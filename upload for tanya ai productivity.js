@@ -221,7 +221,10 @@ var q1 = localStorage.getItem("AIforproductivity1") || "(no response saved)";
               });
             }
 
-            return startY - bannerH - 12;
+            return {
+              page: page,
+              y: startY - bannerH - 12
+            };
           }
 
           // ✏️ Update titles to match your exercises
@@ -287,7 +290,9 @@ var q1 = localStorage.getItem("AIforproductivity1") || "(no response saved)";
               y = pageH - 60;
             }
 
-            y = drawSectionBanner(ex.title, page, y);
+            var banner = drawSectionBanner(ex.title, page, y);
+            page = banner.page;
+            y = banner.y;
 
             var result = drawWrapped(ex.response, y, 11.5, font, BODY_GRAY, page);
             page = result.page;
