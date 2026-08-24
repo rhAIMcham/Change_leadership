@@ -1,6 +1,6 @@
 window.InitUserScripts = function() {
   window.Script1 = function() {
-    var q1 = localStorage.getItem("AIforproductivity1") || "(no response saved)";
+var q1 = localStorage.getItem("AIforproductivity1") || "(no response saved)";
     var q2 = localStorage.getItem("AIforproductivity2") || "(no response saved)";
     var q3 = localStorage.getItem("AIforproductivity3") || "(no response saved)";
     var q4 = localStorage.getItem("AIforproductivity4") || "(no response saved)";
@@ -52,7 +52,6 @@ window.InitUserScripts = function() {
     var q50 = localStorage.getItem("AIforproductivity50") || "(no response saved)";
     var q51 = localStorage.getItem("AIforproductivity51") || "(no response saved)";
 
-
     function loadScript(src, onload) {
       var s = document.createElement("script");
       s.src = src;
@@ -100,11 +99,11 @@ window.InitUserScripts = function() {
             day: "2-digit", month: "long", year: "numeric"
           });
 
-          page.drawText("AI for Productivity AIM", {
+          page.drawText("New Leader Session 3 AIM", {
             x: margin, y: y, size: 21, font: fontBold, color: NAVY
           });
           y -= 22;
-          page.drawText("AI for Productivity AIM  " + dateStr, {
+          page.drawText("New leader programme  ·  Session 3  ·  " + dateStr, {
             x: margin, y: y, size: 11, font: font, color: MUTED_GRAY
           });
           y -= 14;
@@ -306,7 +305,7 @@ window.InitUserScripts = function() {
               font: font,
               color: MUTED_GRAY
             });
-            pg.drawText("AI for Productivity", {
+            pg.drawText("New leader program", {
               x: margin,
               y: 32,
               size: labelSize,
@@ -320,7 +319,7 @@ window.InitUserScripts = function() {
             var url  = URL.createObjectURL(blob);
             var a    = document.createElement("a");
             a.href     = url;
-            a.download = "AI for Productivity AIM.pdf";
+            a.download = "New Leader Session 3 AIM.pdf";
             a.style.display = "none";
             document.body.appendChild(a);
             a.click();
