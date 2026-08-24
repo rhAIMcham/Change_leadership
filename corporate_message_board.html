@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>MCQ Single Screen</title>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+<style>
+
+/* =====================
+    COLOUR TOKENS
+===================== */
+:root {
+    --AIMblue: #4353A3;
+    --darkBlue: #38416D;
+    --teal: #5DC8B9;
+    --cream: #F1EEDE;
+    --grey: #e7e9ec;
+    --rust: #AF4510;
+    --navy: #12195C;
+    --white: #ffffff;
+    --lightBlue: #AEBAE4;
+    --bg-app:          #f0ede8;
+    --bg-sidebar:      #e8e4de;
+    --bg-activity-pane:#454545;
+    --bg-panel:        #ffffff;
+    --bg-message-head: #f5f3f0;
+    --bg-private-tag:  #fff0ee;
+    --bg-unread-dot:   #378add;
+    --bg-avatar-blue:  #b5d4f4;
+    --bg-avatar-teal:  #9fe1cb;
+    --bg-selected-row: #e6f1fb;
+    --bg-badge:        #d85a30;
+    --bg-input:        #f5f3f0;
+    --text-primary:    #1a1a1a;
+    --text-secondary:  #666660;
+    --text-muted:      #999994;
+    --text-avatar-blue:#0c447c;
+    --text-avatar-teal:#085041;
+    --text-private:    #993c1d;
+    --text-badge:      #ffffff;
+    --text-link:       #185fa5;
+    --border-subtle:   #dedad3;
+    --border-medium:   #ccc8c0;
+    --radius-sm:  6px;
+    --radius-md:  8px;
+    --radius-lg:  12px;
+    --radius-pill:99px;
+    --purple-dark: #464775;
+    --purple-mid:  #6264A7;
+    --purple-light:#9EA2D4;
+    --sidebar-bg:  #1b1b2e;
+    --channel-bg:  #252538;
+    --chat-bg:     #ffffff;
+    --text-primary:#1a1a1a;
+    --text-secondary:#555;
+    --text-muted:  #999;
+    --border:      rgba(0,0,0,0.1);
+    --bg-secondary:#f5f5f5;
+    --bg-primary:  #ffffff;
+    --online:      #6EBB8A;
+    --away:        #F4A540;
+    --busy:        #E04D4D;
+    --unread:      #D65B8E;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "IBM-Plex-Sans", sans-serif;
+    padding: 20px;
+    min-height: 100vh;
+    background-color: var(--bg-app);
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    transition: margin-right 0.3s ease;
+    overflow: hidden;
+}
+
+.post-card {
+    border: var(--border-subtle) solid 1px;
+    background-color: var(--bg-primary);
+    border-radius: 4px;
+}
+
+.header {
+    display: flex;
+    border-bottom: var(--border-subtle) solid 1px;
+    background: var(--bg-panel);
+  margin: 4px;
+}
+
+.post-details {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.header-details {
+    display: flex;
+     margin-top: 10px;
+}
+
+.header-icon {
+    margin: 4px;
+}
+
+.header-icon > svg {
+    width: 60px;
+    border: solid 8px white;
+}
+.header-text {
+    margin: 4px;
+}
+
+.header-text > h4 {
+    padding: 3px;
+    color: var(--text-primary);
+}
+
+.header-text > p {
+    padding: 3px;
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+.header-interactive {
+    margin-top: 10px;
+    padding-right: 5px;
+}
+
+.card-content {
+    margin: auto;
+}
+
+.card-content-text {
+    margin: 4px;
+    padding: 20px 12px;
+    background-color: var(--bg-primary);
+    border-bottom: var(--border-subtle) solid 1px;
+}
+
+.card-content-text > p {
+    color: var(--text-primary);
+    line-height: 1.5;
+}
+
+.card-content-image_video {
+    padding: 15px;
+    margin: 6px;
+  align-content: center;
+  background-color: var(--bg-panel);
+  border-bottom: var(--border-subtle) solid 1px;
+}
+
+.card-content-image_video img {
+    width: 100%;
+    border-radius: 4px;
+    display: block;
+}
+
+.card-reactions {
+    margin: 4px;
+  background: white;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-around;
+  padding: 15px;
+}
+
+.emoji {
+       border-radius: var(--radius-pill);
+}
+.card-reactions .emoji > p {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+/* =====================
+    COMMENTS
+===================== */
+.comments-container {
+    margin-top: 8px;
+    background-color: var(--bg-panel);
+    border-radius: 4px;
+    border: var(--border-subtle) solid 1px;
+    padding: 12px;
+}
+
+.comments-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: var(--border-subtle) solid 1px;
+}
+
+.comments-toolbar h5 {
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.sort-select {
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--text-secondary);
+    background-color: var(--bg-input);
+    border: var(--border-subtle) solid 1px;
+    border-radius: var(--radius-pill);
+    padding: 4px 10px;
+    cursor: pointer;
+}
+
+/* --- add comment composer --- */
+.comment-composer {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+    border-bottom: var(--border-subtle) solid 1px;
+}
+
+.comment-avatar {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: 50%;
+    background-color: var(--bg-avatar-teal);
+    color: var(--text-avatar-teal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.comment-avatar.blue {
+    background-color: var(--bg-avatar-blue);
+    color: var(--text-avatar-blue);
+}
+
+.composer-input-wrap {
+    flex: 1;
+}
+
+.comment-input {
+    width: 100%;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text-primary);
+    background-color: var(--bg-input);
+    border: var(--border-subtle) solid 1px;
+    border-radius: var(--radius-lg);
+    padding: 10px 14px;
+    resize: none;
+    min-height: 38px;
+    line-height: 1.4;
+}
+
+.comment-input:focus {
+    outline: none;
+    border-color: var(--AIMblue);
+    background-color: var(--white);
+}
+
+.composer-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 6px;
+}
+
+.post-comment-btn {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--white);
+    background-color: var(--AIMblue);
+    border: none;
+    border-radius: var(--radius-pill);
+    padding: 6px 16px;
+    cursor: pointer;
+}
+
+.post-comment-btn:disabled {
+    background-color: var(--border-medium);
+    cursor: not-allowed;
+}
+
+.post-comment-btn:not(:disabled):hover {
+    background-color: var(--darkBlue);
+}
+
+/* --- comment list --- */
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.comment-box {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.comment-body {
+    flex: 1;
+}
+
+.comment-bubble {
+    background-color: var(--bg-input);
+    border-radius: var(--radius-lg);
+    padding: 8px 14px;
+    display: inline-block;
+    max-width: 100%;
+}
+
+.comment-bubble .comment-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.comment-bubble .comment-text {
+    font-size: 14px;
+    color: var(--text-primary);
+    margin-top: 2px;
+    line-height: 1.4;
+    word-wrap: break-word;
+    max-width: 480px;
+}
+
+.comment-meta {
+    display: flex;
+    gap: 14px;
+    margin-top: 4px;
+    padding-left: 14px;
+}
+
+.comment-meta span {
+    font-size: 12px;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.comment-meta span:hover {
+    color: var(--text-link);
+    text-decoration: underline;
+}
+
+.comments-empty {
+    color: var(--text-muted);
+    font-size: 13px;
+    text-align: center;
+    padding: 10px 0 4px;
+}
+
+/*BUTTONS*/
+.pill-btn {
+    border-radius: var(--radius-pill);
+    background-color: var(--bg-input);
+    padding: 2px 7px;
+    box-shadow: #1b1b2e;
+}
+
+.comment-btn {
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text-secondary);
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.comment-btn:hover {
+    color: var(--text-link);
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="post-card">
+        <div class="header">
+            <div>
+            <div class="header-icon">
+                <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 647.06 647.06">
+                <defs>
+                    <style>
+                    .cls-1 {
+                        fill: #2b42a3;
+                    }
+                    </style>
+                </defs>
+                <path class="cls-1" d="M165.03,414.28v8.14c0,10.49,3.28,18.16,9.84,23.05,6.56,4.88,15.85,7.32,27.87,7.32,13.48,0,25.05-2.89,34.71-8.68,9.65-5.78,14.48-15.18,14.48-28.21v-33.62h-39.35c-31.7,0-47.55,10.67-47.55,32Z"/>
+                <path class="cls-1" d="M589.64,0H57.42C25.71,0,0,25.71,0,57.42v532.22c0,31.71,25.71,57.42,57.42,57.42h532.22c31.71,0,57.42-25.71,57.42-57.42V57.42c0-31.71-25.71-57.42-57.42-57.42ZM359.6,502.53h-44.82c-14.58,0-26.7-4.55-36.35-13.66-9.66-9.1-15.76-21.32-18.31-36.62h-3.28c-4.37,18.58-14.03,32.71-28.97,42.36-14.94,9.65-33.34,14.48-55.2,14.48-28.79,0-50.83-7.63-66.13-22.88-15.3-15.25-22.95-35.41-22.95-60.48,0-30.15,11.02-52.57,33.07-67.29,22.04-14.71,52.01-22.07,89.91-22.07h45.36v-18.04c0-13.84-3.65-24.87-10.93-33.07-7.29-8.2-19.5-12.3-36.62-12.3-16.04,0-28.79,3.47-38.26,10.39-9.48,6.93-17.31,14.76-23.5,23.5l-48.1-42.87c11.66-17.22,26.32-30.68,44-40.39,17.67-9.71,41.62-14.57,71.87-14.57,40.8,0,71.41,8.93,91.82,26.78,20.4,17.86,30.61,43.91,30.61,78.16v125.71h26.78v62.85ZM563.46,278.44h-56.84v161.23h52.47v62.85h-48.1c-28.06,0-49.28-7.11-63.67-21.32-14.4-14.21-21.59-34.98-21.59-62.31v-140.46h-40.45v-62.85h20.22c10.93,0,18.39-2.64,22.41-7.92,4-5.28,6.01-12.84,6.01-22.68v-47h72.69v77.61h56.84v62.85Z"/>
+                </svg>
+            </div>
+            </div>
+            <div class="post-details">
+            <div class="header-details">
+            <div class="header-text">
+                <h4>Lorem ipsum</h4>
+<p>Name of poster posted on date 8th August 2026</p>
+            </div>
+            </div>
+            <div class="header-interactive">
+                <button class="pill-btn">***</button>
+                <button class="pill-btn">X</button>
+            </div>
+        </div>
+        </div>
+        <div class="card-content">
+            <div class="card-content-text">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            </div>
+            <div class="card-content-image_video">
+                <img src="https://placebear.com/400/400" alt="Image of bear">
+            </div>
+                <div class="card-reactions">
+                    <p>Reactions</p>
+            <div class="emoji"><p>&#128077; 4</p></div>
+            <div class="emoji"><p>&#128077; 5</p></div>
+            <div class="emoji"><p>&#128077; 1</p></div>
+            <div class="emoji"><p>&#128077; 5</p></div>
+            <div class="emoji"><p>&#128077; 6</p></div>
+        </div>
+        </div>
+    </div>
+
+    <!-- COMMENTS -->
+    <div class="comments-container" id="commentsContainer">
+
+        <div class="comments-toolbar">
+            <h5 id="commentsCount">0 comments</h5>
+            <select class="sort-select" id="sortSelect" onchange="renderComments()">
+                <option value="newest">Newest first</option>
+                <option value="oldest">Oldest first</option>
+            </select>
+        </div>
+
+        <div class="comment-composer">
+            <div class="comment-avatar blue">You</div>
+            <div class="composer-input-wrap">
+                <textarea
+                    class="comment-input"
+                    id="commentInput"
+                    placeholder="Add a comment..."
+                    rows="1"
+                    oninput="autoGrow(this); toggleButton();"
+                    onkeydown="handleComposerKeydown(event)"
+                ></textarea>
+                <div class="composer-actions">
+                    <button class="post-comment-btn" id="postBtn" onclick="addComment()" disabled>Post</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="comments-list" id="commentsList"></div>
+
+    </div>
+
+</div>
+<script>
+
+    /* =====================
+        COMMENT DATA
+        Reorderable array: change `order` (or just splice/sort this
+        array) to control render order. renderComments() always
+        rebuilds the DOM from this array, so it's the single
+        source of truth.
+    ===================== */
+    let comments = [
+        {
+            id: 1,
+            name: "Jordan Lee",
+            initials: "JL",
+            avatarStyle: "teal",
+            text: "Great post, really enjoyed reading this!",
+            timestamp: new Date("2026-08-08T09:15:00")
+        },
+        {
+            id: 2,
+            name: "Priya Nair",
+            initials: "PN",
+            avatarStyle: "blue",
+            text: "Thanks for sharing, this is super helpful.",
+            timestamp: new Date("2026-08-08T10:42:00")
+        },
+        {
+            id: 3,
+            name: "Sam Okafor",
+            initials: "SO",
+            avatarStyle: "teal",
+            text: "Couldn't agree more with this take.",
+            timestamp: new Date("2026-08-09T08:03:00")
+        }
+    ];
+
+    let nextId = comments.length + 1;
+
+    function escapeHtml(str) {
+        const div = document.createElement("div");
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    function formatTimestamp(date) {
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.round(diffMs / 60000);
+        const diffHours = Math.round(diffMs / 3600000);
+        const diffDays = Math.round(diffMs / 86400000);
+
+        if (diffMins < 1) return "Just now";
+        if (diffMins < 60) return diffMins + "m";
+        if (diffHours < 24) return diffHours + "h";
+        if (diffDays < 7) return diffDays + "d";
+        return date.toLocaleDateString(undefined, { day: "numeric", month: "short" });
+    }
+
+    function renderComments() {
+        const list = document.getElementById("commentsList");
+        const countEl = document.getElementById("commentsCount");
+        const sortOrder = document.getElementById("sortSelect").value;
+
+        // Reorder without mutating the underlying data array's stored order
+        const ordered = [...comments].sort((a, b) => {
+            return sortOrder === "newest"
+                ? b.timestamp - a.timestamp
+                : a.timestamp - b.timestamp;
+        });
+
+        countEl.textContent = comments.length === 1
+            ? "1 comment"
+            : comments.length + " comments";
+
+        if (ordered.length === 0) {
+            list.innerHTML = '<p class="comments-empty">No comments yet. Be the first to comment.</p>';
+            return;
+        }
+
+        list.innerHTML = ordered.map(c => `
+            <div class="comment-box" data-id="${c.id}">
+                <div class="comment-avatar ${c.avatarStyle}">${escapeHtml(c.initials)}</div>
+                <div class="comment-body">
+                    <div class="comment-bubble">
+                        <div class="comment-name">${escapeHtml(c.name)}</div>
+                        <div class="comment-text">${escapeHtml(c.text)}</div>
+                    </div>
+                    <div class="comment-meta">
+                        <span>${formatTimestamp(c.timestamp)}</span>
+                        <span onclick="likeComment(${c.id})">Like</span>
+                        <span onclick="focusComposer()">Reply</span>
+                    </div>
+                </div>
+            </div>
+        `).join("");
+    }
+
+    function addComment() {
+        const input = document.getElementById("commentInput");
+        const text = input.value.trim();
+        if (!text) return;
+
+        // New comments are pushed into the data array; renderComments()
+        // handles putting them in the right visual position per the
+        // current sort order.
+        comments.push({
+            id: nextId++,
+            name: "You",
+            initials: "You",
+            avatarStyle: "blue",
+            text: text,
+            timestamp: new Date()
+        });
+
+        input.value = "";
+        autoGrow(input);
+        toggleButton();
+
+        // Make sure the newly added comment is visible
+        document.getElementById("sortSelect").value = "newest";
+        renderComments();
+    }
+
+    function likeComment(id) {
+        // Placeholder hook for a real like interaction
+        console.log("Liked comment", id);
+    }
+
+    function focusComposer() {
+        document.getElementById("commentInput").focus();
+    }
+
+    function autoGrow(el) {
+        el.style.height = "auto";
+        el.style.height = el.scrollHeight + "px";
+    }
+
+    function toggleButton() {
+        const input = document.getElementById("commentInput");
+        const btn = document.getElementById("postBtn");
+        btn.disabled = input.value.trim().length === 0;
+    }
+
+    function handleComposerKeydown(event) {
+        if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault();
+            addComment();
+        }
+    }
+
+    function toggleComments() {
+        const el = document.getElementById("commentsContainer");
+        el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        focusComposer();
+    }
+
+    renderComments();
+
+</script>
+</body>
+</html>
