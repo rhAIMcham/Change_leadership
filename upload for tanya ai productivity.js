@@ -99,11 +99,11 @@ var q1 = localStorage.getItem("AIforproductivity1") || "(no response saved)";
             day: "2-digit", month: "long", year: "numeric"
           });
 
-          page.drawText("New Leader Session 3 AIM", {
+          page.drawText("AI for productivity - AIM", {
             x: margin, y: y, size: 21, font: fontBold, color: NAVY
           });
           y -= 22;
-          page.drawText("New leader programme  ·  Session 3  ·  " + dateStr, {
+          page.drawText("AI for productivity ·  " + dateStr, {
             x: margin, y: y, size: 11, font: font, color: MUTED_GRAY
           });
           y -= 14;
@@ -190,7 +190,33 @@ var q1 = localStorage.getItem("AIforproductivity1") || "(no response saved)";
 
           // ── Section banner helper ───────────────────────────────────
           function drawSectionBanner(title, page, startY) {
-            var bannerH = 26;
+            var size = 12.5;
+            var maxTitleWidth = maxWidth - 26; // leave a little padding
+            var lineHeight = 12;
+            var words = title.split(" ");
+            var lines = [];
+            var currentLine = "";
+
+            for (var i = 0; i < words.length; i++) {
+              var word = words[i];
+              var candidate = currentLine ? currentLine + " " + word : word;
+
+              if (fontBold.widthOfTextAtSize(candidate, size) <= maxTitleWidth) {
+                currentLine = candidate;
+              } else {
+                if (currentLine) {
+                  lines.push(currentLine);
+                }
+                currentLine = word;
+              }
+            }
+
+            if (currentLine) {
+              lines.push(currentLine);
+            }
+
+            // Make the banner tall enough for wrapped titles
+            var bannerH = Math.max(26, 18 + lines.length * lineHeight);
             page.drawRectangle({
               x: margin,
               y: startY - bannerH + 6,
@@ -198,14 +224,19 @@ var q1 = localStorage.getItem("AIforproductivity1") || "(no response saved)";
               height: bannerH,
               color: NAVY
             });
-            page.drawText(title, {
-              x: margin + 10,
-              y: startY - bannerH + 14,
-              size: 12.5,
-              font: fontBold,
-              color: WHITE
-            });
-            return startY - bannerH - 12;
+
+            var textY = startY - bannerH + 14;
+            for (var j = 0; j < lines.length; j++) {
+              page.drawText(lines[j], {
+                x: margin + 10,
+                y: textY - (j * lineHeight),
+                size: size,
+                font: fontBold,
+                color: WHITE
+              });
+            }
+
+            return startY - bannerH - 8;
           }
 
           // ✏️ Update titles to match your exercises
@@ -305,7 +336,7 @@ var q1 = localStorage.getItem("AIforproductivity1") || "(no response saved)";
               font: font,
               color: MUTED_GRAY
             });
-            pg.drawText("New leader program", {
+            pg.drawText("AI for productivity - AIM", {
               x: margin,
               y: 32,
               size: labelSize,
@@ -319,7 +350,7 @@ var q1 = localStorage.getItem("AIforproductivity1") || "(no response saved)";
             var url  = URL.createObjectURL(blob);
             var a    = document.createElement("a");
             a.href     = url;
-            a.download = "New Leader Session 3 AIM.pdf";
+            a.download = "AI for productivity - AIM.pdf";
             a.style.display = "none";
             document.body.appendChild(a);
             a.click();
