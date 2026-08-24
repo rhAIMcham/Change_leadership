@@ -192,31 +192,16 @@ var q1 = localStorage.getItem("AIforproductivity1") || "(no response saved)";
           function drawSectionBanner(title, page, startY) {
             var size = 12.5;
             var maxTitleWidth = maxWidth - 26; // leave a little padding
-            var lineHeight = 12;
-            var words = title.split(" ");
-            var lines = [];
-            var currentLine = "";
+            var lineHeight = 13;
+            var lines = wrapTitleToLines(title, maxTitleWidth, fontBold, size);
+            var bannerH = Math.max(28, 18 + lines.length * lineHeight);
 
-            for (var i = 0; i < words.length; i++) {
-              var word = words[i];
-              var candidate = currentLine ? currentLine + " " + word : word;
-
-              if (fontBold.widthOfTextAtSize(candidate, size) <= maxTitleWidth) {
-                currentLine = candidate;
-              } else {
-                if (currentLine) {
-                  lines.push(currentLine);
-                }
-                currentLine = word;
-              }
+            // If this banner would run into the footer, move to a new page first
+            if (startY - bannerH - 18 < FOOTER_RESERVE) {
+              page = addPage();
+              startY = pageH - 60;
             }
 
-            if (currentLine) {
-              lines.push(currentLine);
-            }
-
-            // Make the banner tall enough for wrapped titles
-            var bannerH = Math.max(26, 18 + lines.length * lineHeight);
             page.drawRectangle({
               x: margin,
               y: startY - bannerH + 6,
@@ -236,7 +221,7 @@ var q1 = localStorage.getItem("AIforproductivity1") || "(no response saved)";
               });
             }
 
-            return startY - bannerH - 8;
+            return startY - bannerH - 12;
           }
 
           // ✏️ Update titles to match your exercises
@@ -305,10 +290,10 @@ var q1 = localStorage.getItem("AIforproductivity1") || "(no response saved)";
             y = drawSectionBanner(ex.title, page, y);
 
             var result = drawWrapped(ex.response, y, 11.5, font, BODY_GRAY, page);
-            page = result.page;   // pick up whichever page we ended on
+            page = result.page;
             y = result.y;
 
-            y -= 26;
+            y -= 24;
 
             if (y < FOOTER_RESERVE && e < exercises.length - 1) {
               page = addPage();
