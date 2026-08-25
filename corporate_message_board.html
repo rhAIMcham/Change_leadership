@@ -169,19 +169,60 @@ body {
 
 .card-reactions {
     margin: 4px;
-  background: white;
-  border-radius: 4px;
-  display: flex;
-  justify-content: space-around;
-  padding: 15px;
+    background: white;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px 15px;
+}
+
+.card-reactions .reactions-label {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-right: 4px;
 }
 
 .emoji {
-       border-radius: var(--radius-pill);
+    border-radius: var(--radius-pill);
+    border: var(--border-subtle) solid 1px;
+    background-color: var(--bg-input);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
 }
-.card-reactions .emoji > p {
+
+.emoji:active {
+    transform: scale(0.95);
+}
+
+.emoji:hover {
+    border-color: var(--border-medium);
+}
+
+.emoji .emoji-char {
+    font-size: 16px;
+    line-height: 1;
+}
+
+.emoji .emoji-count {
     color: var(--text-secondary);
     font-size: 14px;
+}
+
+.emoji.reacted {
+    background-color: var(--bg-selected-row);
+    border-color: var(--AIMblue);
+}
+
+.emoji.reacted .emoji-count {
+    color: var(--AIMblue);
+    font-weight: 600;
 }
 
 /* =====================
@@ -359,6 +400,15 @@ body {
     text-decoration: underline;
 }
 
+.comment-meta span.like-btn.liked {
+    color: var(--AIMblue);
+    font-weight: 600;
+}
+
+.comment-meta span.like-btn.liked:hover {
+    color: var(--darkBlue);
+}
+
 .comments-empty {
     color: var(--text-muted);
     font-size: 13px;
@@ -427,14 +477,7 @@ body {
             <div class="card-content-image_video">
                 <img src="https://placebear.com/400/400" alt="Image of bear">
             </div>
-                <div class="card-reactions">
-                    <p>Reactions</p>
-            <div class="emoji"><p>&#128077; 4</p></div>
-            <div class="emoji"><p>&#128077; 5</p></div>
-            <div class="emoji"><p>&#128077; 1</p></div>
-            <div class="emoji"><p>&#128077; 5</p></div>
-            <div class="emoji"><p>&#128077; 6</p></div>
-        </div>
+            <div class="card-reactions" id="reactionsBar"></div>
         </div>
     </div>
 
@@ -474,6 +517,51 @@ body {
 <script>
 
     /* =====================
+        REACTIONS DATA
+        Each entry is an emoji with a base count and whether the
+        current user has reacted to it. Clicking toggles the
+        user's own reaction on/off for that specific emoji, so a
+        user can only ever add ONE reaction per emoji (not stack
+        multiples), though they're free to react with several
+        different emojis on the same post.
+    ===================== */
+    let reactions = [
+        { emoji: "👍", count: 4, reacted: false },
+        { emoji: "❤️", count: 5, reacted: false },
+        { emoji: "😂", count: 1, reacted: false },
+        { emoji: "😮", count: 5, reacted: false },
+        { emoji: "😢", count: 6, reacted: false },
+        { emoji: "🎉", count: 0, reacted: false }
+    ];
+
+    function renderReactions() {
+        const bar = document.getElementById("reactionsBar");
+        bar.innerHTML =
+            '<span class="reactions-label">Reactions</span>' +
+            reactions.map((r, i) => `
+                <button
+                    type="button"
+                    class="emoji${r.reacted ? " reacted" : ""}"
+                    onclick="toggleReaction(${i})"
+                    aria-pressed="${r.reacted}"
+                >
+                    <span class="emoji-char">${r.emoji}</span>
+                    <span class="emoji-count">${r.count}</span>
+                </button>
+            `).join("");
+    }
+
+    function toggleReaction(index) {
+        const r = reactions[index];
+        // Toggle: if the user already reacted with this emoji, remove it
+        // (count back down); otherwise add it (count up). Either way this
+        // is the only reaction of this emoji the user can register.
+        r.reacted = !r.reacted;
+        r.count += r.reacted ? 1 : -1;
+        renderReactions();
+    }
+
+    /* =====================
         COMMENT DATA
         Reorderable array: change `order` (or just splice/sort this
         array) to control render order. renderComments() always
@@ -487,7 +575,8 @@ body {
             initials: "JL",
             avatarStyle: "teal",
             text: "Great post, really enjoyed reading this!",
-            timestamp: new Date("2026-08-08T09:15:00")
+            timestamp: new Date("2026-08-08T09:15:00"),
+            liked: false
         },
         {
             id: 2,
@@ -495,7 +584,8 @@ body {
             initials: "PN",
             avatarStyle: "blue",
             text: "Thanks for sharing, this is super helpful.",
-            timestamp: new Date("2026-08-08T10:42:00")
+            timestamp: new Date("2026-08-08T10:42:00"),
+            liked: false
         },
         {
             id: 3,
@@ -503,7 +593,8 @@ body {
             initials: "SO",
             avatarStyle: "teal",
             text: "Couldn't agree more with this take.",
-            timestamp: new Date("2026-08-09T08:03:00")
+            timestamp: new Date("2026-08-09T08:03:00"),
+            liked: false
         }
     ];
 
@@ -560,8 +651,7 @@ body {
                     </div>
                     <div class="comment-meta">
                         <span>${formatTimestamp(c.timestamp)}</span>
-                        <span onclick="likeComment(${c.id})">Like</span>
-                        <span onclick="focusComposer()">Reply</span>
+                        <span class="like-btn${c.liked ? " liked" : ""}" onclick="likeComment(${c.id})">${c.liked ? "Liked" : "Like"}</span>
                     </div>
                 </div>
             </div>
@@ -595,8 +685,10 @@ body {
     }
 
     function likeComment(id) {
-        // Placeholder hook for a real like interaction
-        console.log("Liked comment", id);
+        const comment = comments.find(c => c.id === id);
+        if (!comment) return;
+        comment.liked = !comment.liked;
+        renderComments();
     }
 
     function focusComposer() {
@@ -627,6 +719,7 @@ body {
         focusComposer();
     }
 
+    renderReactions();
     renderComments();
 
 </script>
