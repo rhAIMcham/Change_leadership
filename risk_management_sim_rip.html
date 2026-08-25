@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Matrix Training</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/handsontable/12.3.1/handsontable.full.min.css">
+    <style>
+        * { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+}
+
+body {
+      font-family: "IBM Plex Sans", sans-serif;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+}
+
+h1 { 
+    color: #333; 
+    margin-bottom: 10px; 
+    font-size: 28px; 
+}
+
+.subtitle { 
+    color: #666; 
+    margin-bottom: 25px; 
+    font-size: 16px; 
+}
+
+.round-indicator {
+    background: #667eea;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 30px;
+    margin-bottom: 25px;
+}
+
+.risk-list {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    overflow-y: auto;
+}
+
+.risk-list h2 { 
+    color: #333; 
+    margin-bottom: 12px; 
+    font-size: 18px; 
+}
+
+.risk-item {
+    background: white;
+    padding: 8px 10px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    border-left: 3px solid #667eea;
+    font-size: 13px;
+    cursor: move;
+    transition: opacity 0.2s, transform 0.2s;
+    user-select: none;
+}
+
+.risk-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.risk-item.dragging {
+    opacity: 0.3;
+    cursor: grabbing;
+}
+
+.risk-item.placed {
+    opacity: 0.7;
+    cursor: move;
+    border-left-color: #28a745;
+}
+
+.risk-id {
+    font-weight: bold;
+    color: #667eea;
+    margin-bottom: 3px;
+    font-size: 12px;
+}
+
+.matrix-container { 
+    background: #f8f9fa; 
+    padding: 20px; 
+    border-radius: 8px; 
+}
+
+.matrix-container h2 { 
+    color: #333; 
+    margin-bottom: 15px; 
+    font-size: 20px; 
+}
+
+#hot-container { 
+    margin-bottom: 15px; 
+}
+
+.legend {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.legend-item { 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+}
+
+.legend-color { 
+    width: 30px; 
+    height: 20px; 
+    border-radius: 4px; 
+}
+
+.controls { 
+    text-align: center; 
+    margin-top: 25px; 
+}
+
+button {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+button:hover { 
+    background: #5568d3; 
+}
+
+.results {
+    margin-top: 25px;
+    padding: 20px;
+    border-radius: 8px;
+    display: none;
+}
+
+.results.show { 
+    display: block; 
+}
+
+.results.success { 
+    background: #d4edda; 
+    border: 2px solid #28a745; 
+}
+
+.results.warning { 
+    background: #fff3cd; 
+    border: 2px solid #ffc107; 
+}
+
+.results.danger { 
+    background: #f8d7da; 
+    border: 2px solid #dc3545; 
+}
+
+.results h3 { 
+    margin-bottom: 15px; 
+}
+
+.results ul { 
+    margin: 10px 0 10px 20px; 
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.result-card {
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+    border-left: 4px solid #667eea;
+}
+
+.result-card.correct { 
+    border-left-color: #28a745; 
+}
+
+.result-card.incorrect { 
+    border-left-color: #dc3545; 
+}
+
+.instructions {
+    background: #e3f2fd;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    border-left: 4px solid #2196f3;
+}
+
+.instructions h3 { 
+    color: #1976d2; 
+    margin-bottom: 8px; 
+}
+
+.instructions p { 
+    color: #555; 
+    line-height: 1.6; 
+}
+
+.actions-section {
+    margin-top: 25px;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    transition: opacity 0.3s ease;
+}
+
+.actions-section h2 { 
+    color: #333; 
+    margin-bottom: 8px; 
+    font-size: 20px; 
+}
+
+.actions-subtitle { 
+    color: #666; 
+    margin-bottom: 15px; 
+    font-size: 14px; 
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+}
+
+.action-item {
+    background: white;
+    padding: 12px 15px;
+    border-radius: 6px;
+    border: 2px solid #ddd;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.action-item:hover {
+    border-color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.action-item.selected { 
+    border-color: #667eea; 
+    background: #e8eaf6; 
+}
+
+.action-checkbox {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    border: 2px solid #667eea;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+}
+
+.action-item.selected .action-checkbox { 
+    background: #667eea; 
+}
+
+.action-text { 
+    font-size: 14px; 
+    line-height: 1.4; 
+}
+
+.action-feedback {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 6px;
+    background: #f8f9fa;
+}
+.action-feedback.good {
+    border-left: 4px solid #28a745;
+}
+.action-feedback.bad {
+    border-left: 4px solid #dc3545;
+}
+.quality-indicator {
+    font-size: 0.9em;
+    font-weight: 500;
+}
+.feedback-text {
+    font-size: 0.9em;
+    color: #666;
+    font-style: italic;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Home renovation project</h1>
+        <p class="subtitle"></p>
+
+        <div class="instructions">
+            <h3>Instructions</h3>
+            <p>In this project, you are managing the renovation of your own home. 
+                
+                You have lived here for many years and know the home and local area well. 
+                It is an older home, and this is the first time major works will be carried out on it while you have owned it. 
+                While your budget and deadline are both tight, it is more important for you to finish the work on time than anything else, as your elderly parents will be moving in with you soon.
+            </p><br>
+               <p>Your plan is to redo your kitchen and living area to make your living space more open plan and functional for your lifestyle.
+                An experienced local architect has begun drafting the plans for you, but only a cursory structural inspection has been done.</p><br>
+              <p>  Consider each of the risks below, and place them onto the risk matrix where you think is appropriate. Then, using the matrix as a guide, select the two most important risk management actions you can take. While all the actions may be good options, you must prioritise what is essential.
+                Press 'submit' once you are happy with your selections, and compare your risk matrix placement to ours. 
+</p><br>
+             <p> 
+                Remember, the risk matrix is a tool to help you prioritise resources and manage project risks before they arise. While each risk has a 'correct' location, your project's success is determined by which actions you take.</p>
+        </p>  
+            </div>
+                    <div class="round-indicator" id="roundIndicator">Phase 1 of 3 - Planning</div>
+        <div class="content-grid">
+            <div class="risk-list">
+                <h2>Project Risks</h2><br><p>Drag each of these items into their correct location on the risk matrix</p><br>
+                <div id="risksList"></div>
+                <div class="actions-section">
+                    <h2>Risk Management Actions</h2>
+                    <p class="actions-subtitle">Select <strong>2 actions</strong> to help control project risks:</p>
+                    <div id="actionsList"></div>
+                </div>
+            </div>
+            <div class="matrix-container">
+                <h2>Risk Matrix</h2>
+                <div id="hot-container"></div>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #d4edda;"></div>
+                        <span>Low Risk</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #fff3cd;"></div>
+                        <span>Medium Risk</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ffe5cc;"></div>
+                        <span>High Risk</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #f8d7da;"></div>
+                        <span>Critical Risk</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="submitBtn" onclick="submitAssessment()">Submit Assessment</button>
+            <button onclick="resetMatrix()" style="background: #6c757d; margin-left: 10px;">Reset Matrix</button>
+        </div>
+        <div class="results" id="results"></div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handsontable/12.3.1/handsontable.full.min.js"></script>
+    <script>
+// Risk data for each phase
+const phase1Risks = [
+    { id: 'R1', description: 'Unforeseen structural issues with the building at large.', correct: [0, 2] },
+    { id: 'R2', description: 'Pushback from council on your submitted plans close to start date.', correct: [1, 3] },
+    { id: 'R3', description: 'Inaccurate schematics due to building age, meaning piping and electrical work might require more time', correct: [2, 3] },
+    { id: 'R4', description: 'Your contractors not having time to complete the work if there are any delays, as they have another project beginning very soon after yours has ended', correct: [3, 2] },
+    { id: 'R5', description: 'Potential reduction in income, as you have just started a new job', correct: [3, 1] }
+];
+
+const phase1Actions = [
+    { id: 'A1', text: 'Call structural engineer to conduct through building inspection', quality: 'good' },
+    { id: 'A2', text: 'Start work early, trusting that the final round of approval from the council will not involve any major changes to your plans.', quality: 'bad' },
+    { id: 'A3', text: 'Plan for additional time in demolition and site prep in case of inaccurate schematics', quality: 'good' },
+    { id: 'A4', text: 'Try and organise additional contractors to be on call', quality: 'bad' },
+    { id: 'A5', text: 'Look into potential additional work options and maintain your resume should anything go wrong', quality: 'bad' }
+];
+
+const phase2RisksGood = [
+    { id: 'R6G', description: 'Builder access to site is harder than anticipated, possibly some damage to your garden and curb side', correct: [3, 2] },
+    { id: 'R7G', description: 'Builders cars on streets disrupts your neighbours and causes congestion', correct: [2, 3] },
+    { id: 'R8G', description: 'Concrete pour delayed due to potential rain', correct: [1, 2] },
+    { id: 'R9G', description: 'Supplies delayed', correct: [2, 2] },
+    { id: 'R10G', description: 'Temporary power supply disruptions to site due to unrelated council works', correct: [1, 2] }
+];
+
+const phase2RisksBad = [
+    { id: 'R6B', description: 'Structural issues uncovered partway through demolition, impacting deadlines and budget', correct: [1, 2] },
+    { id: 'R7B', description: 'Council planning permissions arrive after work has begun and require reworks', correct: [1, 3] },
+    { id: 'R8B', description: 'Concrete pour impacted due to potential rain', correct: [2, 2] },
+    { id: 'R9B', description: 'Safety incident shuts down site due to trade overlapping without clear communication', correct: [1, 1] },
+    { id: 'R10B', description: 'Budgetary constraints mean supplies have to be downgraded', correct: [3, 3] }
+];
+
+const phase2ActionsGood = [
+    { id: 'A6G', text: 'Plan to restore plants after building work is complete', quality: 'good' },
+    { id: 'A7G', text: 'Schedule buffer days for weather delays, increasing the deadline', quality: 'good' },
+    { id: 'A8G', text: 'Ask neighbours to park elsewhere while your building work is on-going', quality: 'bad' },
+    { id: 'A9G', text: 'Set up backup power generators', quality: 'good' },
+    { id: 'A10G', text: 'Skip some minor inspections to save time', quality: 'bad' }
+];
+
+const phase2ActionsBad = [
+    { id: 'A6B', text: 'Hire structural engineering consultant, impacting budget', quality: 'good' },
+    { id: 'A7B', text: 'Prioritise council planning permits being approved', quality: 'good' },
+    { id: 'A8B', text: 'Use cheaper supplies and tradespeople to avoid more financial issues', quality: 'bad' },
+    { id: 'A9B', text: 'Implement strict safety protocols and better on-site communication', quality: 'good' },
+    { id: 'A10B', text: 'Do some of the work yourself to save on labour costs', quality: 'bad' }
+];
+
+const phase3RisksGood = [
+    { id: 'R11G', description: 'Final installation requires expensive specialist', correct: [2, 2] },
+    { id: 'R12G', description: 'Final third party inspection scheduling delays', correct: [2, 3] },
+    { id: 'R13G', description: 'Substantial damage to garden, more than you had anticipated', correct: [3, 2] },
+    { id: 'R14G', description: 'You want to make minor final modifications after seeing some elements in person for the first time.', correct: [3, 1] },
+    { id: 'R15G', description: 'Parents arriving early', correct: [1, 2] }
+];
+
+const phase3RisksBad = [
+    { id: 'R11B', description: 'Finalisation build steps skipped to meet deadline', correct: [1, 3] },
+    { id: 'R12B', description: 'Building fails code compliance review', correct: [0, 2] },
+    { id: 'R13B', description: 'Build not ready when parents are arriving', correct: [1, 2] },
+    { id: 'R14B', description: 'Last-minute fixes needed due to rushed or poor work done yourself.', correct: [3, 3] },
+    { id: 'R15B', description: 'Budget issues mean contractors paid late, work delayed further', correct: [1, 3] }
+];
+
+const phase3ActionsGood = [
+    { id: 'A11G', text: 'Conduct thorough pre-final inspection', quality: 'good' },
+    { id: 'A12G', text: 'Properly record finishes and cosmetic details to make future maintenance easy', quality: 'good' },
+    { id: 'A13G', text: 'Rush final touches to finish early', quality: 'bad' },
+    { id: 'A14G', text: 'Schedule buffer for parents arriving', quality: 'good' },
+    { id: 'A15G', text: 'Skip final quality checks as no issues have arisen thus far', quality: 'bad' }
+];
+
+const phase3ActionsBad = [
+    { id: 'A11B', text: 'Organise for parents to stay elsewhere to extend deadline', quality: 'good' },
+    { id: 'A12B', text: 'Ask for help from friends and family for any non-specialised work', quality: 'good' },
+    { id: 'A13B', text: 'Cover up defects cosmetically', quality: 'bad' },
+    { id: 'A14B', text: 'Reprioritise to finish buld and hope to rework some components in the future', quality: 'good' },
+    { id: 'A15B', text: 'Ignore unpaid contractors and employ new ones to finish the build', quality: 'bad' }
+];
+
+const impact = ['Catastrophic', 'High', 'Medium', 'Low', 'Negligible'];
+const likelihood = ['Very Unlikely', 'Unlikely', 'Possible', 'Likely', 'Almost Certain'];
+
+// Global state
+let currentPhase = 1;
+let currentRisks = phase1Risks;
+let currentActions = phase1Actions;
+let selectedActions = [];
+let hot;
+let phaseScores = [];
+let performanceTrajectory = 'good';
+let userAnswers = {};
+let assessmentAccuracy = 0;
+
+// Helper function to get adjacent cells (up, down, left, right)
+function getAdjacentCells(row, col) {
+    const adjacent = [[row, col]]; // Include the original cell
+    
+    // Up
+    if (row > 0) adjacent.push([row - 1, col]);
+    // Down
+    if (row < 4) adjacent.push([row + 1, col]);
+    // Left
+    if (col > 0) adjacent.push([row, col - 1]);
+    // Right
+    if (col < 4) adjacent.push([row, col + 1]);
+    
+    return adjacent;
+}
+
+// Check if a user's answer matches any of the acceptable positions
+function isAnswerCorrect(userRow, userCol, correctRow, correctCol) {
+    const acceptableCells = getAdjacentCells(correctRow, correctCol);
+    return acceptableCells.some(([r, c]) => r === userRow && c === userCol);
+}
+
+// Initialize the Handsontable matrix
+function initMatrix() {
+    hot = new Handsontable(document.getElementById('hot-container'), {
+        data: [['','','','',''],['','','','',''],['','','','',''],['','','','',''],['','','','','']],
+        rowHeaders: ['Catastrophic','High','Medium','Low','Negligible'],
+        colHeaders: ['Very Unlikely','Unlikely','Possible','Likely','Almost Certain'],
+        width: '100%',
+        height: 550,
+        rowHeights: 80,
+        colWidths: 120,
+        rowHeaderWidth: 120,
+        licenseKey: 'non-commercial-and-evaluation',
+cells: (row, col) => {
+    let r;
+    
+    // Critical risk cells
+    if ((row === 0 && col >= 2) || 
+        (row === 1 && col >= 3)) {
+        r = criticalRenderer;
+    }
+    // High risk cells
+    else if ((row === 0 && col >= 1) || 
+             (row === 1 && col === 2) || 
+             (row === 2 && col >= 2 && col <= 4) ||
+             (row === 3 && col === 4)) {
+        r = highRenderer;
+    }
+    // Medium cells
+    else if ((row === 0 && col === 0) || 
+             (row === 1 && col >= 0 && col <= 1) || 
+             (row === 2 && col === 1) ||
+             (row === 3 && col >= 2 && col <= 3) || 
+             (row === 4 && col === 4)) {
+        r = mediumRenderer;
+    }
+    // Low cells (everything else)
+    else {
+        r = lowRenderer;
+    }
+    
+    return { renderer: r, readOnly: true };
+}
+    });
+}
+
+// Cell renderers with drag-drop functionality
+function criticalRenderer(i, td, r, c, p, v, cp) {
+    Handsontable.renderers.TextRenderer.apply(this, arguments);
+    td.style.background = '#f8d7da'; 
+    td.style.fontWeight = 'bold';  
+    td.style.fontSize = '16px';
+    td.style.position = 'relative';
+    td.style.verticalAlign = 'top';
+    td.style.padding = '8px';
+    td.classList.add('droppable-cell');
+    if (!td.hasAttribute('data-drop-setup')) {
+        setupDropZone(td, r, c);
+        td.setAttribute('data-drop-setup', 'true');
+    }
+}
+
+function highRenderer(i, td, r, c, p, v, cp) {
+    Handsontable.renderers.TextRenderer.apply(this, arguments);
+    td.style.background = '#ffe5cc'; 
+    td.style.fontWeight = 'bold';
+    td.style.position = 'relative';
+    td.style.verticalAlign = 'top';
+    td.style.padding = '8px';
+    td.classList.add('droppable-cell');
+    if (!td.hasAttribute('data-drop-setup')) {
+        setupDropZone(td, r, c);
+        td.setAttribute('data-drop-setup', 'true');
+    }
+}
+
+function mediumRenderer(i, td, r, c, p, v, cp) {
+    Handsontable.renderers.TextRenderer.apply(this, arguments);
+    td.style.background = '#fff3cd';
+    td.style.position = 'relative';
+    td.style.verticalAlign = 'top';
+    td.style.padding = '8px';
+    td.classList.add('droppable-cell');
+    if (!td.hasAttribute('data-drop-setup')) {
+        setupDropZone(td, r, c);
+        td.setAttribute('data-drop-setup', 'true');
+    }
+}
+
+function lowRenderer(i, td, r, c, p, v, cp) {
+    Handsontable.renderers.TextRenderer.apply(this, arguments);
+    td.style.background = '#d4edda';
+    td.style.position = 'relative';
+    td.style.verticalAlign = 'top';
+    td.style.padding = '8px';
+    td.classList.add('droppable-cell');
+    if (!td.hasAttribute('data-drop-setup')) {
+        setupDropZone(td, r, c);
+        td.setAttribute('data-drop-setup', 'true');
+    }
+}
+
+// Setup drop zone for matrix cells
+function setupDropZone(td, row, col) {
+    td.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        td.style.boxShadow = 'inset 0 0 10px rgba(102, 126, 234, 0.5)';
+    });
+    
+    td.addEventListener('dragleave', (e) => {
+        td.style.boxShadow = '';
+    });
+    
+    td.addEventListener('drop', (e) => {
+    e.preventDefault();
+    td.style.boxShadow = '';
+    const riskId = e.dataTransfer.getData('text/plain');
+    
+    // Remove risk from its previous location if it was already placed
+    const data = hot.getData();
+    for (let r = 0; r < data.length; r++) {
+        for (let c = 0; c < data[r].length; c++) {
+            if (data[r][c]) {
+                const risks = data[r][c].split(',').map(id => id.trim());
+                const filteredRisks = risks.filter(id => id.toUpperCase() !== riskId.toUpperCase());
+                if (risks.length !== filteredRisks.length) {
+                    hot.setDataAtCell(r, c, filteredRisks.join(', '));
+                }
+            }
+        }
+    }
+    
+    // Get current cell value
+    const currentValue = hot.getDataAtCell(row, col) || '';
+    
+    // Add risk to cell (comma-separated if there's already content)
+    const newValue = currentValue ? `${currentValue}, ${riskId}` : riskId;
+    hot.setDataAtCell(row, col, newValue);
+    
+    // Mark risk as placed (but still draggable)
+    const riskItem = document.getElementById(`risk-${riskId}`);
+    if (riskItem) {
+        riskItem.classList.add('placed');
+    }
+    
+    // Update actions visibility
+    updateActionsVisibility();
+});
+}
+
+// Display risks in the left panel
+function displayRisks() {
+    const list = document.getElementById('risksList');
+    list.innerHTML = currentRisks.map(r => 
+        `<div class="risk-item" draggable="true" id="risk-${r.id}" data-risk-id="${r.id}">
+            <div class="risk-id">${r.id}</div>
+            <div>${r.description}</div>
+        </div>`
+    ).join('');
+    
+    // Add drag event listeners to all risk items
+    document.querySelectorAll('.risk-item').forEach(item => {
+item.addEventListener('dragstart', (e) => {
+    e.dataTransfer.setData('text/plain', item.getAttribute('data-risk-id'));
+    item.classList.add('dragging');
+});
+        
+        item.addEventListener('dragend', (e) => {
+            item.classList.remove('dragging');
+        });
+    });
+}
+
+// Display actions in the left panel
+function displayActions() {
+    const grid = document.createElement('div');
+    grid.className = 'actions-grid';
+    currentActions.forEach(a => {
+        const item = document.createElement('div');
+        item.className = 'action-item' + (selectedActions.includes(a.id) ? ' selected' : '');
+        item.onclick = () => toggleAction(a.id);
+        item.innerHTML = `<div class="action-checkbox">${selectedActions.includes(a.id) ? '✓' : ''}</div>
+                          <div class="action-text"><strong>${a.id}:</strong> ${a.text}</div>`;
+        grid.appendChild(item);
+    });
+    const list = document.getElementById('actionsList');
+    list.innerHTML = '';
+    list.appendChild(grid);
+}
+
+// Toggle action selection
+function toggleAction(id) {
+    if (selectedActions.includes(id)) {
+        selectedActions = selectedActions.filter(x => x !== id);
+    } else if (selectedActions.length < 2) {
+        selectedActions.push(id);
+    } else {
+        alert('You can only select 2 actions. Deselect one first.');
+        return;
+    }
+    displayActions();
+}
+
+// Submit assessment for grading
+function submitAssessment() {
+    if (selectedActions.length !== 2) {
+        alert('Please select exactly 2 actions before submitting.');
+        return;
+    }
+
+    // Calculate risk assessment accuracy
+    const data = hot.getData();
+    userAnswers = {};
+    for (let r = 0; r < data.length; r++) {
+        for (let c = 0; c < data[r].length; c++) {
+            if (data[r][c]) {
+                data[r][c].split(',').map(id => id.trim().toUpperCase()).forEach(id => {
+                    if (id) userAnswers[id] = [r, c];
+                });
+            }
+        }
+    }
+
+    // Calculate risk placement accuracy using new flexible matching
+    let correctRisks = 0;
+    const feedback = currentRisks.map(risk => {
+        const ua = userAnswers[risk.id];
+        const isCorrect = ua && isAnswerCorrect(ua[0], ua[1], risk.correct[0], risk.correct[1]);
+        if (isCorrect) correctRisks++;
+        
+        return {
+            id: risk.id,
+            description: risk.description,
+            correct: isCorrect,
+            userAnswer: ua ? `${likelihood[ua[1]]}, ${impact[ua[0]]}` : 'Not placed',
+            correctAnswer: `${likelihood[risk.correct[1]]}, ${impact[risk.correct[0]]}`
+        };
+    });
+
+    // Calculate action success
+    let goodActions = selectedActions.filter(id => 
+        currentActions.find(a => a.id === id)?.quality === 'good'
+    ).length;
+
+    // Calculate scores
+    const riskAccuracy = (correctRisks / currentRisks.length) * 100;
+    const actionScore = (goodActions / 2) * 100;
+    assessmentAccuracy = Math.round(riskAccuracy);
+
+    // Determine performance trajectory for next phase
+    if (goodActions === 2 || riskAccuracy >= 75) {
+        performanceTrajectory = 'good';
+    } else {
+        performanceTrajectory = 'bad';
+    }
+
+    // Calculate overall score for phase completion
+    const overallScore = Math.round((riskAccuracy * 0.4) + (actionScore * 0.6));
+    phaseScores.push(overallScore);
+
+    // Display results
+    displayResults(overallScore, feedback, goodActions);
+}
+
+// Display results after submission
+function displayResults(score, feedback, goodActions) {
+    const div = document.getElementById('results');
+    const actionScore = (goodActions / 2) * 100;
+    const riskScore = assessmentAccuracy;
+    
+    // Determine success based primarily on actions
+    const success = actionScore >= 75;
+    div.className = 'results show ' + (success ? 'success' : actionScore >= 50 ? 'warning' : 'danger');
+    
+    const actionFeedback = {
+        // Phase 1 Actions
+        'A1': 'Excellent choice! A structural inspection now can identify and prevent major issues before work begins.',
+        'A2': 'High risk choice. Starting without final council approval could lead to expensive rework and delays.',
+        'A3': 'Good choice. By planning for more time allowance, your timeline and project is more resilient.',
+        'A4': 'Having backup contractors sounds good, but should not be prioritised above structural quality and timeline flexibility.',
+        'A5': 'Focus should be on project risk management rather than personal contingency planning.',
+        
+        // Phase 2 Good Path Actions
+        'A6G': 'Good planning! Addressing landscaping restoration early prevents future issues.',
+        'A7G': 'Smart decision! Weather buffer in the schedule prevents cascade of delays.',
+        'A8G': 'Poor neighbor relations could create project complications and complaints.',
+        'A9G': 'Excellent! Backup power ensures work continuity despite external disruptions.',
+        'A10G': 'Skipping inspections, even minor ones, often leads to issues later.',
+        
+        // Phase 2 Bad Path Actions
+        'A6B': 'Right call! Expert structural help is worth the cost when issues arise.',
+        'A7B': 'Critical decision! Proper permits must be prioritized to prevent work stoppage.',
+        'A8B': 'Cutting costs on materials often leads to quality and safety issues.',
+        'A9B': 'Excellent choice! Safety and communication are essential for project success.',
+        'A10B': 'DIY work to save costs often leads to quality issues and rework. Focus should be on righting the structure and ensuring council compliance.',
+        
+        // Phase 3 Good Path Actions
+        'A11G': 'Smart choice! Thorough inspection prevents post-completion issues.',
+        'A12G': 'Good planning! Proper documentation helps with maintenance and warranty.',
+        'A13G': 'Rushing final work often leads to quality issues and callbacks.',
+        'A14G': 'Excellent! Buffer time for when your parents arrive reduces stress and rushing.',
+        'A15G': 'Never skip quality checks, even with a good track record.',
+        
+        // Phase 3 Bad Path Actions
+        'A11B': 'Good solution! Alternative accommodation helps manage deadline pressure.',
+        'A12B': 'Smart thinking! Using help appropriately can speed up non-critical work.',
+        'A13B': 'Cosmetic fixes without addressing root causes will lead to future problems.',
+        'A14B': 'Practical approach! Prioritizing completion with planned future improvements.',
+        'A15B': 'Payment disputes with contractors often escalate and delay completion.'
+    };
+
+    const actionFb = selectedActions.map(id => {
+        const action = currentActions.find(x => x.id === id);
+        const quality = action.quality === 'good' ? '✅ Good Choice' : '❌ Poor Choice';
+        const feedback = actionFeedback[id] || 'No specific feedback available.';
+        return `<li class="action-feedback ${action.quality}">
+                    <strong>${action.id}:</strong> ${action.text}
+                    <br>
+                    <span class="quality-indicator">${quality}</span>
+                    <br>
+                    <span class="feedback-text">${feedback}</span>
+                </li>`;
+    }).join('');
+
+    let msg = '';
+    if (currentPhase === 1) {
+        msg = actionScore >= 75 ? 
+            `<h3>🎉 Good Action Choices! (${actionScore}%)</h3>
+             <p><strong>Actions:</strong> ${goodActions}/2 selected correctly</p>
+             <p>Risk Assessment: ${riskScore}% ${riskScore < 60 ? 'Consider reviewing risk identification process' : '✅'}</p>
+             <p>Strong decisions set good foundation. Moving to Month 2...</p>` :
+            `<h3>⚠️ Review Action Choices (${actionScore}%)</h3>
+             <p><strong>Actions:</strong> ${goodActions}/2 selected correctly</p>
+             <p>Risk Assessment: ${riskScore}% ${riskScore < 60 ? 'Consider reviewing risk identification process' : '✅'}</p>
+             <p>Choices may lead to complications in Month 2...</p>`;
+    } else if (currentPhase === 2) {
+        msg = actionScore >= 75 ? 
+            `<h3>🎉 Strong Action Planning! (${actionScore}%)</h3>
+             <p><strong>Actions:</strong> ${goodActions}/2 selected correctly</p>
+             <p>Risk Assessment: ${riskScore}% ${riskScore < 60 ? 'Consider reviewing risk identification process' : '✅'}</p>
+             <p>Good control measures in place. Final phase ahead...</p>` :
+            `<h3>⚠️ Action Planning Needs Work (${actionScore}%)</h3>
+             <p><strong>Actions:</strong> ${goodActions}/2 selected correctly</p>
+             <p>Risk Assessment: ${riskScore}% ${riskScore < 60 ? 'Consider reviewing risk identification process' : '✅'}</p>
+             <p>Month 3 success depends on better control measures...</p>`;
+    } else {
+        const avg = Math.round((phaseScores.reduce((a,b) => a+b, 0) / 3));
+        msg = `<h3>Delivery day is here.</h3>
+               <p><strong>Final Actions:</strong> ${goodActions}/2 correct (${actionScore}%)</p>
+               <p><strong>Risk Assessment:</strong> ${riskScore}% ${riskScore < 60 ? '⚠️ Review risk identification process' : '✅'}</p>
+               <p><strong>Overall Project Score:</strong> ${avg}%</p>
+               <hr style="margin:15px 0">`;
+        
+        if (performanceTrajectory === 'good') {
+            if (goodActions === 2) {
+                msg += `<p><strong>Excellent project management</strong></p>
+                       <p>You maintained good project control throughout and made excellent final decisions. 
+                       The project is completed successfully and under budget!</p>`;
+            } else {
+                msg += `<p><strong>Partial success</strong></p>
+                       <p>While the project was on a good track, some of your final actions weren't optimal. 
+                       The project completed but with some minor issues that better choices could have prevented.</p>
+                       <p>Review your action choices: some selected actions weren't the best options available.</p>`;
+            }
+        } else {
+            if (goodActions === 2) {
+                msg += `<p><strong>Project succeeded, but there is room for improvement</strong></p>
+                       <p>Despite earlier challenges, your excellent final decisions helped salvage the project. 
+                       While completed, the project exceeded initial budget and timeline.</p>
+                       <p>Identifying and controlling risks, specifically which risks are the most significant and important to control, can help avoid project delays and challenges.</p>`;
+            } else {
+                msg += `<p><strong>Project failure</strong></p>
+                       <p>The combination of earlier challenges and poor final decisions led to project failure. 
+                       Critical objectives were not met.</p>
+                       <p>For future projects, focus on both early risk identification AND selecting appropriate control measures.</p>`;
+            }
+        }
+    }
+    
+    div.innerHTML = msg + '<h4 style="margin-top:15px">Selected Actions & Feedback:</h4><ul style="list-style: none; padding: 0;">' + actionFb + '</ul>';
+
+    // Add risk placement feedback in collapsible section
+    const riskFeedbackSection = document.createElement('div');
+    riskFeedbackSection.innerHTML = `
+        <h4 style="margin-top:20px;cursor:pointer;color:#666;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'grid' : 'none'">
+            ▼ View Risk Placement Details
+        </h4>`;
+    
+    const grid = document.createElement('div');
+    grid.className = 'results-grid';
+    grid.style.display = 'none';
+    feedback.forEach(f => {
+        const card = document.createElement('div');
+        card.className = `result-card ${f.correct ? 'correct' : 'incorrect'}`;
+        card.innerHTML = `<div class="risk-id">${f.id}</div>
+                         <div style="font-size:14px;margin-bottom:8px">${f.description}</div>
+                         <div style="font-size:12px;color:#666">
+                             <strong>Your:</strong> ${f.userAnswer}<br>
+                             <strong>Correct:</strong> ${f.correctAnswer}
+                         </div>`;
+        grid.appendChild(card);
+    });
+    riskFeedbackSection.appendChild(grid);
+    div.appendChild(riskFeedbackSection);
+
+    const btn = document.getElementById('submitBtn');
+    if (currentPhase < 3) {
+        btn.textContent = `Continue to Phase ${currentPhase + 1}`;
+        btn.onclick = nextPhase;
+    } else {
+        btn.textContent = 'Start New Project';
+        btn.onclick = resetGame;
+    }
+}
+
+// Move to next phase
+function nextPhase() {
+    currentPhase++;
+    selectedActions = [];
+    if (currentPhase === 2) {
+        document.getElementById('roundIndicator').textContent = 'Phase 2 of 3 - Build phase';
+        currentRisks = performanceTrajectory === 'good' ? phase2RisksGood : phase2RisksBad;
+        currentActions = performanceTrajectory === 'good' ? phase2ActionsGood : phase2ActionsBad;
+    } else {
+        document.getElementById('roundIndicator').textContent = 'Phase 3 of 3 - Finishing touches';
+        currentRisks = performanceTrajectory === 'good' ? phase3RisksGood : phase3RisksBad;
+        currentActions = performanceTrajectory === 'good' ? phase3ActionsGood : phase3ActionsBad;
+    }
+    displayRisks();
+    displayActions();
+    resetMatrix();
+    document.getElementById('results').classList.remove('show');
+    document.getElementById('submitBtn').textContent = 'Submit Assessment';
+    document.getElementById('submitBtn').onclick = submitAssessment;
+}
+
+// Reset the matrix
+function resetMatrix() {
+    hot.loadData([['','','','',''],['','','','',''],['','','','',''],['','','','',''],['','','','','']]);
+    
+    document.querySelectorAll('.risk-item').forEach(item => {
+        item.classList.remove('placed');
+        item.setAttribute('draggable', 'true');
+    });
+    
+    updateActionsVisibility();
+}
+
+// Reset the entire game
+function resetGame() {
+    currentPhase = 1;
+    currentRisks = phase1Risks;
+    currentActions = phase1Actions;
+    selectedActions = [];
+    phaseScores = [];
+    performanceTrajectory = 'good';
+    document.getElementById('roundIndicator').textContent = 'Phase 1 of 3 - Month 1';
+    displayRisks();
+    displayActions();
+    resetMatrix();
+    document.getElementById('results').classList.remove('show');
+    document.getElementById('submitBtn').textContent = 'Submit Assessment';
+    document.getElementById('submitBtn').onclick = submitAssessment;
+}
+
+// Check if all risks are placed
+function areAllRisksPlaced() {
+    const data = hot.getData();
+    const placedRisks = new Set();
+    
+    for (let r = 0; r < data.length; r++) {
+        for (let c = 0; c < data[r].length; c++) {
+            if (data[r][c]) {
+                data[r][c].split(',').map(id => id.trim().toUpperCase())
+                    .forEach(id => {
+                        if (id) placedRisks.add(id);
+                    });
+            }
+        }
+    }
+    
+    return placedRisks.size === currentRisks.length;
+}
+
+// Update actions section visibility based on whether all risks are placed
+function updateActionsVisibility() {
+    const actionsSection = document.querySelector('.actions-section');
+    if (areAllRisksPlaced()) {
+        actionsSection.style.opacity = '1';
+        actionsSection.style.pointerEvents = 'auto';
+    } else {
+        actionsSection.style.opacity = '0.5';
+        actionsSection.style.pointerEvents = 'none';
+    }
+}
+
+// Initialize on page load
+window.onload = () => { 
+    initMatrix(); 
+    displayRisks(); 
+    displayActions(); 
+};
+    </script>
+</body>
+</html>
