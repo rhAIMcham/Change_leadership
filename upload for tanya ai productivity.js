@@ -99,11 +99,11 @@ var q1 = localStorage.getItem("AIforproductivity1") || "(no response saved)";
             day: "2-digit", month: "long", year: "numeric"
           });
 
-          page.drawText("AI for productivity - AIM", {
+          page.drawText("New Leader Session 3 AIM", {
             x: margin, y: y, size: 21, font: fontBold, color: NAVY
           });
           y -= 22;
-          page.drawText("AI for productivity ·  " + dateStr, {
+          page.drawText("New leader programme  ·  Session 3  ·  " + dateStr, {
             x: margin, y: y, size: 11, font: font, color: MUTED_GRAY
           });
           y -= 14;
@@ -115,8 +115,7 @@ var q1 = localStorage.getItem("AIforproductivity1") || "(no response saved)";
           });
           y -= 30;
 
-          // ── Generic word-wrap helper: returns an array of plain text lines ──
-          // (used for banner titles, which have no bold markers)
+          // ── Word-wrap helper for plain (non-bold-marked) text, e.g. banner titles ──
           function wrapTitleToLines(text, maxLineWidth, fontRef, size) {
             var words = text.split(" ");
             var lines = [];
@@ -221,16 +220,16 @@ var q1 = localStorage.getItem("AIforproductivity1") || "(no response saved)";
             return { page: page, y: curY };
           }
 
-          // ── Section banner helper ───────────────────────────────────
+          // ── Section banner helper (now wraps long titles across lines) ──
           function drawSectionBanner(title, page, startY) {
             var size = 12.5;
-            var maxTitleWidth = maxWidth - 26; // leave a little padding
+            var maxTitleWidth = maxWidth - 20;
             var lineHeight = 15;
             var lines = wrapTitleToLines(title, maxTitleWidth, fontBold, size);
-            var bannerH = Math.max(28, 18 + lines.length * lineHeight);
+            var bannerH = Math.max(26, (lines.length * lineHeight) + 12);
 
-            // If this banner would run into the footer, move to a new page first
-            if (startY - bannerH - 18 < FOOTER_RESERVE) {
+            // If the banner would collide with the footer, start a new page first
+            if (startY - bannerH - 12 < FOOTER_RESERVE) {
               page = addPage();
               startY = pageH - 60;
             }
@@ -243,21 +242,17 @@ var q1 = localStorage.getItem("AIforproductivity1") || "(no response saved)";
               color: NAVY
             });
 
-            var textY = startY - 14;
             for (var j = 0; j < lines.length; j++) {
               page.drawText(lines[j], {
                 x: margin + 10,
-                y: textY - (j * lineHeight),
+                y: startY - 14 - (j * lineHeight),
                 size: size,
                 font: fontBold,
                 color: WHITE
               });
             }
 
-            return {
-              page: page,
-              y: startY - bannerH - 12
-            };
+            return { page: page, y: startY - bannerH - 12 };
           }
 
           // ✏️ Update titles to match your exercises
@@ -328,10 +323,10 @@ var q1 = localStorage.getItem("AIforproductivity1") || "(no response saved)";
             y = banner.y;
 
             var result = drawWrapped(ex.response, y, 11.5, font, BODY_GRAY, page);
-            page = result.page;
+            page = result.page;   // pick up whichever page we ended on
             y = result.y;
 
-            y -= 24;
+            y -= 26;
 
             if (y < FOOTER_RESERVE && e < exercises.length - 1) {
               page = addPage();
@@ -359,7 +354,7 @@ var q1 = localStorage.getItem("AIforproductivity1") || "(no response saved)";
               font: font,
               color: MUTED_GRAY
             });
-            pg.drawText("AI for productivity - AIM", {
+            pg.drawText("New leader program", {
               x: margin,
               y: 32,
               size: labelSize,
@@ -373,7 +368,7 @@ var q1 = localStorage.getItem("AIforproductivity1") || "(no response saved)";
             var url  = URL.createObjectURL(blob);
             var a    = document.createElement("a");
             a.href     = url;
-            a.download = "AI for productivity - AIM.pdf";
+            a.download = "New Leader Session 3 AIM.pdf";
             a.style.display = "none";
             document.body.appendChild(a);
             a.click();
