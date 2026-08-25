@@ -115,6 +115,39 @@ var q1 = localStorage.getItem("AIforproductivity1") || "(no response saved)";
           });
           y -= 30;
 
+          // ── Generic word-wrap helper: returns an array of plain text lines ──
+          // (used for banner titles, which have no bold markers)
+          function wrapTitleToLines(text, maxLineWidth, fontRef, size) {
+            var words = text.split(" ");
+            var lines = [];
+            var current = "";
+
+            for (var i = 0; i < words.length; i++) {
+              var word = words[i];
+              if (word.length === 0) continue;
+
+              var candidate = current ? current + " " + word : word;
+              var candidateWidth = fontRef.widthOfTextAtSize(candidate, size);
+
+              if (candidateWidth > maxLineWidth && current) {
+                lines.push(current);
+                current = word;
+              } else {
+                current = candidate;
+              }
+            }
+
+            if (current) {
+              lines.push(current);
+            }
+
+            if (lines.length === 0) {
+              lines.push("");
+            }
+
+            return lines;
+          }
+
           // ── Wrapped text helper (page-break safe, supports **bold**) ──
           function drawWrapped(text, startY, size, fontRef, color, page) {
             var paragraphs = text.split("\n");
@@ -192,7 +225,7 @@ var q1 = localStorage.getItem("AIforproductivity1") || "(no response saved)";
           function drawSectionBanner(title, page, startY) {
             var size = 12.5;
             var maxTitleWidth = maxWidth - 26; // leave a little padding
-            var lineHeight = 13;
+            var lineHeight = 15;
             var lines = wrapTitleToLines(title, maxTitleWidth, fontBold, size);
             var bannerH = Math.max(28, 18 + lines.length * lineHeight);
 
@@ -210,7 +243,7 @@ var q1 = localStorage.getItem("AIforproductivity1") || "(no response saved)";
               color: NAVY
             });
 
-            var textY = startY - bannerH + 14;
+            var textY = startY - 14;
             for (var j = 0; j < lines.length; j++) {
               page.drawText(lines[j], {
                 x: margin + 10,
