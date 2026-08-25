@@ -117,34 +117,40 @@ var q1 = localStorage.getItem("AIforproductivity1") || "(no response saved)";
 
           // ── Word-wrap helper for plain (non-bold-marked) text, e.g. banner titles ──
           function wrapTitleToLines(text, maxLineWidth, fontRef, size) {
-            var words = text.split(" ");
+            var paragraphs = text.split("\n");
             var lines = [];
-            var current = "";
 
-            for (var i = 0; i < words.length; i++) {
-              var word = words[i];
-              if (word.length === 0) continue;
+            for (var p = 0; p < paragraphs.length; p++) {
+              var words = paragraphs[p].split(" ");
+              var line = "";
 
-              var candidate = current ? current + " " + word : word;
-              var candidateWidth = fontRef.widthOfTextAtSize(candidate, size);
+              if (words.length === 1 && words[0] === "") {
+                // blank line from a paragraph break
+                lines.push("");
+                continue;
+              }
 
-              if (candidateWidth > maxLineWidth && current) {
-                lines.push(current);
-                current = word;
-              } else {
-                current = candidate;
+              for (var i = 0; i < words.length; i++) {
+                var word = words[i];
+                if (word === "") continue;
+
+                var testLine = line ? line + " " + word : word;
+                var testWidth = fontRef.widthOfTextAtSize(testLine, size);
+
+                if (testWidth > maxLineWidth && line) {
+                  lines.push(line);
+                  line = word;
+                } else {
+                  line = testLine;
+                }
+              }
+
+              if (line) {
+                lines.push(line);
               }
             }
 
-            if (current) {
-              lines.push(current);
-            }
-
-            if (lines.length === 0) {
-              lines.push("");
-            }
-
-            return lines;
+            return lines.length ? lines : [""];
           }
 
           // ── Wrapped text helper (page-break safe, supports **bold**) ──
