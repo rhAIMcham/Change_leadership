@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>MCQ Single Screen</title>
+  <title>at work interface</title>
   <meta charset="UTF-8" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -418,10 +418,14 @@ body {
 
 /*BUTTONS*/
 .pill-btn {
-    border-radius: var(--radius-pill);
+border-radius: var(--radius-pill);
+    border: var(--border-subtle) solid 1px;
     background-color: var(--bg-input);
-    padding: 2px 7px;
-    box-shadow: #1b1b2e;
+    align-items: center;
+    padding: 5px 12px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
 }
 
 .comment-btn {
@@ -464,10 +468,10 @@ body {
 <p>Name of poster posted on date 8th August 2026</p>
             </div>
             </div>
-            <div class="header-interactive">
+            <!-- <div class="header-interactive">
                 <button class="pill-btn">***</button>
                 <button class="pill-btn">X</button>
-            </div>
+            </div> -->
         </div>
         </div>
         <div class="card-content">
