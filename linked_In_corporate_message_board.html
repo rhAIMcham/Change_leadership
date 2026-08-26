@@ -604,6 +604,21 @@ border-radius: var(--radius-pill);
 
     let nextId = comments.length + 1;
 
+    const additionalCommentQueue = [
+        {
+            name: "Mary Croft",
+            initials: "MC",
+            avatarStyle: "blue",
+            text: "How will this impact other small businesses? I can't believe you are ok with this"
+        },
+        {
+            name: "Alex Morgan",
+            initials: "AM",
+            avatarStyle: "teal",
+            text: "I would be interested to hear how this affects smaller suppliers."
+        }
+    ];
+
     function escapeHtml(str) {
         const div = document.createElement("div");
         div.textContent = str;
@@ -684,6 +699,32 @@ border-radius: var(--radius-pill);
         toggleButton();
 
         // Make sure the newly added comment is visible
+        document.getElementById("sortSelect").value = "newest";
+        renderComments();
+    }
+
+    const triggerBtn = document.getElementById("postBtn");
+
+    triggerBtn.addEventListener("click", () => {
+        setTimeout(additionalComments, 1500);
+    });
+
+    function additionalComments() {
+        const nextComment = additionalCommentQueue.shift();
+
+        // Stop when there are no queued comments left
+        if (!nextComment) return;
+
+        comments.push({
+            id: nextId++,
+            name: nextComment.name,
+            initials: nextComment.initials,
+            avatarStyle: nextComment.avatarStyle,
+            text: nextComment.text,
+            timestamp: new Date(),
+            liked: false
+        });
+
         document.getElementById("sortSelect").value = "newest";
         renderComments();
     }
