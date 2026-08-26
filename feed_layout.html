@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Feed interface</title>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+<style>
+
+/* =====================
+    COLOUR TOKENS
+===================== */
+:root {
+    --AIMblue: #4353A3;
+    --darkBlue: #38416D;
+    --teal: #5DC8B9;
+    --cream: #F1EEDE;
+    --grey: #e7e9ec;
+    --rust: #AF4510;
+    --navy: #12195C;
+    --white: #ffffff;
+    --lightBlue: #AEBAE4;
+    --bg-app:          #f0ede8;
+    --bg-sidebar:      #e8e4de;
+    --bg-activity-pane:#454545;
+    --bg-panel:        #ffffff;
+    --bg-message-head: #f5f3f0;
+    --bg-private-tag:  #fff0ee;
+    --bg-unread-dot:   #378add;
+    --bg-avatar-blue:  #b5d4f4;
+    --bg-avatar-teal:  #9fe1cb;
+    --bg-selected-row: #e6f1fb;
+    --bg-badge:        #d85a30;
+    --bg-input:        #f5f3f0;
+    --text-primary:    #1a1a1a;
+    --text-secondary:  #666660;
+    --text-muted:      #999994;
+    --text-avatar-blue:#0c447c;
+    --text-avatar-teal:#085041;
+    --text-private:    #993c1d;
+    --text-badge:      #ffffff;
+    --text-link:       #185fa5;
+    --border-subtle:   #dedad3;
+    --border-medium:   #ccc8c0;
+    --radius-sm:  6px;
+    --radius-md:  8px;
+    --radius-lg:  12px;
+    --radius-pill:99px;
+    --purple-dark: #464775;
+    --purple-mid:  #6264A7;
+    --purple-light:#9EA2D4;
+    --sidebar-bg:  #1b1b2e;
+    --channel-bg:  #252538;
+    --chat-bg:     #ffffff;
+    --text-primary:#1a1a1a;
+    --text-secondary:#555;
+    --text-muted:  #999;
+    --border:      rgba(0,0,0,0.1);
+    --bg-secondary:#f5f5f5;
+    --bg-primary:  #ffffff;
+    --online:      #6EBB8A;
+    --away:        #F4A540;
+    --busy:        #E04D4D;
+    --unread:      #D65B8E;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "IBM-Plex-Sans", sans-serif;
+    padding: 20px;
+    min-height: 100vh;
+    background-color: var(--bg-app);
+}
+</style>
+</head>
+<body>
+    <div class="container">
+        <div class="post-stack" id="post-stack">
+            <div class="post">
+                <!--Posts go here-->
+            </div>
+        </div>
+
+        
+    </div>
+<div class="chat-pane">
+    <div class="chat-header">
+      <div class="chat-header-left">
+        <i class="ti ti-hash chat-header-icon" id="header-icon"></i>
+        <div>
+          <div class="chat-header-name" id="chat-title">new-leaders</div>
+          <div class="chat-header-desc" id="chat-desc">Resources and discussion for new leaders — 4 members</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-body" id="chat-body">
+      <!-- Populated by JS on load -->
+    </div>
+
+    <div class="compose-area">
+      <div class="compose-box">
+        <div class="chat-options">
+
+        </div>
+        <!-- <textarea class="compose-input-chat"  placeholder="Message general" rows="1"></textarea> -->
+      </div>
+    </div>
+  </div>
+</body>
+<script>
+  const dms = {
+    'mark': {
+      title: 'Mark J',
+      avatar: '<div class="chat-avatar av-blue">MJ</div>',
+      desc: 'Away · He/him · Joined 5 years ago',
+      placeholder: 'Message Mark J',
+      html: `
+        <div class="date-divider">Today</div>
+        <div class="chat-group">
+          <div class="chat-avatar av-blue">MJ</div>
+          <div class="chat-content">
+            <div class="chat-meta"><span class="chat-name">Mark J</span><span class="chat-time">10:58 AM</span></div>
+            <div class="chat-text">Congratulations again on the new role. I have a few ideas I’d love to share once you’ve settled in. </div>
+          </div>
+          <div class="chat-actions">
+             
+          </div>
+        </div>
+        </div>`
+    },
+    'jordan': {
+      title: 'Jordan S',
+      avatar: '<div class="chat-avatar av-teal">JS</div>',
+      desc: 'Away · They/them · Joined 2 years ago',
+      placeholder: 'Message Jordan S',
+      html: `
+        <div class="date-divider">Today</div>
+        <div class="chat-group">
+          <div class="chat-avatar av-teal">JS</div>
+          <div class="chat-content">
+            <div class="chat-meta"><span class="chat-name">Jordan S</span><span class="chat-time">10:37 AM</span></div>
+            <div class="chat-text">Hi! Looking forward to getting to know you better, let me know if you need me to jump on anything.</div>
+          </div>
+          <div class="chat-actions">
+             
+          </div>
+        </div>`
+    },
+    'audrey': {
+      title: 'Audrey E',
+      avatar: '<div class="chat-avatar av-coral">AE</div>',
+      desc: 'Busy · She/her · Joined 6 years ago',
+      placeholder: 'Message Audrey E',
+      html: `
+        <div class="date-divider">Today</div>
+        <div class="chat-group">
+          <div class="chat-avatar av-coral">AE</div>
+          <div class="chat-content">
+            <div class="chat-meta"><span class="chat-name">Audrey E</span><span class="chat-time">10:14 AM</span></div>
+            <div class="chat-text">Hey!!! So exciting to be working together again. Come find me whenever you want to grab a coffee and a debrief on everything.</div>
+            </div>
+          <div class="chat-actions">
+             
+          </div>
+        </div>`
+    },
+    'priya': {
+      title: 'Priya D',
+      avatar: '<div class="chat-avatar av-purple">PD</div>',
+      desc: 'Online · She/her · Joined 3 years ago',
+      placeholder: 'Message Priya D',
+      html: `
+        <div class="date-divider">Today</div>
+        <div class="chat-group">
+          <div class="chat-avatar av-purple">PD</div>
+          <div class="chat-content">
+            <div class="chat-meta"><span class="chat-name">Priya D</span><span class="chat-time">9:29 AM</span></div>
+            <div class="chat-text">Congratulations on joining the team.</div>
+            </div>
+          <div class="chat-actions">
+             
+          </div>
+        </div>`
+    }
+  };
+
+  // ── HELPERS ───────────────────────────────────────────────────────────
+  function setChat(data) {
+    document.getElementById('chat-title').textContent = data.title;
+    document.getElementById('chat-desc').textContent = data.desc;
+    
+    const headerIcon = document.getElementById('header-icon');
+    headerIcon.innerHTML = data.avatar;
+    headerIcon.className = 'chat-header-icon';
+    
+    // document.querySelector('.compose-input-chat').placeholder = data.placeholder;
+    document.getElementById('chat-body').innerHTML = data.html;
+    document.getElementById('chat-body').scrollTop = 99999;
+  }
+
+  function loadDM(name, el) {
+    clearActive();
+    el.classList.add('active');
+    setChat(dms[name]);
+  }
+
+  function setActive(el) {
+    document.querySelectorAll('.activity-icon').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+    
+    const chatSection = document.getElementById('chatSection');
+    const phoneSection = document.getElementById('phoneSection');
+    
+    // Check which icon was clicked (0 = chat, 1 = calls)
+    const icons = document.querySelectorAll('.activity-icon');
+    const clickedIndex = Array.from(icons).indexOf(el);
+    
+    if (clickedIndex === 0) {
+      chatSection.style.display = 'flex';
+      phoneSection.style.display = 'none';
+    } else {
+      chatSection.style.display = 'none';
+        phoneSection.style.display = 'flex';
+    }
+  }
+  // Load default channel on startup
+  setChat(dms['mark']);
+</script>
+</html>
