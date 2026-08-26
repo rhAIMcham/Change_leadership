@@ -63,6 +63,8 @@
     --away:        #F4A540;
     --busy:        #E04D4D;
     --unread:      #D65B8E;
+    --star-empty:  #d8d5cc;
+    --star-fill:   #E0A63E;
 }
 
 * {
@@ -138,25 +140,37 @@ body {
     transition: margin-right 0.3s ease;
     overflow: hidden;
     margin-top: 85px;
+    align-items: flex-start;
 }
 
 section {
     min-width: 300px;
-    border: solid red 2px;
 }
 
 .left-panel {
-    background: yellow;
     margin: 15px;
 }
 
 .middle-panel {
     margin: 15px;
+    flex: 1;
 }
 
 .right-panel {
-    background: green;
     margin: 15px;
+}
+
+.panel-heading {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    padding: 0 4px 10px;
+}
+
+.panel-subheading {
+    font-size: 12px;
+    color: var(--text-muted);
+    padding: 0 4px 14px;
 }
 
 .post-card {
@@ -514,6 +528,134 @@ border-radius: var(--radius-pill);
 .comment-btn:hover {
     color: var(--text-link);
 }
+
+/* =====================
+    COMPANY HEADER (middle panel)
+===================== */
+.company-header {
+    background-color: var(--bg-primary);
+    border: var(--border-subtle) solid 1px;
+    border-radius: 4px;
+    padding: 18px 20px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.company-logo {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+    border-radius: var(--radius-md);
+    background-color: var(--bg-avatar-blue);
+    color: var(--text-avatar-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.company-header h2 {
+    font-size: 20px;
+    color: var(--text-primary);
+}
+
+.company-header p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 3px;
+}
+
+/* =====================
+    PAST REVIEWS (left panel)
+===================== */
+.review-card {
+    background-color: var(--bg-primary);
+    border: var(--border-subtle) solid 1px;
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    margin-bottom: 10px;
+}
+
+.review-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.review-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.review-date {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.review-stars {
+    font-size: 12px;
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+.review-stars .filled { color: var(--star-fill); }
+.review-stars .empty { color: var(--star-empty); }
+
+.review-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    margin-top: 6px;
+}
+
+/* =====================
+    RATING METRICS (right panel)
+===================== */
+.ratings-card {
+    background-color: var(--bg-primary);
+    border: var(--border-subtle) solid 1px;
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+}
+
+.metric-row {
+    padding: 12px 0;
+    border-bottom: var(--border-subtle) solid 1px;
+}
+
+.metric-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.metric-row:first-child {
+    padding-top: 0;
+}
+
+.metric-label {
+    font-size: 13px;
+    color: var(--text-primary);
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.metric-stars {
+    font-size: 16px;
+    letter-spacing: 2px;
+    color: var(--star-empty);
+}
+
+.metric-status {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
 </style>
 </head>
 <body>
@@ -594,121 +736,143 @@ border-radius: var(--radius-pill);
         </ul>
     </nav>
 <div class="container">
+
+    <!-- ===================== LEFT PANEL: PAST REVIEWS ===================== -->
     <section class="left-panel">
-        <p>left section</p>
+        <div class="panel-heading">Past reviews</div>
+        <div id="pastReviewsList"></div>
     </section>
+
+    <!-- ===================== MIDDLE PANEL: COMPANY + GENERIC COMMENTS ===================== -->
     <section class="middle-panel">
-    <div class="post-card">
-        <div class="header">
+
+        <div class="company-header">
+            <div class="company-logo" id="companyLogo">AC</div>
             <div>
-
+                <h2 id="companyName">Acme Corp</h2>
+                <p>Share your experience with this company below</p>
             </div>
-            <div class="post-details">
-            <div class="header-details">
-            <div class="header-text">
-                <h4>Lorem ipsum</h4>
-<p>Name of poster posted on date 8th August 2026</p>
-            </div>
-            </div>
-            <!-- <div class="header-interactive">
-                <button class="pill-btn">***</button>
-                <button class="pill-btn">X</button>
-            </div> -->
-        </div>
-        </div>
-        <div class="card-content">
-            <div class="card-content-text">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-            </div>
-            <div class="card-content-image_video">
-                <img src="https://placebear.com/400/400" alt="Image of bear">
-            </div>
-            <div class="card-reactions" id="reactionsBar"></div>
-        </div>
-    </div>
-
-    <!-- COMMENTS -->
-    <div class="comments-container" id="commentsContainer">
-
-        <div class="comments-toolbar">
-            <h5 id="commentsCount">0 comments</h5>
-            <select class="sort-select" id="sortSelect" onchange="renderComments()">
-                <option value="newest">Newest first</option>
-                <option value="oldest">Oldest first</option>
-            </select>
         </div>
 
-        <div class="comment-composer">
-            <div class="comment-avatar blue">You</div>
-            <div class="composer-input-wrap">
-                <textarea
-                    class="comment-input"
-                    id="commentInput"
-                    placeholder="Add a comment..."
-                    rows="1"
-                    oninput="autoGrow(this); toggleButton();"
-                    onkeydown="handleComposerKeydown(event)"
-                ></textarea>
-                <div class="composer-actions">
-                    <button class="post-comment-btn" id="postBtn" onclick="addComment()" disabled>Post</button>
+        <!-- COMMENTS -->
+        <div class="comments-container" id="commentsContainer">
+
+            <div class="comments-toolbar">
+                <h5 id="commentsCount">0 comments</h5>
+                <select class="sort-select" id="sortSelect" onchange="renderComments()">
+                    <option value="newest">Newest first</option>
+                    <option value="oldest">Oldest first</option>
+                </select>
+            </div>
+
+            <div class="comment-composer">
+                <div class="comment-avatar blue">You</div>
+                <div class="composer-input-wrap">
+                    <textarea
+                        class="comment-input"
+                        id="commentInput"
+                        placeholder="Leave a comment about this company..."
+                        rows="1"
+                        oninput="autoGrow(this); toggleButton();"
+                        onkeydown="handleComposerKeydown(event)"
+                    ></textarea>
+                    <div class="composer-actions">
+                        <button class="post-comment-btn" id="postBtn" onclick="addComment()" disabled>Post</button>
+                    </div>
                 </div>
             </div>
+
+            <div class="comments-list" id="commentsList"></div>
+
         </div>
-
-        <div class="comments-list" id="commentsList"></div>
-
-    </div>
     </section>
+
+    <!-- ===================== RIGHT PANEL: RATING METRICS (BLANK) ===================== -->
     <section class="right-panel">
-        <p>right panel</p>
+        <div class="panel-heading">Company ratings</div>
+        <div class="panel-subheading">Not yet rated</div>
+        <div class="ratings-card" id="ratingsCard"></div>
     </section>
 
 </div>
 <script>
 
     /* =====================
-        REACTIONS DATA
-        Each entry is an emoji with a base count and whether the
-        current user has reacted to it. Clicking toggles the
-        user's own reaction on/off for that specific emoji, so a
-        user can only ever add ONE reaction per emoji (not stack
-        multiples), though they're free to react with several
-        different emojis on the same post.
+        PAST REVIEWS DATA (left panel)
+        Static, read-only list of prior reviews left about the company.
     ===================== */
-    let reactions = [
-        { emoji: "👍", count: 4, reacted: false },
-        { emoji: "❤️", count: 5, reacted: false },
-        { emoji: "😂", count: 1, reacted: false },
-        { emoji: "😮", count: 5, reacted: false },
-        { emoji: "😢", count: 6, reacted: false },
-        { emoji: "🎉", count: 0, reacted: false }
+    const pastReviews = [
+        {
+            name: "Jordan Lee",
+            rating: 4,
+            date: "12 Jul 2026",
+            text: "Solid service overall, delivery was a little later than promised."
+        },
+        {
+            name: "Priya Nair",
+            rating: 5,
+            date: "3 Jun 2026",
+            text: "Really happy with how responsive the support team was."
+        },
+        {
+            name: "Sam Okafor",
+            rating: 3,
+            date: "22 May 2026",
+            text: "Good value, but the onboarding process could be clearer."
+        },
+        {
+            name: "Alex Morgan",
+            rating: 4,
+            date: "9 Apr 2026",
+            text: "Reliable so far, would recommend to a small business."
+        }
     ];
 
-    function renderReactions() {
-        const bar = document.getElementById("reactionsBar");
-        bar.innerHTML =
-            '<span class="reactions-label">Reactions</span>' +
-            reactions.map((r, i) => `
-                <button
-                    type="button"
-                    class="emoji${r.reacted ? " reacted" : ""}"
-                    onclick="toggleReaction(${i})"
-                    aria-pressed="${r.reacted}"
-                >
-                    <span class="emoji-char">${r.emoji}</span>
-                    <span class="emoji-count">${r.count}</span>
-                </button>
-            `).join("");
+    function starString(rating) {
+        let out = "";
+        for (let i = 1; i <= 5; i++) {
+            out += `<span class="${i <= rating ? "filled" : "empty"}">★</span>`;
+        }
+        return out;
     }
 
-    function toggleReaction(index) {
-        const r = reactions[index];
-        // Toggle: if the user already reacted with this emoji, remove it
-        // (count back down); otherwise add it (count up). Either way this
-        // is the only reaction of this emoji the user can register.
-        r.reacted = !r.reacted;
-        r.count += r.reacted ? 1 : -1;
-        renderReactions();
+    function renderPastReviews() {
+        const list = document.getElementById("pastReviewsList");
+        list.innerHTML = pastReviews.map(r => `
+            <div class="review-card">
+                <div class="review-card-head">
+                    <div>
+                        <div class="review-name">${escapeHtml(r.name)}</div>
+                        <div class="review-date">${escapeHtml(r.date)}</div>
+                    </div>
+                    <div class="review-stars">${starString(r.rating)}</div>
+                </div>
+                <div class="review-text">${escapeHtml(r.text)}</div>
+            </div>
+        `).join("");
+    }
+
+    /* =====================
+        RATING METRICS DATA (right panel)
+        Four key metrics the company is rated on. Values are intentionally
+        left blank (no score / empty stars) until real rating data exists.
+    ===================== */
+    const ratingMetrics = [
+        { label: "Communication" },
+        { label: "Value for money" },
+        { label: "Reliability" },
+        { label: "Overall satisfaction" }
+    ];
+
+    function renderRatingMetrics() {
+        const card = document.getElementById("ratingsCard");
+        card.innerHTML = ratingMetrics.map(m => `
+            <div class="metric-row">
+                <div class="metric-label">${escapeHtml(m.label)}</div>
+                <div class="metric-stars">★★★★★</div>
+                <div class="metric-status">No ratings yet</div>
+            </div>
+        `).join("");
     }
 
     /* =====================
@@ -724,7 +888,7 @@ border-radius: var(--radius-pill);
             name: "Jordan Lee",
             initials: "JL",
             avatarStyle: "teal",
-            text: "Great post, really enjoyed reading this!",
+            text: "Great company to deal with, really enjoyed working with them!",
             timestamp: new Date("2026-08-08T09:15:00"),
             liked: false
         },
@@ -749,21 +913,6 @@ border-radius: var(--radius-pill);
     ];
 
     let nextId = comments.length + 1;
-
-    const additionalCommentQueue = [
-        {
-            name: "Mary Croft",
-            initials: "MC",
-            avatarStyle: "blue",
-            text: "How will this impact other small businesses? I can't believe you are ok with this"
-        },
-        {
-            name: "Alex Morgan",
-            initials: "AM",
-            avatarStyle: "teal",
-            text: "I would be interested to hear how this affects smaller suppliers."
-        }
-    ];
 
     function escapeHtml(str) {
         const div = document.createElement("div");
@@ -837,7 +986,8 @@ border-radius: var(--radius-pill);
             initials: "You",
             avatarStyle: "blue",
             text: text,
-            timestamp: new Date()
+            timestamp: new Date(),
+            liked: false
         });
 
         input.value = "";
@@ -845,32 +995,6 @@ border-radius: var(--radius-pill);
         toggleButton();
 
         // Make sure the newly added comment is visible
-        document.getElementById("sortSelect").value = "newest";
-        renderComments();
-    }
-
-    const triggerBtn = document.getElementById("postBtn");
-
-    triggerBtn.addEventListener("click", () => {
-        setTimeout(additionalComments, 1500);
-    });
-
-    function additionalComments() {
-        const nextComment = additionalCommentQueue.shift();
-
-        // Stop when there are no queued comments left
-        if (!nextComment) return;
-
-        comments.push({
-            id: nextId++,
-            name: nextComment.name,
-            initials: nextComment.initials,
-            avatarStyle: nextComment.avatarStyle,
-            text: nextComment.text,
-            timestamp: new Date(),
-            liked: false
-        });
-
         document.getElementById("sortSelect").value = "newest";
         renderComments();
     }
@@ -904,13 +1028,8 @@ border-radius: var(--radius-pill);
         }
     }
 
-    function toggleComments() {
-        const el = document.getElementById("commentsContainer");
-        el.scrollIntoView({ behavior: "smooth", block: "nearest" });
-        focusComposer();
-    }
-
-    renderReactions();
+    renderPastReviews();
+    renderRatingMetrics();
     renderComments();
 
 </script>
