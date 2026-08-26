@@ -30,14 +30,18 @@
     --bg-unread-dot:   #378add;
     --bg-avatar-blue:  #b5d4f4;
     --bg-avatar-teal:  #9fe1cb;
+    --bg-avatar-coral: #f5c9b8;
+    --bg-avatar-purple:#d3d2ee;
     --bg-selected-row: #e6f1fb;
     --bg-badge:        #d85a30;
     --bg-input:        #f5f3f0;
     --text-primary:    #1a1a1a;
     --text-secondary:  #666660;
     --text-muted:      #999994;
-    --text-avatar-blue:#0c447c;
-    --text-avatar-teal:#085041;
+    --text-avatar-blue:  #0c447c;
+    --text-avatar-teal:  #085041;
+    --text-avatar-coral: #8a3212;
+    --text-avatar-purple:#40408a;
     --text-private:    #993c1d;
     --text-badge:      #ffffff;
     --text-link:       #185fa5;
@@ -50,19 +54,12 @@
     --purple-dark: #464775;
     --purple-mid:  #6264A7;
     --purple-light:#9EA2D4;
-    --sidebar-bg:  #1b1b2e;
-    --channel-bg:  #252538;
-    --chat-bg:     #ffffff;
-    --text-primary:#1a1a1a;
-    --text-secondary:#555;
-    --text-muted:  #999;
-    --border:      rgba(0,0,0,0.1);
-    --bg-secondary:#f5f5f5;
-    --bg-primary:  #ffffff;
     --online:      #6EBB8A;
     --away:        #F4A540;
     --busy:        #E04D4D;
     --unread:      #D65B8E;
+    --like-red:    #d8536f;
+    --repost-green:#2ba033;
 }
 
 * {
@@ -72,165 +69,864 @@
 }
 
 body {
-    font-family: "IBM-Plex-Sans", sans-serif;
-    padding: 20px;
+    font-family: "IBM Plex Sans", sans-serif;
     min-height: 100vh;
     background-color: var(--bg-app);
+}
+
+/* =====================
+    NAVBAR
+===================== */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background-color: var(--white);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.nav-inner {
+    width: 100%;
+    max-width: 600px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nav-brand {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--AIMblue);
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 1.25rem;
+}
+
+.nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.nav-links a.active,
+.nav-links a:hover {
+    color: var(--AIMblue);
+}
+
+/* =====================
+    LAYOUT
+===================== */
+.feed-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding-top: 76px;
+    padding-bottom: 60px;
+}
+
+.panel-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-primary);
+    padding: 4px 16px 12px;
+}
+
+/* =====================
+    COMPOSE CARD
+===================== */
+.compose-card {
+    background-color: var(--bg-panel);
+    border: var(--border-subtle) solid 1px;
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    margin: 0 4px 16px;
+}
+
+.compose-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.avatar {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.avatar.sm {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    font-size: 13px;
+}
+
+.av-blue   { background-color: var(--bg-avatar-blue);   color: var(--text-avatar-blue); }
+.av-teal   { background-color: var(--bg-avatar-teal);   color: var(--text-avatar-teal); }
+.av-coral  { background-color: var(--bg-avatar-coral);  color: var(--text-avatar-coral); }
+.av-purple { background-color: var(--bg-avatar-purple); color: var(--text-avatar-purple); }
+
+.compose-input-wrap {
+    flex: 1;
+}
+
+.compose-input {
+    width: 100%;
+    font-family: inherit;
+    font-size: 16px;
+    color: var(--text-primary);
+    background: none;
+    border: none;
+    resize: none;
+    min-height: 44px;
+    line-height: 1.4;
+}
+
+.compose-input::placeholder {
+    color: var(--text-muted);
+}
+
+.compose-input:focus {
+    outline: none;
+}
+
+.compose-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 8px;
+    padding-top: 10px;
+    border-top: var(--border-subtle) solid 1px;
+}
+
+.char-count {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.char-count.near-limit { color: var(--busy); font-weight: 600; }
+
+.post-btn {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--white);
+    background-color: var(--AIMblue);
+    border: none;
+    border-radius: var(--radius-pill);
+    padding: 8px 20px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.post-btn:disabled {
+    background-color: var(--border-medium);
+    cursor: not-allowed;
+}
+
+.post-btn:not(:disabled):hover {
+    background-color: var(--darkBlue);
+}
+
+/* =====================
+    FEED / POST CARDS
+===================== */
+.feed-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.post-card {
+    background-color: var(--bg-panel);
+    border: var(--border-subtle) solid 1px;
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    margin: 0 4px 12px;
+}
+
+.post-card.new-post {
+    animation: postIn 0.25s ease;
+}
+
+@keyframes postIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.post-row {
+    display: flex;
+    gap: 10px;
+}
+
+.post-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.post-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.post-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.post-handle,
+.post-time {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.post-time::before {
+    content: "·";
+    margin-right: 5px;
+    color: var(--text-muted);
+}
+
+.post-text {
+    font-size: 14.5px;
+    color: var(--text-primary);
+    line-height: 1.45;
+    margin-top: 3px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.post-image {
+    margin-top: 10px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: var(--border-subtle) solid 1px;
+}
+
+.post-image img {
+    width: 100%;
+    display: block;
+}
+
+.post-actions {
+    display: flex;
+    justify-content: space-between;
+    max-width: 320px;
+    margin-top: 10px;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: var(--radius-pill);
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.action-btn:hover {
+    background-color: var(--bg-selected-row);
+}
+
+.action-btn .icon {
+    font-size: 15px;
+    line-height: 1;
+}
+
+.action-btn.like.liked {
+    color: var(--like-red);
+    font-weight: 600;
+}
+
+.action-btn.repost.reposted {
+    color: var(--repost-green);
+    font-weight: 600;
+}
+
+.feed-empty {
+    color: var(--text-muted);
+    font-size: 13px;
+    text-align: center;
+    padding: 30px 0;
+}
+
+/* =====================
+    REPLIES THREAD (expandable, array-driven)
+===================== */
+.action-btn.reply .caret {
+    font-size: 10px;
+    margin-left: 2px;
+    transition: transform 0.15s ease;
+    display: inline-block;
+}
+
+.action-btn.reply.open .caret {
+    transform: rotate(180deg);
+}
+
+.replies-panel {
+    margin-top: 10px;
+    padding: 10px 0 0 10px;
+    border-top: var(--border-subtle) solid 1px;
+    border-left: 2px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.reply-item {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.avatar.xs {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    font-size: 11px;
+}
+
+.reply-bubble {
+    background-color: var(--bg-input);
+    border-radius: var(--radius-lg);
+    padding: 7px 12px;
+    flex: 1;
+    min-width: 0;
+}
+
+.reply-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.reply-name {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.reply-handle,
+.reply-time {
+    font-size: 11.5px;
+    color: var(--text-muted);
+}
+
+.reply-time::before {
+    content: "·";
+    margin-right: 5px;
+    color: var(--text-muted);
+}
+
+.reply-text {
+    font-size: 13.5px;
+    color: var(--text-primary);
+    line-height: 1.4;
+    margin-top: 1px;
+    word-wrap: break-word;
+}
+
+.replies-empty {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    padding: 2px 0 2px 2px;
+}
+
+.reply-composer {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.reply-input {
+    flex: 1;
+    font-family: inherit;
+    font-size: 13.5px;
+    color: var(--text-primary);
+    background-color: var(--bg-input);
+    border: var(--border-subtle) solid 1px;
+    border-radius: var(--radius-pill);
+    padding: 7px 14px;
+}
+
+.reply-input:focus {
+    outline: none;
+    border-color: var(--AIMblue);
+    background-color: var(--white);
+}
+
+.reply-send-btn {
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--white);
+    background-color: var(--AIMblue);
+    border: none;
+    border-radius: var(--radius-pill);
+    padding: 7px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.reply-send-btn:disabled {
+    background-color: var(--border-medium);
+    cursor: not-allowed;
+}
+
+.reply-send-btn:not(:disabled):hover {
+    background-color: var(--darkBlue);
 }
 </style>
 </head>
 <body>
-    <div class="container">
-        <div class="post-stack" id="post-stack">
-            <div class="post">
-                <!--Posts go here-->
-            </div>
-        </div>
 
-        
+  <nav class="navbar">
+    <div class="nav-inner">
+      <div class="nav-brand">feed</div>
+      <ul class="nav-links">
+        <li><a href="#" class="active">Home</a></li>
+        <li><a href="#">Explore</a></li>
+        <li><a href="#">Notifications</a></li>
+        <li><a href="#">Profile</a></li>
+      </ul>
     </div>
-<div class="chat-pane">
-    <div class="chat-header">
-      <div class="chat-header-left">
-        <i class="ti ti-hash chat-header-icon" id="header-icon"></i>
-        <div>
-          <div class="chat-header-name" id="chat-title">new-leaders</div>
-          <div class="chat-header-desc" id="chat-desc">Resources and discussion for new leaders — 4 members</div>
+  </nav>
+
+  <div class="feed-container">
+
+    <div class="panel-title">Home</div>
+
+    <!-- COMPOSE -->
+    <div class="compose-card">
+      <div class="compose-row">
+        <div class="avatar sm av-blue">You</div>
+        <div class="compose-input-wrap">
+          <textarea
+            class="compose-input"
+            id="composeInput"
+            placeholder="What's happening?"
+            rows="2"
+            maxlength="280"
+            oninput="autoGrow(this); updateComposeState();"
+          ></textarea>
+          <div class="compose-footer">
+            <span class="char-count" id="charCount">280</span>
+            <button class="post-btn" id="postBtn" onclick="addPost()" disabled>Post</button>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="chat-body" id="chat-body">
-      <!-- Populated by JS on load -->
-    </div>
+    <!-- FEED -->
+    <div class="feed-list" id="feedList"></div>
 
-    <div class="compose-area">
-      <div class="compose-box">
-        <div class="chat-options">
-
-        </div>
-        <!-- <textarea class="compose-input-chat"  placeholder="Message general" rows="1"></textarea> -->
-      </div>
-    </div>
   </div>
-</body>
+
 <script>
-  const dms = {
-    'mark': {
-      title: 'Mark J',
-      avatar: '<div class="chat-avatar av-blue">MJ</div>',
-      desc: 'Away · He/him · Joined 5 years ago',
-      placeholder: 'Message Mark J',
-      html: `
-        <div class="date-divider">Today</div>
-        <div class="chat-group">
-          <div class="chat-avatar av-blue">MJ</div>
-          <div class="chat-content">
-            <div class="chat-meta"><span class="chat-name">Mark J</span><span class="chat-time">10:58 AM</span></div>
-            <div class="chat-text">Congratulations again on the new role. I have a few ideas I’d love to share once you’ve settled in. </div>
-          </div>
-          <div class="chat-actions">
-             
-          </div>
-        </div>
-        </div>`
+
+  /* =====================
+      POST DATA
+      Array-driven, same pattern as the DM/channel data in the base
+      chat interface: a single source-of-truth array is mapped to
+      HTML strings inside render(); nothing is ever hand-edited
+      in the DOM directly.
+  ===================== */
+  let posts = [
+    {
+      id: 4,
+      name: "Priya D",
+      handle: "@priyad",
+      avatarInitials: "PD",
+      avatarStyle: "av-purple",
+      timestamp: new Date(Date.now() - 1000 * 60 * 35),
+      text: "Congratulations on joining the team! Excited to see what we build together.",
+      image: null,
+      reposts: 1,
+      likes: 12,
+      liked: false,
+      reposted: false,
+      showReplies: false,
+      repliesList: [
+        {
+          id: 101,
+          name: "Mark J",
+          handle: "@markj",
+          avatarInitials: "MJ",
+          avatarStyle: "av-blue",
+          timestamp: new Date(Date.now() - 1000 * 60 * 30),
+          text: "Same here, been a great first week already."
+        },
+        {
+          id: 102,
+          name: "Audrey E",
+          handle: "@audreye",
+          avatarInitials: "AE",
+          avatarStyle: "av-coral",
+          timestamp: new Date(Date.now() - 1000 * 60 * 20),
+          text: "+1, let's get a sync on the calendar this week."
+        },
+        {
+          id: 103,
+          name: "Jordan S",
+          handle: "@jordans",
+          avatarInitials: "JS",
+          avatarStyle: "av-teal",
+          timestamp: new Date(Date.now() - 1000 * 60 * 12),
+          text: "Welcome aboard!"
+        }
+      ]
     },
-    'jordan': {
-      title: 'Jordan S',
-      avatar: '<div class="chat-avatar av-teal">JS</div>',
-      desc: 'Away · They/them · Joined 2 years ago',
-      placeholder: 'Message Jordan S',
-      html: `
-        <div class="date-divider">Today</div>
-        <div class="chat-group">
-          <div class="chat-avatar av-teal">JS</div>
-          <div class="chat-content">
-            <div class="chat-meta"><span class="chat-name">Jordan S</span><span class="chat-time">10:37 AM</span></div>
-            <div class="chat-text">Hi! Looking forward to getting to know you better, let me know if you need me to jump on anything.</div>
-          </div>
-          <div class="chat-actions">
-             
-          </div>
-        </div>`
+    {
+      id: 3,
+      name: "Audrey E",
+      handle: "@audreye",
+      avatarInitials: "AE",
+      avatarStyle: "av-coral",
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 3),
+      text: "Come find me whenever you want to grab a coffee and a debrief on everything going on this week ☕",
+      image: "https://placebear.com/600/300",
+      reposts: 2,
+      likes: 28,
+      liked: true,
+      reposted: false,
+      showReplies: false,
+      repliesList: [
+        {
+          id: 104,
+          name: "Priya D",
+          handle: "@priyad",
+          avatarInitials: "PD",
+          avatarStyle: "av-purple",
+          timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2),
+          text: "I'm in, Thursday works for me."
+        },
+        {
+          id: 105,
+          name: "Mark J",
+          handle: "@markj",
+          avatarInitials: "MJ",
+          avatarStyle: "av-blue",
+          timestamp: new Date(Date.now() - 1000 * 60 * 60),
+          text: "Count me in too, been meaning to catch up."
+        },
+        {
+          id: 106,
+          name: "You",
+          handle: "@you",
+          avatarInitials: "You",
+          avatarStyle: "av-blue",
+          timestamp: new Date(Date.now() - 1000 * 60 * 45),
+          text: "Same, coffee on me."
+        },
+        {
+          id: 107,
+          name: "Jordan S",
+          handle: "@jordans",
+          avatarInitials: "JS",
+          avatarStyle: "av-teal",
+          timestamp: new Date(Date.now() - 1000 * 60 * 30),
+          text: "Great, I'll set something up."
+        },
+        {
+          id: 108,
+          name: "Priya D",
+          handle: "@priyad",
+          avatarInitials: "PD",
+          avatarStyle: "av-purple",
+          timestamp: new Date(Date.now() - 1000 * 60 * 15),
+          text: "Perfect, see everyone there!"
+        }
+      ]
     },
-    'audrey': {
-      title: 'Audrey E',
-      avatar: '<div class="chat-avatar av-coral">AE</div>',
-      desc: 'Busy · She/her · Joined 6 years ago',
-      placeholder: 'Message Audrey E',
-      html: `
-        <div class="date-divider">Today</div>
-        <div class="chat-group">
-          <div class="chat-avatar av-coral">AE</div>
-          <div class="chat-content">
-            <div class="chat-meta"><span class="chat-name">Audrey E</span><span class="chat-time">10:14 AM</span></div>
-            <div class="chat-text">Hey!!! So exciting to be working together again. Come find me whenever you want to grab a coffee and a debrief on everything.</div>
-            </div>
-          <div class="chat-actions">
-             
-          </div>
-        </div>`
+    {
+      id: 2,
+      name: "Jordan S",
+      handle: "@jordans",
+      avatarInitials: "JS",
+      avatarStyle: "av-teal",
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 6),
+      text: "Looking forward to getting to know everyone better. Let me know if you need a hand with anything this sprint.",
+      image: null,
+      reposts: 0,
+      likes: 9,
+      liked: false,
+      reposted: false,
+      showReplies: false,
+      repliesList: [
+        {
+          id: 109,
+          name: "Priya D",
+          handle: "@priyad",
+          avatarInitials: "PD",
+          avatarStyle: "av-purple",
+          timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5),
+          text: "Appreciate that, might take you up on it."
+        }
+      ]
     },
-    'priya': {
-      title: 'Priya D',
-      avatar: '<div class="chat-avatar av-purple">PD</div>',
-      desc: 'Online · She/her · Joined 3 years ago',
-      placeholder: 'Message Priya D',
-      html: `
-        <div class="date-divider">Today</div>
-        <div class="chat-group">
-          <div class="chat-avatar av-purple">PD</div>
-          <div class="chat-content">
-            <div class="chat-meta"><span class="chat-name">Priya D</span><span class="chat-time">9:29 AM</span></div>
-            <div class="chat-text">Congratulations on joining the team.</div>
-            </div>
-          <div class="chat-actions">
-             
-          </div>
-        </div>`
+    {
+      id: 1,
+      name: "Mark J",
+      handle: "@markj",
+      avatarInitials: "MJ",
+      avatarStyle: "av-blue",
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 22),
+      text: "A few ideas I'd love to share with the new leaders group once everyone's settled in.",
+      image: null,
+      reposts: 0,
+      likes: 4,
+      liked: false,
+      reposted: false,
+      showReplies: false,
+      repliesList: []
     }
-  };
+  ];
+
+  let nextReplyId = 200;
+
+  let nextId = Math.max(...posts.map(p => p.id)) + 1;
 
   // ── HELPERS ───────────────────────────────────────────────────────────
-  function setChat(data) {
-    document.getElementById('chat-title').textContent = data.title;
-    document.getElementById('chat-desc').textContent = data.desc;
-    
-    const headerIcon = document.getElementById('header-icon');
-    headerIcon.innerHTML = data.avatar;
-    headerIcon.className = 'chat-header-icon';
-    
-    // document.querySelector('.compose-input-chat').placeholder = data.placeholder;
-    document.getElementById('chat-body').innerHTML = data.html;
-    document.getElementById('chat-body').scrollTop = 99999;
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
   }
 
-  function loadDM(name, el) {
-    clearActive();
-    el.classList.add('active');
-    setChat(dms[name]);
+  function formatTimestamp(date) {
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.round(diffMs / 60000);
+    const diffHours = Math.round(diffMs / 3600000);
+    const diffDays = Math.round(diffMs / 86400000);
+
+    if (diffMins < 1) return "now";
+    if (diffMins < 60) return diffMins + "m";
+    if (diffHours < 24) return diffHours + "h";
+    if (diffDays < 7) return diffDays + "d";
+    return date.toLocaleDateString(undefined, { day: "numeric", month: "short" });
   }
 
-  function setActive(el) {
-    document.querySelectorAll('.activity-icon').forEach(i => i.classList.remove('active'));
-    el.classList.add('active');
-    
-    const chatSection = document.getElementById('chatSection');
-    const phoneSection = document.getElementById('phoneSection');
-    
-    // Check which icon was clicked (0 = chat, 1 = calls)
-    const icons = document.querySelectorAll('.activity-icon');
-    const clickedIndex = Array.from(icons).indexOf(el);
-    
-    if (clickedIndex === 0) {
-      chatSection.style.display = 'flex';
-      phoneSection.style.display = 'none';
-    } else {
-      chatSection.style.display = 'none';
-        phoneSection.style.display = 'flex';
+  // ── RENDER ───────────────────────────────────────────────────────────
+  function renderFeed() {
+    const list = document.getElementById("feedList");
+
+    if (posts.length === 0) {
+      list.innerHTML = '<p class="feed-empty">No posts yet. Be the first to post.</p>';
+      return;
     }
+
+    list.innerHTML = posts.map(p => `
+      <div class="post-card${p.isNew ? " new-post" : ""}" data-id="${p.id}">
+        <div class="post-row">
+          <div class="avatar ${p.avatarStyle}">${escapeHtml(p.avatarInitials)}</div>
+          <div class="post-body">
+            <div class="post-meta">
+              <span class="post-name">${escapeHtml(p.name)}</span>
+              <span class="post-handle">${escapeHtml(p.handle)}</span>
+              <span class="post-time">${formatTimestamp(p.timestamp)}</span>
+            </div>
+            <div class="post-text">${escapeHtml(p.text)}</div>
+            ${p.image ? `
+              <div class="post-image">
+                <img src="${p.image}" alt="Post image">
+              </div>` : ""}
+            <div class="post-actions">
+              <button class="action-btn reply${p.showReplies ? " open" : ""}" onclick="toggleReplies(${p.id})">
+                <span class="icon">💬</span><span>${p.repliesList.length}</span><span class="caret">▾</span>
+              </button>
+              <button class="action-btn repost${p.reposted ? " reposted" : ""}" onclick="toggleRepost(${p.id})">
+                <span class="icon">🔁</span><span>${p.reposts}</span>
+              </button>
+              <button class="action-btn like${p.liked ? " liked" : ""}" onclick="toggleLike(${p.id})">
+                <span class="icon">${p.liked ? "❤️" : "🤍"}</span><span>${p.likes}</span>
+              </button>
+              <button class="action-btn share" onclick="sharePost(${p.id})">
+                <span class="icon">📤</span>
+              </button>
+            </div>
+            ${p.showReplies ? `
+              <div class="replies-panel">
+                ${p.repliesList.length === 0
+                  ? '<div class="replies-empty">No replies yet. Be the first to reply.</div>'
+                  : p.repliesList.map(r => `
+                    <div class="reply-item">
+                      <div class="avatar xs ${r.avatarStyle}">${escapeHtml(r.avatarInitials)}</div>
+                      <div class="reply-bubble">
+                        <div class="reply-meta">
+                          <span class="reply-name">${escapeHtml(r.name)}</span>
+                          <span class="reply-handle">${escapeHtml(r.handle)}</span>
+                          <span class="reply-time">${formatTimestamp(r.timestamp)}</span>
+                        </div>
+                        <div class="reply-text">${escapeHtml(r.text)}</div>
+                      </div>
+                    </div>
+                  `).join("")
+                }
+                <div class="reply-composer">
+                  <div class="avatar xs av-blue">You</div>
+                  <input
+                    type="text"
+                    class="reply-input"
+                    id="replyInput-${p.id}"
+                    placeholder="Post your reply"
+                    oninput="updateReplyState(${p.id})"
+                    onkeydown="if(event.key==='Enter'){event.preventDefault();addReply(${p.id});}"
+                  >
+                  <button class="reply-send-btn" id="replySendBtn-${p.id}" onclick="addReply(${p.id})" disabled>Reply</button>
+                </div>
+              </div>
+            ` : ""}
+          </div>
+        </div>
+      </div>
+    `).join("");
+
+    posts.forEach(p => p.isNew = false);
   }
-  // Load default channel on startup
-  setChat(dms['mark']);
+
+  // ── ACTIONS ──────────────────────────────────────────────────────────
+  function addPost() {
+    const input = document.getElementById("composeInput");
+    const text = input.value.trim();
+    if (!text) return;
+
+    posts.unshift({
+      id: nextId++,
+      name: "You",
+      handle: "@you",
+      avatarInitials: "You",
+      avatarStyle: "av-blue",
+      timestamp: new Date(),
+      text: text,
+      image: null,
+      reposts: 0,
+      likes: 0,
+      liked: false,
+      reposted: false,
+      isNew: true,
+      showReplies: false,
+      repliesList: []
+    });
+
+    input.value = "";
+    autoGrow(input);
+    updateComposeState();
+    renderFeed();
+  }
+
+  function toggleLike(id) {
+    const post = posts.find(p => p.id === id);
+    if (!post) return;
+    post.liked = !post.liked;
+    post.likes += post.liked ? 1 : -1;
+    renderFeed();
+  }
+
+  function toggleRepost(id) {
+    const post = posts.find(p => p.id === id);
+    if (!post) return;
+    post.reposted = !post.reposted;
+    post.reposts += post.reposted ? 1 : -1;
+    renderFeed();
+  }
+
+  function toggleReplies(id) {
+    const post = posts.find(p => p.id === id);
+    if (!post) return;
+    post.showReplies = !post.showReplies;
+    renderFeed();
+  }
+
+  function addReply(postId) {
+    const post = posts.find(p => p.id === postId);
+    if (!post) return;
+
+    const input = document.getElementById(`replyInput-${postId}`);
+    const text = input.value.trim();
+    if (!text) return;
+
+    post.repliesList.push({
+      id: nextReplyId++,
+      name: "You",
+      handle: "@you",
+      avatarInitials: "You",
+      avatarStyle: "av-blue",
+      timestamp: new Date(),
+      text: text
+    });
+
+    post.showReplies = true;
+    renderFeed();
+  }
+
+  function updateReplyState(postId) {
+    const input = document.getElementById(`replyInput-${postId}`);
+    const btn = document.getElementById(`replySendBtn-${postId}`);
+    btn.disabled = input.value.trim().length === 0;
+  }
+
+  function sharePost(id) {
+    document.getElementById("composeInput").focus();
+  }
+
+  // ── COMPOSER UTILS ───────────────────────────────────────────────────
+  function autoGrow(el) {
+    el.style.height = "auto";
+    el.style.height = el.scrollHeight + "px";
+  }
+
+  function updateComposeState() {
+    const input = document.getElementById("composeInput");
+    const btn = document.getElementById("postBtn");
+    const countEl = document.getElementById("charCount");
+    const remaining = 280 - input.value.length;
+
+    btn.disabled = input.value.trim().length === 0;
+    countEl.textContent = remaining;
+    countEl.classList.toggle("near-limit", remaining <= 20);
+  }
+
+  // Post on Cmd/Ctrl+Enter
+  document.addEventListener("DOMContentLoaded", () => {
+    const input = document.getElementById("composeInput");
+    input.addEventListener("keydown", (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+        e.preventDefault();
+        addPost();
+      }
+    });
+  });
+
+  renderFeed();
+
 </script>
+</body>
 </html>
