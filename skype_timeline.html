@@ -367,6 +367,203 @@ a:hover {
     margin-left: 15px;
 }
 
+/*----------------------------------------------
+    ADDED: IMAGE GALLERY (3-up)
+----------------------------------------------*/
+.gallery-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+.gallery-item {
+  flex: 1 1 220px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--grey);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.gallery-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+.gallery-item img {
+  display: block;
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+.gallery-caption {
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  border-top: 3px solid var(--AIMblue);
+}
+
+/*----------------------------------------------
+    ADDED: HOTSPOT MAP
+----------------------------------------------*/
+.hotspot-map {
+  position: relative;
+  width: 100%;
+  height: 340px;
+  border-radius: var(--radius-lg);
+  margin: 20px 0;
+  background-color: var(--cream);
+  background-image:
+    radial-gradient(circle at 22% 35%, rgba(93,200,185,0.35), transparent 55%),
+    radial-gradient(circle at 62% 60%, rgba(67,83,163,0.30), transparent 55%),
+    radial-gradient(circle at 80% 25%, rgba(175,69,16,0.20), transparent 50%),
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.03) 0 1px, transparent 1px 28px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.03) 0 1px, transparent 1px 28px);
+  overflow: hidden;
+}
+.hotspot {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border-radius: 50%;
+  background: var(--rust);
+  border: 3px solid var(--white);
+  box-shadow: 0 0 0 rgba(175,69,16,0.55);
+  cursor: pointer;
+  animation: hotspot-pulse 2.4s infinite;
+  z-index: 2;
+}
+.hotspot:hover, .hotspot.active {
+  background: var(--AIMblue);
+}
+@keyframes hotspot-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(175,69,16,0.45); }
+  70%  { box-shadow: 0 0 0 14px rgba(175,69,16,0); }
+  100% { box-shadow: 0 0 0 0 rgba(175,69,16,0); }
+}
+.hotspot-tooltip {
+  position: absolute;
+  display: none;
+  min-width: 190px;
+  max-width: 240px;
+  background: var(--white);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  font-size: 13px;
+  color: var(--text-primary);
+  z-index: 3;
+  transform: translate(-50%, calc(-100% - 16px));
+}
+.hotspot-tooltip.visible { display: block; }
+.hotspot-tooltip strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--navy);
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.hotspot-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: -10px;
+  margin-bottom: 8px;
+}
+
+/*----------------------------------------------
+    ADDED: STAT COUNTERS
+----------------------------------------------*/
+.stat-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+.stat-card {
+  flex: 1 1 150px;
+  text-align: center;
+  background: var(--cream);
+  border-radius: var(--radius-lg);
+  padding: 22px 12px;
+}
+.stat-number {
+  font-size: 2.4em;
+  font-weight: 700;
+  color: var(--AIMblue);
+  line-height: 1.1;
+}
+.stat-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 6px;
+}
+
+/*----------------------------------------------
+    ADDED: READ MORE TOGGLE
+----------------------------------------------*/
+.read-more-wrap {
+  position: relative;
+  max-height: 130px;
+  overflow: hidden;
+  transition: max-height 0.45s ease;
+}
+.read-more-wrap:not(.expanded)::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 48px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1));
+}
+.read-more-wrap.expanded {
+  max-height: 2000px;
+}
+.read-more-btn {
+  display: inline-block;
+  margin-top: 10px;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--text-link);
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+}
+.read-more-btn:hover {
+  color: var(--lightBlue);
+}
+
+/*----------------------------------------------
+    ADDED: EXPANDABLE DETAIL / ACCORDION
+----------------------------------------------*/
+.detail-toggle {
+  margin-top: 14px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.detail-toggle summary {
+  cursor: pointer;
+  padding: 10px 14px;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--navy);
+  background: var(--bg-message-head);
+  list-style: none;
+}
+.detail-toggle summary::-webkit-details-marker { display: none; }
+.detail-toggle summary:before {
+  content: "+  ";
+  color: var(--AIMblue);
+}
+.detail-toggle[open] summary:before {
+  content: "\2013  ";
+}
+.detail-toggle > div {
+  padding: 12px 14px;
+  font-size: 14px;
+}
+
 </style>
 </head>
 <body>
@@ -395,6 +592,22 @@ a:hover {
                     <div class="timeline-content">
                         <h3 class="timeline-title">Skype is launched</h3>
                         <p>The early 2000s was a period of rapid globalisation and technological development, facilitated by increased accessibility to the Internet and online networks. However, making long-distance phone calls was still an expensive and complicated process. Recognising the need for faster, cheaper communication, a small team of developers created Skype. This pioneering technology allowed for cheap long-distance calls for the first time, connecting families around the world.</p>
+
+                        <!-- ADDED: 3-image gallery -->
+                        <div class="gallery-row">
+                            <div class="gallery-item">
+                                <img src="https://i.insider.com/8ab9b91446c6e3491515d600?width=600&format=jpeg&auto=webp" alt="The Skype founders" loading="lazy">
+                                <div class="gallery-caption">The founding team, 2003</div>
+                            </div>
+                            <div class="gallery-item">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3JZiFOPeLmsL57lfgDdx6UTIlTKo6z6xOR4Z3f6sxEWU7NlZQNA0BRMg&s=10" alt="Placeholder image 2" loading="lazy">
+                                <div class="gallery-caption">Early Tallinn engineering office</div>
+                            </div>
+                            <div class="gallery-item">
+                                <img src="https://placebear.com/400/300" alt="Placeholder image 3" loading="lazy">
+                                <div class="gallery-caption">Launch day setup</div>
+                            </div>
+                        </div>
                     </div>
                 </li>
                 <li class="timeline-item">
@@ -405,6 +618,32 @@ a:hover {
                     <div class="timeline-content">
                         <h3 class="timeline-title">1 million users</h3>
                         <p>By the end of their first year, they had over a million simultaneous users online at peak. The small size of the company allowed them to improve features rapidly, and the free to use model allowed them to rapidly gain users and expand their reach.</p>
+
+                        <!-- ADDED: stat counters -->
+                        <div class="stat-row">
+                            <div class="stat-card">
+                                <div class="stat-number" data-count-to="1" data-suffix="M+">0</div>
+                                <div class="stat-label">Peak simultaneous users</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" data-count-to="1" data-suffix="">0</div>
+                                <div class="stat-label">Year since launch</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" data-count-to="0" data-suffix="$">Free</div>
+                                <div class="stat-label">Cost to use</div>
+                            </div>
+                        </div>
+
+                        <!-- ADDED: hotspot map -->
+                        <p class="hotspot-hint">Click a marker to see where Skype's early growth was happening.</p>
+                        <div class="hotspot-map" id="growthMap">
+                            <div class="hotspot" style="top:38%; left:52%;" data-title="Tallinn, Estonia" data-text="Home of Skype's original engineering team and where the peer-to-peer technology was built."></div>
+                            <div class="hotspot" style="top:30%; left:46%;" data-title="Luxembourg" data-text="Skype's early corporate headquarters, chosen for its central position in Europe."></div>
+                            <div class="hotspot" style="top:34%; left:40%;" data-title="London, UK" data-text="One of the first major markets where Skype's calling and messaging tools were adopted."></div>
+                            <div class="hotspot" style="top:45%; left:15%;" data-title="North America" data-text="A fast-growing user base once word of free long-distance calling spread."></div>
+                            <div class="hotspot-tooltip" id="growthMapTooltip"></div>
+                        </div>
                     </div>
                 </li>
                 <li class="timeline-item period">
@@ -424,6 +663,14 @@ a:hover {
                     <div class="timeline-content">
                         <h3 class="timeline-title">Acquired by eBay</h3>
                         <p>Skype's life as a private company was short lived. After rocketing to popularity in Europe, Skype caught the attention of another early internet heavy weight, eBay. Skype was acquired by eBay for $2.6 billion in 2005. Up until this point Skype had primarily been used by people seeking to connect with family and friends or by small businesses, but eBay saw a different future for Skype. As then CEO Meg Whitman told The New York Times, the plan was to integrate skype into eBay’s online marketplace, allowing vendors and purchasers to call with one another. They also hoped this would enable Skype to grow in the business world, “particularly with transactions involving real estate, big-ticket purchases, and services that require detailed conversations.”</p>
+
+                        <!-- ADDED: expandable detail -->
+                        <details class="detail-toggle">
+                            <summary>Why did eBay want Skype?</summary>
+                            <div>
+                                <p>Beyond the headline price tag, the acquisition reflected eBay's bet that voice communication could reduce friction in online transactions — buyers and sellers negotiating big-ticket items over a call rather than back-and-forth messages.</p>
+                            </div>
+                        </details>
                     </div>
                 </li>
                 <li class="timeline-item">
@@ -437,6 +684,22 @@ a:hover {
                             <br><br>
                             Crucially, this video call technology also opened doors in the world of business. Communication with another office or team far away no longer needed to be impersonal or text only, as colleagues could call each other easily and reliably so long as they both had an internet connection.
                         </p>
+
+                        <!-- ADDED: 3-image gallery -->
+                        <div class="gallery-row">
+                            <div class="gallery-item">
+                                <img src="https://picsum.photos/seed/skype-videocall1/400/300" alt="Placeholder image 1" loading="lazy">
+                                <div class="gallery-caption">Early video calling interface</div>
+                            </div>
+                            <div class="gallery-item">
+                                <img src="https://picsum.photos/seed/skype-videocall2/400/300" alt="Placeholder image 2" loading="lazy">
+                                <div class="gallery-caption">Families connecting overseas</div>
+                            </div>
+                            <div class="gallery-item">
+                                <img src="https://picsum.photos/seed/skype-videocall3/400/300" alt="Placeholder image 3" loading="lazy">
+                                <div class="gallery-caption">Remote teams collaborating</div>
+                            </div>
+                        </div>
                     </div>
                 </li>
                                 <li class="timeline-item period">
@@ -453,6 +716,8 @@ a:hover {
                     <div class="timeline-marker"></div>
                     <div class="timeline-content">
                         <h3 class="timeline-title">Event Title</h3>
+                        <!-- ADDED: read-more wrapper around original text (text itself unchanged) -->
+                        <div class="read-more-wrap" id="readMore1">
                         <p>Nullam vel sem. Nullam vel sem. Integer ante arcu, accumsan a, consectetuer eget, posuere ut, mauris. Donec orci lectus, aliquam ut, faucibus non, euismod id, nulla. Donec vitae sapien ut libero venenatis faucibus. ullam dictum felis
                             eu pede mollis pretium. Pellentesque ut neque.
                         Nullam vel sem. Nullam vel sem. Integer ante arcu, accumsan a, consectetuer eget, posuere ut, mauris. Donec orci lectus, aliquam ut, faucibus non, euismod id, nulla. Donec vitae sapien ut libero venenatis faucibus. ullam dictum felis
@@ -466,6 +731,8 @@ a:hover {
                             eu pede mollis pretium. Pellentesque ut neque. 
                         Nullam vel sem. Nullam vel sem. Integer ante arcu, accumsan a, consectetuer eget, posuere ut, mauris. Donec orci lectus, aliquam ut, faucibus non, euismod id, nulla. Donec vitae sapien ut libero venenatis faucibus. ullam dictum felis
                             eu pede mollis pretium. Pellentesque ut neque. </p>
+                        </div>
+                        <button class="read-more-btn" type="button" onclick="toggleReadMore('readMore1', this)">Read more</button>
                     </div>
                 </li>
                 <li class="timeline-item">
@@ -571,5 +838,91 @@ options: {
 
   chart.update();
 
-  
+
+/* ================================================
+   ADDED: Read-more toggle
+================================================ */
+function toggleReadMore(id, btn) {
+  var el = document.getElementById(id);
+  var expanded = el.classList.toggle('expanded');
+  btn.textContent = expanded ? 'Read less' : 'Read more';
+}
+
+/* ================================================
+   ADDED: Hotspot map interactions
+================================================ */
+(function () {
+  var map = document.getElementById('growthMap');
+  if (!map) return;
+  var tooltip = document.getElementById('growthMapTooltip');
+  var dots = map.querySelectorAll('.hotspot');
+
+  dots.forEach(function (dot) {
+    dot.addEventListener('click', function (e) {
+      var isSame = dot.classList.contains('active');
+      dots.forEach(function (d) { d.classList.remove('active'); });
+      tooltip.classList.remove('visible');
+
+      if (isSame) { return; }
+
+      dot.classList.add('active');
+      tooltip.innerHTML = '<strong>' + dot.dataset.title + '</strong>' + dot.dataset.text;
+      tooltip.style.left = dot.style.left;
+      tooltip.style.top = dot.style.top;
+      tooltip.classList.add('visible');
+    });
+  });
+
+  document.addEventListener('click', function (e) {
+    if (!map.contains(e.target)) {
+      dots.forEach(function (d) { d.classList.remove('active'); });
+      tooltip.classList.remove('visible');
+    }
+  });
+})();
+
+/* ================================================
+   ADDED: Animated stat counters (count up when visible)
+================================================ */
+(function () {
+  var counters = document.querySelectorAll('.stat-number[data-count-to]');
+  if (!counters.length) return;
+
+  function animateCounter(el) {
+    var target = parseFloat(el.dataset.countTo);
+    var suffix = el.dataset.suffix || '';
+    if (isNaN(target) || target === 0) { return; } // leave text-only stats (e.g. "Free") untouched
+    var duration = 1200;
+    var start = null;
+
+    function step(timestamp) {
+      if (!start) start = timestamp;
+      var progress = Math.min((timestamp - start) / duration, 1);
+      var value = (progress * target).toFixed(target < 10 ? 1 : 0);
+      el.textContent = value + suffix;
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      } else {
+        el.textContent = target + suffix;
+      }
+    }
+    window.requestAnimationFrame(step);
+  }
+
+  if ('IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          animateCounter(entry.target);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    counters.forEach(function (c) { observer.observe(c); });
+  } else {
+    counters.forEach(animateCounter);
+  }
+})();
+
     </script>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Feed interface</title>
+  <title>Chirper</title>
   <meta charset="UTF-8" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -9,57 +9,31 @@
 <style>
 
 /* =====================
-    COLOUR TOKENS
+    COLOUR TOKENS (Twitter/Threads inspired)
 ===================== */
 :root {
-    --AIMblue: #4353A3;
-    --darkBlue: #38416D;
-    --teal: #5DC8B9;
-    --cream: #F1EEDE;
-    --grey: #e7e9ec;
-    --rust: #AF4510;
-    --navy: #12195C;
-    --white: #ffffff;
-    --lightBlue: #AEBAE4;
-    --bg-app:          #f0ede8;
-    --bg-sidebar:      #e8e4de;
-    --bg-activity-pane:#454545;
-    --bg-panel:        #ffffff;
-    --bg-message-head: #f5f3f0;
-    --bg-private-tag:  #fff0ee;
-    --bg-unread-dot:   #378add;
-    --bg-avatar-blue:  #b5d4f4;
-    --bg-avatar-teal:  #9fe1cb;
-    --bg-avatar-coral: #f5c9b8;
-    --bg-avatar-purple:#d3d2ee;
-    --bg-selected-row: #e6f1fb;
-    --bg-badge:        #d85a30;
-    --bg-input:        #f5f3f0;
-    --text-primary:    #1a1a1a;
-    --text-secondary:  #666660;
-    --text-muted:      #999994;
-    --text-avatar-blue:  #0c447c;
-    --text-avatar-teal:  #085041;
-    --text-avatar-coral: #8a3212;
-    --text-avatar-purple:#40408a;
-    --text-private:    #993c1d;
-    --text-badge:      #ffffff;
-    --text-link:       #185fa5;
-    --border-subtle:   #dedad3;
-    --border-medium:   #ccc8c0;
-    --radius-sm:  6px;
-    --radius-md:  8px;
-    --radius-lg:  12px;
-    --radius-pill:99px;
-    --purple-dark: #464775;
-    --purple-mid:  #6264A7;
-    --purple-light:#9EA2D4;
-    --online:      #6EBB8A;
-    --away:        #F4A540;
-    --busy:        #E04D4D;
-    --unread:      #D65B8E;
-    --like-red:    #d8536f;
-    --repost-green:#2ba033;
+    --bg-app:           #ffffff;
+    --bg-panel:         #ffffff;
+    --bg-hover:         #f7f7f7;
+    --bg-input:         #eff3f4;
+    --bg-trend-card:    #f7f9f9;
+    --accent:           #1d9bf0;
+    --accent-hover:     #1a8cd8;
+    --accent-tint:      #e8f5fe;
+    --like-red:         #f91880;
+    --repost-green:     #00ba7c;
+    --text-primary:     #0f1419;
+    --text-secondary:   #536471;
+    --text-muted:       #8b98a5;
+    --border-subtle:    #eff3f4;
+    --border-medium:    #cfd9de;
+    --avatar-blue:      #7ea6d9;
+    --avatar-teal:      #6fc2ac;
+    --avatar-coral:     #e3987b;
+    --avatar-purple:    #a9a4dd;
+    --radius-sm:  8px;
+    --radius-md:  16px;
+    --radius-pill:9999px;
 }
 
 * {
@@ -72,7 +46,10 @@ body {
     font-family: "IBM Plex Sans", sans-serif;
     min-height: 100vh;
     background-color: var(--bg-app);
+    color: var(--text-primary);
 }
+
+a { color: inherit; text-decoration: none; }
 
 /* =====================
     NAVBAR
@@ -82,8 +59,9 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    height: 60px;
-    background-color: var(--white);
+    height: 53px;
+    background-color: rgba(255,255,255,0.9);
+    backdrop-filter: blur(8px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -93,53 +71,64 @@ body {
 
 .nav-inner {
     width: 100%;
-    max-width: 600px;
-    padding: 0 16px;
+    max-width: 990px;
+    padding: 0 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
 .nav-brand {
-    font-size: 1.45rem;
-    font-weight: 700;
-    color: var(--AIMblue);
-}
-
-.nav-links {
-    list-style: none;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
     display: flex;
-    gap: 1.25rem;
+    align-items: center;
+    gap: 6px;
 }
 
-.nav-links a {
-    color: var(--text-secondary);
-    text-decoration: none;
-    font-size: 0.85rem;
-    font-weight: 600;
-    transition: color 0.2s ease;
-}
-
-.nav-links a.active,
-.nav-links a:hover {
-    color: var(--AIMblue);
+.nav-brand .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background-color: var(--accent);
+    display: inline-block;
 }
 
 /* =====================
-    LAYOUT
+    LAYOUT — center feed + right rail
 ===================== */
-.feed-container {
-    max-width: 600px;
+.page-shell {
+    max-width: 990px;
     margin: 0 auto;
-    padding-top: 76px;
+    padding-top: 53px;
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+}
+
+.feed-container {
+    width: 600px;
+    max-width: 600px;
+    min-width: 0;
+    border-left: 1px solid var(--border-subtle);
+    border-right: 1px solid var(--border-subtle);
     padding-bottom: 60px;
 }
 
 .panel-title {
-    font-size: 17px;
-    font-weight: 700;
+    font-size: 20px;
+    font-weight: 800;
     color: var(--text-primary);
-    padding: 4px 16px 12px;
+    padding: 14px 16px;
+    letter-spacing: -0.01em;
+    border-bottom: 1px solid var(--border-subtle);
+    position: sticky;
+    top: 53px;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(8px);
+    z-index: 5;
 }
 
 /* =====================
@@ -147,50 +136,46 @@ body {
 ===================== */
 .compose-card {
     background-color: var(--bg-panel);
-    border: var(--border-subtle) solid 1px;
-    border-radius: var(--radius-md);
-    padding: 14px 16px;
-    margin: 0 4px 16px;
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 12px 16px;
 }
 
 .compose-row {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     align-items: flex-start;
 }
 
 .avatar {
-    width: 42px;
-    height: 42px;
-    min-width: 42px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 13px;
     font-weight: 700;
+    color: #fff;
 }
 
-.avatar.sm {
-    width: 42px;
-    height: 42px;
-    min-width: 42px;
-    font-size: 13px;
-}
+.avatar.sm { width: 44px; height: 44px; min-width: 44px; font-size: 13px; }
+.avatar.xs { width: 32px; height: 32px; min-width: 32px; font-size: 11px; }
 
-.av-blue   { background-color: var(--bg-avatar-blue);   color: var(--text-avatar-blue); }
-.av-teal   { background-color: var(--bg-avatar-teal);   color: var(--text-avatar-teal); }
-.av-coral  { background-color: var(--bg-avatar-coral);  color: var(--text-avatar-coral); }
-.av-purple { background-color: var(--bg-avatar-purple); color: var(--text-avatar-purple); }
+.av-blue   { background-color: var(--avatar-blue); }
+.av-teal   { background-color: var(--avatar-teal); }
+.av-coral  { background-color: var(--avatar-coral); }
+.av-purple { background-color: var(--avatar-purple); }
 
 .compose-input-wrap {
     flex: 1;
+    padding-top: 8px;
 }
 
 .compose-input {
     width: 100%;
     font-family: inherit;
-    font-size: 16px;
+    font-size: 19px;
     color: var(--text-primary);
     background: none;
     border: none;
@@ -199,37 +184,28 @@ body {
     line-height: 1.4;
 }
 
-.compose-input::placeholder {
-    color: var(--text-muted);
-}
-
-.compose-input:focus {
-    outline: none;
-}
+.compose-input::placeholder { color: var(--text-muted); }
+.compose-input:focus { outline: none; }
 
 .compose-footer {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 12px;
+    gap: 14px;
     margin-top: 8px;
     padding-top: 10px;
-    border-top: var(--border-subtle) solid 1px;
+    border-top: 1px solid var(--border-subtle);
 }
 
-.char-count {
-    font-size: 12px;
-    color: var(--text-muted);
-}
-
-.char-count.near-limit { color: var(--busy); font-weight: 600; }
+.char-count { font-size: 13px; color: var(--text-muted); }
+.char-count.near-limit { color: var(--like-red); font-weight: 600; }
 
 .post-btn {
     font-family: inherit;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 700;
-    color: var(--white);
-    background-color: var(--AIMblue);
+    color: #fff;
+    background-color: var(--accent);
     border: none;
     border-radius: var(--radius-pill);
     padding: 8px 20px;
@@ -237,81 +213,47 @@ body {
     transition: background-color 0.15s ease;
 }
 
-.post-btn:disabled {
-    background-color: var(--border-medium);
-    cursor: not-allowed;
-}
-
-.post-btn:not(:disabled):hover {
-    background-color: var(--darkBlue);
-}
+.post-btn:disabled { background-color: var(--accent); opacity: 0.5; cursor: not-allowed; }
+.post-btn:not(:disabled):hover { background-color: var(--accent-hover); }
 
 /* =====================
     FEED / POST CARDS
 ===================== */
-.feed-list {
-    display: flex;
-    flex-direction: column;
-}
+.feed-list { display: flex; flex-direction: column; }
 
 .post-card {
     background-color: var(--bg-panel);
-    border: var(--border-subtle) solid 1px;
-    border-radius: var(--radius-md);
-    padding: 14px 16px;
-    margin: 0 4px 12px;
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 12px 16px;
+    transition: background-color 0.1s ease;
 }
 
-.post-card.new-post {
-    animation: postIn 0.25s ease;
-}
+.post-card:hover { background-color: var(--bg-hover); }
+
+.post-card.new-post { animation: postIn 0.25s ease; }
 
 @keyframes postIn {
     from { opacity: 0; transform: translateY(-6px); }
     to   { opacity: 1; transform: translateY(0); }
 }
 
-.post-row {
-    display: flex;
-    gap: 10px;
-}
+.post-row { display: flex; gap: 12px; }
 
-.post-body {
-    flex: 1;
-    min-width: 0;
-        margin-right: 10px;
-}
+.post-body { flex: 1; min-width: 0; margin-right: 4px; }
 
-.post-meta {
-    display: flex;
-    align-items: baseline;
-    gap: 5px;
-    flex-wrap: wrap;
-}
+.post-meta { display: flex; align-items: baseline; gap: 5px; flex-wrap: wrap; }
 
-.post-name {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--text-primary);
-}
+.post-name { font-size: 15px; font-weight: 700; color: var(--text-primary); }
 
-.post-handle,
-.post-time {
-    font-size: 13px;
-    color: var(--text-muted);
-}
+.post-handle, .post-time { font-size: 15px; color: var(--text-muted); }
 
-.post-time::before {
-    content: "·";
-    margin-right: 5px;
-    color: var(--text-muted);
-}
+.post-time::before { content: "·"; margin-right: 5px; color: var(--text-muted); }
 
 .post-text {
-    font-size: 14.5px;
+    font-size: 15px;
     color: var(--text-primary);
-    line-height: 1.45;
-    margin-top: 3px;
+    line-height: 1.4;
+    margin-top: 2px;
     white-space: pre-wrap;
     word-wrap: break-word;
 }
@@ -320,18 +262,15 @@ body {
     margin-top: 10px;
     border-radius: var(--radius-md);
     overflow: hidden;
-    border: var(--border-subtle) solid 1px;
+    border: 1px solid var(--border-subtle);
 }
 
-.post-image img {
-    width: 100%;
-    display: block;
-}
+.post-image img { width: 100%; display: block; }
 
 .post-actions {
     display: flex;
     justify-content: space-between;
-    max-width: 320px;
+    max-width: 340px;
     margin-top: 10px;
 }
 
@@ -343,41 +282,26 @@ body {
     border: none;
     font-family: inherit;
     font-size: 13px;
-    color: var(--text-secondary);
+    color: var(--text-muted);
     cursor: pointer;
-    padding: 4px 6px;
+    padding: 6px 8px;
     border-radius: var(--radius-pill);
     transition: background-color 0.15s ease, color 0.15s ease;
 }
 
-.action-btn:hover {
-    background-color: var(--bg-selected-row);
-}
+.action-btn:hover { background-color: var(--accent-tint); color: var(--accent); }
+.action-btn.repost:hover { background-color: #e5f9f2; color: var(--repost-green); }
+.action-btn.like:hover { background-color: #fde2ec; color: var(--like-red); }
 
-.action-btn .icon {
-    font-size: 15px;
-    line-height: 1;
-}
+.action-btn .icon { font-size: 15px; line-height: 1; }
 
-.action-btn.like.liked {
-    color: var(--like-red);
-    font-weight: 600;
-}
+.action-btn.like.liked { color: var(--like-red); font-weight: 600; }
+.action-btn.repost.reposted { color: var(--repost-green); font-weight: 600; }
 
-.action-btn.repost.reposted {
-    color: var(--repost-green);
-    font-weight: 600;
-}
-
-.feed-empty {
-    color: var(--text-muted);
-    font-size: 13px;
-    text-align: center;
-    padding: 30px 0;
-}
+.feed-empty { color: var(--text-muted); font-size: 14px; text-align: center; padding: 30px 0; }
 
 /* =====================
-    REPLIES THREAD (expandable, array-driven)
+    REPLIES THREAD
 ===================== */
 .action-btn.reply .caret {
     font-size: 10px;
@@ -386,65 +310,34 @@ body {
     display: inline-block;
 }
 
-.action-btn.reply.open .caret {
-    transform: rotate(180deg);
-}
+.action-btn.reply.open .caret { transform: rotate(180deg); }
 
 .replies-panel {
     margin-top: 10px;
-    padding: 10px 0 0 10px;
-    border-top: var(--border-subtle) solid 1px;
+    padding: 10px 0 0 12px;
     border-left: 2px solid var(--border-subtle);
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-.reply-item {
-    display: flex;
-    gap: 8px;
-    align-items: flex-start;
-}
-
-.avatar.xs {
-    width: 30px;
-    height: 30px;
-    min-width: 30px;
-    font-size: 11px;
-}
+.reply-item { display: flex; gap: 8px; align-items: flex-start; }
 
 .reply-bubble {
     background-color: var(--bg-input);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     padding: 7px 12px;
     flex: 1;
     min-width: 0;
 }
 
-.reply-meta {
-    display: flex;
-    align-items: baseline;
-    gap: 5px;
-    flex-wrap: wrap;
-}
+.reply-meta { display: flex; align-items: baseline; gap: 5px; flex-wrap: wrap; }
 
-.reply-name {
-    font-size: 12.5px;
-    font-weight: 700;
-    color: var(--text-primary);
-}
+.reply-name { font-size: 13px; font-weight: 700; color: var(--text-primary); }
 
-.reply-handle,
-.reply-time {
-    font-size: 11.5px;
-    color: var(--text-muted);
-}
+.reply-handle, .reply-time { font-size: 12px; color: var(--text-muted); }
 
-.reply-time::before {
-    content: "·";
-    margin-right: 5px;
-    color: var(--text-muted);
-}
+.reply-time::before { content: "·"; margin-right: 5px; color: var(--text-muted); }
 
 .reply-text {
     font-size: 13.5px;
@@ -454,17 +347,9 @@ body {
     word-wrap: break-word;
 }
 
-.replies-empty {
-    font-size: 12.5px;
-    color: var(--text-muted);
-    padding: 2px 0 2px 2px;
-}
+.replies-empty { font-size: 13px; color: var(--text-muted); padding: 2px 0 2px 2px; }
 
-.reply-composer {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
+.reply-composer { display: flex; gap: 8px; align-items: center; }
 
 .reply-input {
     flex: 1;
@@ -472,81 +357,126 @@ body {
     font-size: 13.5px;
     color: var(--text-primary);
     background-color: var(--bg-input);
-    border: var(--border-subtle) solid 1px;
+    border: 1px solid transparent;
     border-radius: var(--radius-pill);
-    padding: 7px 14px;
+    padding: 8px 14px;
 }
 
 .reply-input:focus {
     outline: none;
-    border-color: var(--AIMblue);
-    background-color: var(--white);
+    border-color: var(--accent);
+    background-color: #fff;
 }
 
 .reply-send-btn {
     font-family: inherit;
     font-size: 12.5px;
     font-weight: 700;
-    color: var(--white);
-    background-color: var(--AIMblue);
+    color: #fff;
+    background-color: var(--accent);
     border: none;
     border-radius: var(--radius-pill);
-    padding: 7px 14px;
+    padding: 8px 14px;
     cursor: pointer;
     white-space: nowrap;
 }
 
-.reply-send-btn:disabled {
-    background-color: var(--border-medium);
-    cursor: not-allowed;
+.reply-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.reply-send-btn:not(:disabled):hover { background-color: var(--accent-hover); }
+
+/* =====================
+    TRENDING SIDEBAR
+===================== */
+.trend-rail {
+    width: 350px;
+    max-width: 350px;
+    min-width: 0;
+    padding: 12px 16px;
+    position: sticky;
+    top: 53px;
 }
 
-.reply-send-btn:not(:disabled):hover {
-    background-color: var(--darkBlue);
+.trend-card {
+    background-color: var(--bg-trend-card);
+    border-radius: var(--radius-md);
+    overflow: hidden;
 }
+
+.trend-card-title {
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--text-primary);
+    padding: 12px 16px 4px;
+}
+
+.trend-item {
+    display: block;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: background-color 0.12s ease;
+}
+
+.trend-item:hover { background-color: rgba(15,20,25,0.05); }
+
+.trend-item:first-of-type { border-radius: 0; }
+.trend-card > .trend-item:last-child { border-radius: 0 0 var(--radius-md) var(--radius-md); }
+
+.trend-meta { font-size: 12.5px; color: var(--text-muted); }
+
+.trend-topic {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-top: 1px;
+}
+
+.trend-count { font-size: 12.5px; color: var(--text-muted); margin-top: 1px; }
 </style>
 </head>
 <body>
 
   <nav class="navbar">
     <div class="nav-inner">
-      <div class="nav-brand">Chirper</div>
-      <ul class="nav-links">
-        <!-- <li><a href="#" class="active">Home</a></li> -->
-        <!-- <li><a href="#">Explore</a></li>
-        <li><a href="#">Notifications</a></li>
-        <li><a href="#">Profile</a></li> -->
-      </ul>
+      <div class="nav-brand"><span class="dot"></span>Chirper</div>
     </div>
   </nav>
 
-  <div class="feed-container">
+  <div class="page-shell">
 
-    <!-- <div class="panel-title">Home</div> -->
+    <div class="feed-container">
 
-    <!-- COMPOSE -->
-    <div class="compose-card">
-      <div class="compose-row">
-        <div class="avatar sm av-blue">You</div>
-        <div class="compose-input-wrap">
-          <textarea
-            class="compose-input"
-            id="composeInput"
-            placeholder="What's happening?"
-            rows="2"
-            maxlength="280"
-            oninput="autoGrow(this); updateComposeState();"
-          ></textarea>
-          <div class="compose-footer">
-            <span class="char-count" id="charCount">280</span>
-            <button class="post-btn" id="postBtn" onclick="addPost()" disabled>Post</button>
+      <div class="panel-title">Home</div>
+
+      <!-- COMPOSE -->
+      <div class="compose-card">
+        <div class="compose-row">
+          <div class="avatar sm av-blue">You</div>
+          <div class="compose-input-wrap">
+            <textarea
+              class="compose-input"
+              id="composeInput"
+              placeholder="What's happening?"
+              rows="2"
+              maxlength="280"
+              oninput="autoGrow(this); updateComposeState();"
+            ></textarea>
+            <div class="compose-footer">
+              <span class="char-count" id="charCount">280</span>
+              <button class="post-btn" id="postBtn" onclick="addPost()" disabled>Post</button>
+            </div>
           </div>
         </div>
       </div>
+
+      <!-- FEED -->
+      <div class="feed-list" id="feedList"></div>
+
     </div>
 
-    <!-- FEED -->
-    <div class="feed-list" id="feedList"></div>
+    <!-- TRENDING SIDEBAR -->
+    <aside class="trend-rail">
+      <div class="trend-card" id="trendCard"></div>
+    </aside>
 
   </div>
 
@@ -554,10 +484,6 @@ body {
 
   /* =====================
       POST DATA
-      Array-driven, same pattern as the DM/channel data in the base
-      chat interface: a single source-of-truth array is mapped to
-      HTML strings inside render(); nothing is ever hand-edited
-      in the DOM directly.
   ===================== */
   let posts = [
     {
@@ -710,6 +636,19 @@ body {
     }
   ];
 
+  /* =====================
+      TRENDING DATA
+      Array-driven, same pattern as posts — mapped to HTML inside
+      renderTrends(), never hand-edited in the DOM.
+  ===================== */
+  let trends = [
+    { category: "Business · Trending", topic: "Q3 Roadmap", count: "1,204 posts" },
+    { category: "Trending in Team", topic: "#NewHires", count: "312 posts" },
+    { category: "Technology · Trending", topic: "Sprint Planning", count: "980 posts" },
+    { category: "Trending", topic: "Coffee Debrief", count: "87 posts" },
+    { category: "Trending in Team", topic: "Leaders Group", count: "56 posts" }
+  ];
+
   let nextReplyId = 200;
 
   let nextId = Math.max(...posts.map(p => p.id)) + 1;
@@ -735,7 +674,22 @@ body {
     return date.toLocaleDateString(undefined, { day: "numeric", month: "short" });
   }
 
-  // ── RENDER ───────────────────────────────────────────────────────────
+  // ── RENDER: TRENDS ───────────────────────────────────────────────────
+  function renderTrends() {
+    const card = document.getElementById("trendCard");
+    card.innerHTML = `
+      <div class="trend-card-title">What's happening</div>
+      ${trends.map(t => `
+        <div class="trend-item">
+          <div class="trend-meta">${escapeHtml(t.category)}</div>
+          <div class="trend-topic">${escapeHtml(t.topic)}</div>
+          <div class="trend-count">${escapeHtml(t.count)}</div>
+        </div>
+      `).join("")}
+    `;
+  }
+
+  // ── RENDER: FEED ─────────────────────────────────────────────────────
   function renderFeed() {
     const list = document.getElementById("feedList");
 
@@ -927,6 +881,7 @@ body {
   });
 
   renderFeed();
+  renderTrends();
 
 </script>
 </body>
