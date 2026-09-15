@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Clear view interface</title>
-  <meta charset="UTF-8" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+<meta charset="UTF-8" />
+<title>Clearview — Company reviews</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
 <style>
@@ -12,656 +12,286 @@
     COLOUR TOKENS
 ===================== */
 :root {
-    --AIMblue: #4353A3;
-    --darkBlue: #38416D;
-    --teal: #5DC8B9;
+    --AIMblue: #0d705d;
+    --darkBlue: #095444;
+    --teal: #4bc6b1;
+    --tealDark: #0d705d;
     --cream: #F1EEDE;
-    --grey: #e7e9ec;
     --rust: #AF4510;
-    --navy: #12195C;
+    --navy: #0d705d;
     --white: #ffffff;
-    --lightBlue: #AEBAE4;
     --bg-app:          #f0ede8;
-    --bg-sidebar:      #e8e4de;
-    --bg-activity-pane:#454545;
     --bg-panel:        #ffffff;
-    --bg-message-head: #f5f3f0;
-    --bg-private-tag:  #fff0ee;
-    --bg-unread-dot:   #378add;
-    --bg-avatar-blue:  #b5d4f4;
-    --bg-avatar-teal:  #9fe1cb;
-    --bg-selected-row: #e6f1fb;
-    --bg-badge:        #d85a30;
     --bg-input:        #f5f3f0;
+    --bg-avatar-blue:  #c3ede4;
+    --bg-avatar-teal:  #9fe1cb;
     --text-primary:    #1a1a1a;
     --text-secondary:  #666660;
     --text-muted:      #999994;
-    --text-avatar-blue:#0c447c;
+    --text-avatar-blue:#0d705d;
     --text-avatar-teal:#085041;
-    --text-private:    #993c1d;
-    --text-badge:      #ffffff;
-    --text-link:       #185fa5;
     --border-subtle:   #dedad3;
     --border-medium:   #ccc8c0;
     --radius-sm:  6px;
     --radius-md:  8px;
     --radius-lg:  12px;
     --radius-pill:99px;
-    --purple-dark: #464775;
-    --purple-mid:  #6264A7;
-    --purple-light:#9EA2D4;
-    --sidebar-bg:  #1b1b2e;
-    --channel-bg:  #252538;
-    --chat-bg:     #ffffff;
-    --text-primary:#1a1a1a;
-    --text-secondary:#555;
-    --text-muted:  #999;
-    --border:      rgba(0,0,0,0.1);
-    --bg-secondary:#f5f5f5;
-    --bg-primary:  #ffffff;
-    --online:      #6EBB8A;
-    --away:        #F4A540;
-    --busy:        #E04D4D;
-    --unread:      #D65B8E;
     --star-empty:  #d8d5cc;
     --star-fill:   #E0A63E;
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    font-family: "IBM-Plex-Sans", sans-serif;
-    padding: 20px;
-    min-height: 100vh;
+    font-family: "IBM Plex Sans", sans-serif;
     background-color: var(--bg-app);
+    color: var(--text-primary);
 }
 
-
+/* ===================== NAVBAR ===================== */
 .navbar {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 60px;
+    top: 0; left: 0; width: 100%; height: 64px;
     background-color: white;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    padding: 0 40px;
     z-index: 1000;
     border-bottom: 1px solid var(--border-subtle);
 }
 
-/* Logo styling */
-.nav-brand {
-        margin: 0 120px;
-    font-size: 1.2rem;
-    font-weight: bold;
+.logo { display: flex; align-items: center; gap: 6px; }
+.logo-mark { display: flex; align-items: center; }
+.logo-mark svg { display: block; }
+.logo-word {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -0.02em;
 }
-
-/* Links list */
-.nav-links {
-        margin: 0 120px;
-    list-style: none;
-    display: flex;
+.logo-tagline {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-left: 16px;
+    padding-left: 16px;
+    border-left: 1px solid var(--border-subtle);
 }
-
-/* Link items */
-.nav-links li {
-    margin-left: 1.5rem;
+svg {
+    width: 150px;
 }
-
-/* Link anchors */
-.nav-links a {
-    color: var(--text-primary);
-    text-decoration: none;
-    font-size: 0.95rem;
-    transition: color 0.3s ease;
-}
-
-/* Hover effect */
-.nav-links a:hover {
-    color: var(--bg-unread-dot);
-}
-
-/* Push content down so it is not hidden under the fixed navbar */
-.content {
-    margin-top: 80px;
-    padding: 2rem;
-}
-
+/* ===================== LAYOUT ===================== */
 .container {
     display: flex;
-    max-width: 1600px;
-    margin: 0 auto;
-    transition: margin-right 0.3s ease;
-    overflow: hidden;
-    margin-top: 85px;
+    max-width: 1100px;
+    margin: 84px auto 40px;
     align-items: flex-start;
+    justify-content: center;
+    gap: 24px;
+    padding: 0 20px;
 }
 
-section {
-    min-width: 300px;
-}
-
-.left-panel {
-    margin: 15px;
-}
-
-.middle-panel {
-    margin: 15px;
-    flex: 1;
-}
-
-.right-panel {
-    margin: 15px;
-}
+.middle-panel { flex: 1; max-width: 720px; min-width: 0; }
+.right-panel { width: 300px; flex-shrink: 0; }
 
 .panel-heading {
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 700;
     color: var(--text-primary);
-    padding: 0 4px 10px;
+    padding: 0 4px 12px;
 }
-
 .panel-subheading {
     font-size: 12px;
     color: var(--text-muted);
     padding: 0 4px 14px;
+    margin-top: -8px;
 }
 
-.post-card {
-    border: var(--border-subtle) solid 1px;
-    background-color: var(--bg-primary);
-    border-radius: 4px;
-}
-
-.header {
-    display: flex;
-    border-bottom: var(--border-subtle) solid 1px;
-    background: var(--bg-panel);
-  margin: 4px;
-}
-
-.post-details {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-}
-
-.header-details {
-    display: flex;
-     margin-top: 10px;
-}
-
-.header-icon {
-    margin: 4px;
-}
-
-.header-icon > svg {
-    width: 200px;
-    /* border: solid 8px white; */
-}
-.header-text {
-    margin: 4px;
-}
-
-.header-text > h4 {
-    padding: 3px;
-    color: var(--text-primary);
-}
-
-.header-text > p {
-    padding: 3px;
-    color: var(--text-secondary);
-    font-size: 13px;
-}
-
-.header-interactive {
-    margin-top: 10px;
-    padding-right: 5px;
-}
-
-.card-content {
-    margin: auto;
-}
-
-.card-content-text {
-    margin: 4px;
-    padding: 20px 12px;
-    background-color: var(--bg-primary);
-    border-bottom: var(--border-subtle) solid 1px;
-}
-
-.card-content-text > p {
-    color: var(--text-primary);
-    line-height: 1.5;
-}
-
-.card-content-image_video {
-    padding: 15px;
-    margin: 6px;
-  align-content: center;
-  background-color: var(--bg-panel);
-  border-bottom: var(--border-subtle) solid 1px;
-}
-
-.card-content-image_video img {
-    width: 100%;
-    border-radius: 4px;
-    display: block;
-}
-
-.card-reactions {
-    margin: 4px;
-    background: white;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 12px 15px;
-}
-
-.card-reactions .reactions-label {
-    color: var(--text-secondary);
-    font-size: 14px;
-    margin-right: 4px;
-}
-
-.emoji {
-    border-radius: var(--radius-pill);
-    border: var(--border-subtle) solid 1px;
-    background-color: var(--bg-input);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 5px 12px;
-    cursor: pointer;
-    font-family: inherit;
-    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
-}
-
-.emoji:active {
-    transform: scale(0.95);
-}
-
-.emoji:hover {
-    border-color: var(--border-medium);
-}
-
-.emoji .emoji-char {
-    font-size: 16px;
-    line-height: 1;
-}
-
-.emoji .emoji-count {
-    color: var(--text-secondary);
-    font-size: 14px;
-}
-
-.emoji.reacted {
-    background-color: var(--bg-selected-row);
-    border-color: var(--AIMblue);
-}
-
-.emoji.reacted .emoji-count {
-    color: var(--AIMblue);
-    font-weight: 600;
-}
-
-/* =====================
-    COMMENTS
-===================== */
-.comments-container {
-    margin-top: 8px;
-    background-color: var(--bg-panel);
-    border-radius: 4px;
-    border: var(--border-subtle) solid 1px;
-    padding: 12px;
-}
-
-.comments-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-    border-bottom: var(--border-subtle) solid 1px;
-}
-
-.comments-toolbar h5 {
-    color: var(--text-primary);
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.sort-select {
-    font-family: inherit;
-    font-size: 13px;
-    color: var(--text-secondary);
-    background-color: var(--bg-input);
-    border: var(--border-subtle) solid 1px;
-    border-radius: var(--radius-pill);
-    padding: 4px 10px;
-    cursor: pointer;
-}
-
-/* --- add comment composer --- */
-.comment-composer {
-    display: flex;
-    gap: 8px;
-    align-items: flex-start;
-    padding-bottom: 14px;
-    margin-bottom: 14px;
-    border-bottom: var(--border-subtle) solid 1px;
-}
-
-.comment-avatar {
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
-    border-radius: 50%;
-    background-color: var(--bg-avatar-teal);
-    color: var(--text-avatar-teal);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 600;
-}
-
-.comment-avatar.blue {
-    background-color: var(--bg-avatar-blue);
-    color: var(--text-avatar-blue);
-}
-
-.composer-input-wrap {
-    flex: 1;
-}
-
-.comment-input {
-    width: 100%;
-    font-family: inherit;
-    font-size: 14px;
-    color: var(--text-primary);
-    background-color: var(--bg-input);
-    border: var(--border-subtle) solid 1px;
-    border-radius: var(--radius-lg);
-    padding: 10px 14px;
-    resize: none;
-    min-height: 38px;
-    line-height: 1.4;
-}
-
-.comment-input:focus {
-    outline: none;
-    border-color: var(--AIMblue);
-    background-color: var(--white);
-}
-
-.composer-actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 6px;
-}
-
-.post-comment-btn {
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--white);
-    background-color: var(--AIMblue);
-    border: none;
-    border-radius: var(--radius-pill);
-    padding: 6px 16px;
-    cursor: pointer;
-}
-
-.post-comment-btn:disabled {
-    background-color: var(--border-medium);
-    cursor: not-allowed;
-}
-
-.post-comment-btn:not(:disabled):hover {
-    background-color: var(--darkBlue);
-}
-
-/* --- comment list --- */
-.comments-list {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-}
-
-.comment-box {
-    display: flex;
-    gap: 8px;
-    align-items: flex-start;
-}
-
-.comment-body {
-    flex: 1;
-}
-
-.comment-bubble {
-    background-color: var(--bg-input);
-    border-radius: var(--radius-lg);
-    padding: 8px 14px;
-    display: inline-block;
-    max-width: 100%;
-}
-
-.comment-bubble .comment-name {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
-.comment-bubble .comment-text {
-    font-size: 14px;
-    color: var(--text-primary);
-    margin-top: 2px;
-    line-height: 1.4;
-    word-wrap: break-word;
-    max-width: 480px;
-}
-
-.comment-meta {
-    display: flex;
-    gap: 14px;
-    margin-top: 4px;
-    padding-left: 14px;
-}
-
-.comment-meta span {
-    font-size: 12px;
-    color: var(--text-muted);
-    cursor: pointer;
-}
-
-.comment-meta span:hover {
-    color: var(--text-link);
-    text-decoration: underline;
-}
-
-.comment-meta span.like-btn.liked {
-    color: var(--AIMblue);
-    font-weight: 600;
-}
-
-.comment-meta span.like-btn.liked:hover {
-    color: var(--darkBlue);
-}
-
-.comments-empty {
-    color: var(--text-muted);
-    font-size: 13px;
-    text-align: center;
-    padding: 10px 0 4px;
-}
-
-/*BUTTONS*/
-.pill-btn {
-border-radius: var(--radius-pill);
-    border: var(--border-subtle) solid 1px;
-    background-color: var(--bg-input);
-    align-items: center;
-    padding: 5px 12px;
-    cursor: pointer;
-    font-family: inherit;
-    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
-}
-
-.comment-btn {
-    font-family: inherit;
-    font-size: 14px;
-    color: var(--text-secondary);
-    background: none;
-    border: none;
-    cursor: pointer;
-}
-
-.comment-btn:hover {
-    color: var(--text-link);
-}
-
-/* =====================
-    COMPANY HEADER (middle panel)
-===================== */
+/* ===================== COMPANY HEADER ===================== */
 .company-header {
-    background-color: var(--bg-primary);
-    border: var(--border-subtle) solid 1px;
-    border-radius: 4px;
-    padding: 18px 20px;
-    margin-bottom: 15px;
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 22px 24px;
+    margin-bottom: 16px;
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
 }
-
 .company-logo {
-    width: 52px;
-    height: 52px;
-    min-width: 52px;
+    width: 56px; height: 56px; min-width: 56px;
     border-radius: var(--radius-md);
     background-color: var(--bg-avatar-blue);
     color: var(--text-avatar-blue);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 19px; font-weight: 700;
+}
+.company-header h2 { font-size: 21px; }
+.company-header p { font-size: 13px; color: var(--text-secondary); margin-top: 4px; line-height: 1.5; }
+
+/* ===================== TAB BAR ===================== */
+.tab-bar {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+}
+.tab-btn {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-pill);
+    padding: 8px 18px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.tab-btn:hover { border-color: var(--teal); }
+.tab-btn.active {
+    background-color: var(--AIMblue);
+    border-color: var(--AIMblue);
+    color: var(--white);
+}
+
+/* ===================== TAB CONTENT PANEL ===================== */
+.tab-panel {
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 18px 20px;
+    min-height: 200px;
+}
+
+.empty-state { text-align: center; color: var(--text-muted); font-size: 13px; padding: 40px 10px; }
+
+/* --- reviews feed --- */
+.reviews-list { display: flex; flex-direction: column; gap: 14px; }
+.feed-review { display: flex; gap: 10px; padding-bottom: 14px; border-bottom: 1px solid var(--border-subtle); }
+.feed-review:last-child { border-bottom: none; padding-bottom: 0; }
+.avatar {
+    width: 38px; height: 38px; min-width: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600;
+}
+.avatar.teal { background-color: var(--bg-avatar-teal); color: var(--text-avatar-teal); }
+.avatar.blue { background-color: var(--bg-avatar-blue); color: var(--text-avatar-blue); }
+.feed-body { flex: 1; }
+.feed-top { display: flex; justify-content: space-between; align-items: center; }
+.feed-name { font-size: 13px; font-weight: 600; }
+.feed-time { font-size: 11px; color: var(--text-muted); }
+.feed-stars { font-size: 12px; letter-spacing: 1px; margin-top: 2px; }
+.feed-line { font-size: 13px; margin-top: 8px; line-height: 1.5; }
+.feed-line .tag { font-weight: 600; color: var(--text-secondary); }
+.feed-pros .tag { color: var(--tealDark); }
+.feed-cons .tag { color: var(--rust); }
+.feed-meta { display: flex; gap: 14px; margin-top: 8px; }
+.feed-meta span { font-size: 12px; color: var(--text-muted); cursor: pointer; }
+.feed-meta span:hover { color: var(--AIMblue); }
+.feed-meta span.liked { color: var(--teal); font-weight: 600; }
+
+/* --- jobs / salaries lists --- */
+.simple-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 0; border-bottom: 1px solid var(--border-subtle);
+}
+.simple-row:last-child { border-bottom: none; }
+.simple-row-title { font-size: 13px; font-weight: 600; }
+.simple-row-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.simple-row-value { font-size: 13px; color: var(--text-secondary); text-align: right; }
+
+/* --- benefits / culture --- */
+.pill-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill-list span {
+    font-size: 12px; background-color: var(--bg-input);
+    border: 1px solid var(--border-subtle); border-radius: var(--radius-pill);
+    padding: 6px 14px;
+}
+.culture-para { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 12px; }
+.culture-para:last-child { margin-bottom: 0; }
+
+/* --- photos --- */
+.photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.photo-tile {
+    aspect-ratio: 4/3; border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: var(--white); font-weight: 600; text-align: center; padding: 8px;
+}
+
+/* ===================== RIGHT PANEL ===================== */
+.rating-summary {
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 20px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    font-weight: 700;
+    gap: 16px;
+    margin-bottom: 16px;
 }
-
-.company-header h2 {
-    font-size: 20px;
-    color: var(--text-primary);
+.rating-circle {
+    width: 84px; height: 84px; min-width: 84px; border-radius: 50%;
+    background-color: var(--cream);
+    border: 3px solid var(--AIMblue);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    transition: transform 0.15s ease;
 }
+.rating-circle .num { font-size: 20px; font-weight: 700; color: var(--navy); line-height: 1; }
+.rating-circle .of5 { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+.rating-summary-text { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
 
-.company-header p {
-    font-size: 13px;
-    color: var(--text-secondary);
-    margin-top: 3px;
-}
-
-/* =====================
-    PAST REVIEWS (left panel)
-===================== */
-.review-card {
-    background-color: var(--bg-primary);
-    border: var(--border-subtle) solid 1px;
+.categories-card {
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
-    padding: 12px 14px;
-    margin-bottom: 10px;
+    padding: 16px 18px;
+    margin-bottom: 16px;
 }
+.category-row { padding: 9px 0; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; }
+.category-row:last-child { border-bottom: none; padding-bottom: 0; }
+.category-row:first-child { padding-top: 0; }
+.category-label { font-size: 13px; }
+.category-stars { font-size: 12px; letter-spacing: 1px; }
 
-.review-card-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 8px;
-}
-
-.review-name {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
-.review-date {
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-top: 2px;
-}
-
-.review-stars {
-    font-size: 12px;
-    letter-spacing: 1px;
-    white-space: nowrap;
-}
-
-.review-stars .filled { color: var(--star-fill); }
-.review-stars .empty { color: var(--star-empty); }
-
-.review-text {
-    font-size: 13px;
-    color: var(--text-secondary);
-    line-height: 1.45;
-    margin-top: 6px;
-}
-
-/* =====================
-    RATING METRICS (right panel)
-===================== */
-.ratings-card {
-    background-color: var(--bg-primary);
-    border: var(--border-subtle) solid 1px;
+/* --- leave a review composer --- */
+.composer-card {
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
-    padding: 14px 16px;
+    padding: 16px 18px;
 }
-
-.metric-row {
-    padding: 12px 0;
-    border-bottom: var(--border-subtle) solid 1px;
+.composer-title { font-size: 13px; font-weight: 700; margin-bottom: 10px; }
+.star-picker { display: flex; gap: 4px; margin-bottom: 12px; }
+.star-picker span { font-size: 22px; color: var(--star-empty); cursor: pointer; line-height: 1; }
+.star-picker span.selected { color: var(--star-fill); }
+.field-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; display: block; }
+textarea.composer-input {
+    width: 100%; font-family: inherit; font-size: 13px; color: var(--text-primary);
+    background-color: var(--bg-input); border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm); padding: 8px 10px; resize: none; min-height: 54px; margin-bottom: 12px;
 }
-
-.metric-row:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
+textarea.composer-input:focus { outline: none; border-color: var(--AIMblue); background-color: var(--white); }
+.post-comment-btn {
+    font-family: inherit; font-size: 13px; font-weight: 600; color: var(--white);
+    background-color: var(--AIMblue); border: none; border-radius: var(--radius-pill);
+    padding: 8px 0; width: 100%; cursor: pointer;
 }
+.post-comment-btn:disabled { background-color: var(--border-medium); cursor: not-allowed; }
+.post-comment-btn:not(:disabled):hover { background-color: var(--darkBlue); }
+.composer-hint { font-size: 11px; color: var(--text-muted); margin-top: 8px; text-align: center; }
 
-.metric-row:first-child {
-    padding-top: 0;
-}
-
-.metric-label {
-    font-size: 13px;
-    color: var(--text-primary);
-    font-weight: 600;
-    margin-bottom: 6px;
-}
-
-.metric-stars {
-    font-size: 16px;
-    letter-spacing: 2px;
-    color: var(--star-empty);
-}
-
-.metric-status {
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-top: 4px;
+@media (max-width: 980px) {
+    .container { flex-direction: column; }
+    .middle-panel, .right-panel { width: 100%; max-width: 100%; }
 }
 </style>
 </head>
 <body>
- <nav class="navbar">
-        <div class="nav-brand">
-                        <div class="header-icon">
+
+<nav class="navbar">
+    <div>
 <?xml version="1.0" encoding="UTF-8"?>
 <svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1850.98 303.08">
   <defs>
@@ -741,305 +371,335 @@ border-radius: var(--radius-pill);
     </g>
   </g>
 </svg>
-            </div>
         </div>
-    </nav>
+
+        <span class="logo-tagline">Insights from the inside</span>
+    </div>
+</nav>
+
 <div class="container">
 
-    <!-- ===================== LEFT PANEL: PAST REVIEWS ===================== -->
-    <section class="left-panel">
-        <div class="panel-heading">Past reviews</div>
-        <div id="pastReviewsList"></div>
-    </section>
-
-    <!-- ===================== MIDDLE PANEL: COMPANY + GENERIC COMMENTS ===================== -->
+    <!-- ===================== MIDDLE PANEL: COMPANY + TABS ===================== -->
     <section class="middle-panel">
 
         <div class="company-header">
             <div class="company-logo" id="companyLogo">AC</div>
             <div>
                 <h2 id="companyName">Acme Corp</h2>
-                <p>Share your experience with this company below</p>
+                <p id="companyDesc">Manufacturing &amp; logistics · 500–1,000 employees</p>
             </div>
         </div>
 
-        <!-- COMMENTS -->
-        <div class="comments-container" id="commentsContainer">
+        <div class="tab-bar" id="tabBar"></div>
 
-            <div class="comments-toolbar">
-                <h5 id="commentsCount">0 comments</h5>
-                <select class="sort-select" id="sortSelect" onchange="renderComments()">
-                    <option value="newest">Newest first</option>
-                    <option value="oldest">Oldest first</option>
-                </select>
-            </div>
+        <div class="tab-panel" id="tabPanel"></div>
 
-            <div class="comment-composer">
-                <div class="comment-avatar blue">You</div>
-                <div class="composer-input-wrap">
-                    <textarea
-                        class="comment-input"
-                        id="commentInput"
-                        placeholder="Leave a comment about this company..."
-                        rows="1"
-                        oninput="autoGrow(this); toggleButton();"
-                        onkeydown="handleComposerKeydown(event)"
-                    ></textarea>
-                    <div class="composer-actions">
-                        <button class="post-comment-btn" id="postBtn" onclick="addComment()" disabled>Post</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="comments-list" id="commentsList"></div>
-
-        </div>
     </section>
 
-    <!-- ===================== RIGHT PANEL: RATING METRICS (BLANK) ===================== -->
+    <!-- ===================== RIGHT PANEL: RATINGS + LEAVE A REVIEW ===================== -->
     <section class="right-panel">
         <div class="panel-heading">Company ratings</div>
-        <div class="panel-subheading">Not yet rated</div>
-        <div class="ratings-card" id="ratingsCard"></div>
+
+        <div class="rating-summary">
+            <div class="rating-circle">
+                <div class="num" id="overallScore">–</div>
+                <div class="of5">out of 5</div>
+            </div>
+            <div class="rating-summary-text">Based on <span id="reviewCount">0</span> employee reviews across 5 key areas.</div>
+        </div>
+
+        <div class="categories-card" id="categoriesCard"></div>
+
+        <div class="composer-card">
+            <div class="composer-title">Leave a review</div>
+            <div class="star-picker" id="starPicker"></div>
+            <label class="field-label" for="prosInput">Pros</label>
+            <textarea class="composer-input" id="prosInput" placeholder="What worked well?" oninput="toggleSubmit()"></textarea>
+            <label class="field-label" for="consInput">Cons</label>
+            <textarea class="composer-input" id="consInput" placeholder="What could be better?" oninput="toggleSubmit()"></textarea>
+            <button class="post-comment-btn" id="submitBtn" onclick="submitReview()" disabled>Post review</button>
+            <div class="composer-hint">Your review appears at the top of the Reviews tab.</div>
+        </div>
     </section>
 
 </div>
+
 <script>
 
-    /* =====================
-        PAST REVIEWS DATA (left panel)
-        Static, read-only list of prior reviews left about the company.
-    ===================== */
-    const pastReviews = [
-        {
-            name: "Jordan Lee",
-            rating: 4,
-            date: "12 Jul 2026",
-            text: "Solid service overall, delivery was a little later than promised."
-        },
-        {
-            name: "Priya Nair",
-            rating: 5,
-            date: "3 Jun 2026",
-            text: "Really happy with how responsive the support team was."
-        },
-        {
-            name: "Sam Okafor",
-            rating: 3,
-            date: "22 May 2026",
-            text: "Good value, but the onboarding process could be clearer."
-        },
-        {
-            name: "Alex Morgan",
-            rating: 4,
-            date: "9 Apr 2026",
-            text: "Reliable so far, would recommend to a small business."
-        }
-    ];
+/* =====================================================
+   DATA — everything below is the single source of truth.
+   Edit these arrays/objects to change what's on the page;
+   every render function reads from here, nothing is hard-coded
+   into the markup.
+===================================================== */
 
-    function starString(rating) {
-        let out = "";
-        for (let i = 1; i <= 5; i++) {
-            out += `<span class="${i <= rating ? "filled" : "empty"}">★</span>`;
-        }
-        return out;
+const ratingCategories = [
+    { label: "Management",         score: 3.6 },
+    { label: "Culture",            score: 3.9 },
+    { label: "Work-life balance",  score: 3.2 },
+    { label: "Compensation",       score: 3.4 },
+    { label: "Career growth",      score: 2.9 }
+];
+
+const jobs = [
+    { title: "Senior Software Engineer", location: "Sydney, AU · Full-time", posted: "3d ago" },
+    { title: "Product Designer",         location: "Remote · Full-time",     posted: "1w ago" },
+    { title: "Customer Success Manager", location: "Melbourne, AU · Full-time", posted: "2w ago" }
+];
+
+const salaries = [
+    { role: "Software Engineer",  range: "$110k – $145k" },
+    { role: "Product Manager",    range: "$130k – $165k" },
+    { role: "Customer Support",   range: "$65k – $80k" }
+];
+
+const benefits = [
+    "Private health insurance", "Remote-friendly", "Annual learning budget",
+    "Paid parental leave", "Stock options", "Wellness stipend"
+];
+
+const culture = [
+    "Employees describe a collaborative, low-ego environment where feedback flows in both directions.",
+    "Leadership runs quarterly town halls and shares roadmap decisions openly.",
+    "Some reviewers note that rapid growth has made processes feel inconsistent across teams."
+];
+
+const photos = [
+    { label: "Sydney office", color: "#4353A3" },
+    { label: "Team offsite",  color: "#5DC8B9" },
+    { label: "Melbourne HQ",  color: "#AF4510" }
+];
+
+// Employee review feed — data-driven, newest posted reviews are unshifted
+// onto the front of this array so they render at the top. The overall
+// rating (right panel) is derived live from this array every time it changes.
+let reviews = [
+    { id: 1, name: "Former Engineer",  initials: "JL", avatarStyle: "teal", rating: 5,
+      pros: "Great company to deal with, really enjoyed working with them!", cons: "",
+      timestamp: new Date("2026-08-09T08:03:00"), liked: false },
+    { id: 2, name: "Anonymous",        initials: "AU", avatarStyle: "blue", rating: 2,
+      pros: "The company culture seemed genuinely nice.",
+      cons: "The role didn't align with how it was presented during hiring — frustrating experience overall.",
+      timestamp: new Date("2026-08-08T10:42:00"), liked: false },
+    { id: 3, name: "Current Employee", initials: "SO", avatarStyle: "teal", rating: 4,
+      pros: "Really enjoyed my time here, found the leadership approachable and transparent.", cons: "Onboarding could be faster.",
+      timestamp: new Date("2026-08-08T09:15:00"), liked: false }
+];
+let nextId = reviews.length + 1;
+
+const tabs = [
+    { key: "reviews",  label: "Reviews"  },
+    { key: "jobs",     label: "Jobs"     },
+    { key: "salaries", label: "Salaries" },
+    { key: "benefits", label: "Benefits" },
+    { key: "culture",  label: "Culture"  },
+    { key: "photos",   label: "Photos"   }
+];
+let activeTab = "reviews";
+let selectedStars = 0;
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+function starString(rating, cls) {
+    let out = "";
+    for (let i = 1; i <= 5; i++) {
+        out += `<span class="${i <= Math.round(rating) ? "filled" : "empty"}">★</span>`;
     }
+    return `<span class="${cls || ""}">${out}</span>`;
+}
 
-    function renderPastReviews() {
-        const list = document.getElementById("pastReviewsList");
-        list.innerHTML = pastReviews.map(r => `
-            <div class="review-card">
-                <div class="review-card-head">
-                    <div>
-                        <div class="review-name">${escapeHtml(r.name)}</div>
-                        <div class="review-date">${escapeHtml(r.date)}</div>
+function formatTimestamp(date) {
+    const diffMs = new Date() - date;
+    const diffMins = Math.round(diffMs / 60000);
+    const diffHours = Math.round(diffMs / 3600000);
+    const diffDays = Math.round(diffMs / 86400000);
+    if (diffMins < 1) return "Just now";
+    if (diffMins < 60) return diffMins + "m";
+    if (diffHours < 24) return diffHours + "h";
+    if (diffDays < 7) return diffDays + "d";
+    return date.toLocaleDateString(undefined, { day: "numeric", month: "short" });
+}
+
+/* =====================================================
+   RENDER — RATINGS (right panel)
+   overallAverage() is recomputed from the live `reviews` array
+   every time it's called, so the score always reflects the
+   current set of reviews, including any just submitted.
+===================================================== */
+function overallAverage() {
+    const catAvg = ratingCategories.reduce((s, c) => s + c.score, 0) / ratingCategories.length;
+    if (reviews.length === 0) return catAvg;
+    const reviewAvg = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
+    return (catAvg + reviewAvg) / 2;
+}
+
+function renderRatingSummary() {
+    document.getElementById("overallScore").textContent = overallAverage().toFixed(1);
+    document.getElementById("reviewCount").textContent = reviews.length;
+}
+
+function renderCategories() {
+    document.getElementById("categoriesCard").innerHTML = ratingCategories.map(c => `
+        <div class="category-row">
+            <div class="category-label">${escapeHtml(c.label)}</div>
+            <div class="category-stars">${starString(c.score)}</div>
+        </div>
+    `).join("");
+}
+
+function renderStarPicker() {
+    const picker = document.getElementById("starPicker");
+    picker.innerHTML = [1,2,3,4,5].map(i => `
+        <span class="${i <= selectedStars ? "selected" : ""}" onclick="setStars(${i})">★</span>
+    `).join("");
+}
+
+function setStars(n) {
+    selectedStars = n;
+    renderStarPicker();
+    toggleSubmit();
+}
+
+function toggleSubmit() {
+    const pros = document.getElementById("prosInput").value.trim();
+    const cons = document.getElementById("consInput").value.trim();
+    document.getElementById("submitBtn").disabled = !(selectedStars > 0 && (pros || cons));
+}
+
+function submitReview() {
+    const pros = document.getElementById("prosInput").value.trim();
+    const cons = document.getElementById("consInput").value.trim();
+    if (!(selectedStars > 0 && (pros || cons))) return;
+
+    // New reviews go to the front of the array so they appear
+    // at the top of the feed — nothing about the render logic changes.
+    reviews.unshift({
+        id: nextId++,
+        name: "You",
+        initials: "You",
+        avatarStyle: "blue",
+        rating: selectedStars,
+        pros, cons,
+        timestamp: new Date(),
+        liked: false
+    });
+
+    document.getElementById("prosInput").value = "";
+    document.getElementById("consInput").value = "";
+    selectedStars = 0;
+    renderStarPicker();
+    toggleSubmit();
+
+    // Re-derive and re-render the overall rating immediately so it
+    // reflects the review that was just added.
+    renderRatingSummary();
+
+    activeTab = "reviews";
+    renderTabBar();
+    renderTabPanel();
+}
+
+function likeReview(id) {
+    const r = reviews.find(r => r.id === id);
+    if (!r) return;
+    r.liked = !r.liked;
+    renderTabPanel();
+}
+
+/* =====================================================
+   RENDER — TAB BAR + TAB CONTENT (middle panel)
+===================================================== */
+function renderTabBar() {
+    document.getElementById("tabBar").innerHTML = tabs.map(t => `
+        <button class="tab-btn ${t.key === activeTab ? "active" : ""}" onclick="switchTab('${t.key}')">${escapeHtml(t.label)}</button>
+    `).join("");
+}
+
+function switchTab(key) {
+    activeTab = key;
+    renderTabBar();
+    renderTabPanel();
+}
+
+function renderTabPanel() {
+    const panel = document.getElementById("tabPanel");
+    panel.innerHTML = tabContent[activeTab]();
+}
+
+const tabContent = {
+    reviews: () => {
+        if (reviews.length === 0) return `<div class="empty-state">No reviews yet. Be the first to leave one.</div>`;
+        return `<div class="reviews-list">${reviews.map(r => `
+            <div class="feed-review">
+                <div class="avatar ${r.avatarStyle}">${escapeHtml(r.initials)}</div>
+                <div class="feed-body">
+                    <div class="feed-top">
+                        <div class="feed-name">${escapeHtml(r.name)}</div>
+                        <div class="feed-time">${formatTimestamp(r.timestamp)}</div>
                     </div>
-                    <div class="review-stars">${starString(r.rating)}</div>
+                    <div class="feed-stars">${starString(r.rating)}</div>
+                    ${r.pros ? `<div class="feed-line feed-pros"><span class="tag">Pros:</span> ${escapeHtml(r.pros)}</div>` : ""}
+                    ${r.cons ? `<div class="feed-line feed-cons"><span class="tag">Cons:</span> ${escapeHtml(r.cons)}</div>` : ""}
+                    <div class="feed-meta">
+                        <span class="${r.liked ? "liked" : ""}" onclick="likeReview(${r.id})">${r.liked ? "Liked" : "Like"}</span>
+                    </div>
                 </div>
-                <div class="review-text">${escapeHtml(r.text)}</div>
             </div>
-        `).join("");
-    }
-
-    /* =====================
-        RATING METRICS DATA (right panel)
-        Four key metrics the company is rated on. Values are intentionally
-        left blank (no score / empty stars) until real rating data exists.
-    ===================== */
-    const ratingMetrics = [
-        { label: "Communication" },
-        { label: "Value for money" },
-        { label: "Reliability" },
-        { label: "Overall satisfaction" }
-    ];
-
-    function renderRatingMetrics() {
-        const card = document.getElementById("ratingsCard");
-        card.innerHTML = ratingMetrics.map(m => `
-            <div class="metric-row">
-                <div class="metric-label">${escapeHtml(m.label)}</div>
-                <div class="metric-stars">★★★★★</div>
-                <div class="metric-status">No ratings yet</div>
-            </div>
-        `).join("");
-    }
-
-    /* =====================
-        COMMENT DATA
-        Reorderable array: change `order` (or just splice/sort this
-        array) to control render order. renderComments() always
-        rebuilds the DOM from this array, so it's the single
-        source of truth.
-    ===================== */
-    let comments = [
-        {
-            id: 1,
-            name: " ",
-            initials: "JL",
-            avatarStyle: "teal",
-            text: "Great company to deal with, really enjoyed working with them!",
-            timestamp: new Date("2026-08-08T09:15:00"),
-            liked: false
-        },
-        {
-            id: 2,
-            name: " ",
-            initials: "AU",
-            avatarStyle: "blue",
-            text: "I didn't spend long at this company. I felt the role didn't align with how it was presented to be during the hiring phase, and while the company seemed nice the role wasn't something I was actually interested in. Frustrating experience.",
-            timestamp: new Date("2026-08-08T10:42:00"),
-            liked: false
-        },
-        {
-            id: 3,
-            name: " ",
-            initials: "SO",
-            avatarStyle: "teal",
-            text: "Really enjoyed my time here, found the leadership ",
-            timestamp: new Date("2026-08-09T08:03:00"),
-            liked: false
-        }
-    ];
-
-    let nextId = comments.length + 1;
-
-    function escapeHtml(str) {
-        const div = document.createElement("div");
-        div.textContent = str;
-        return div.innerHTML;
-    }
-
-    function formatTimestamp(date) {
-        const now = new Date();
-        const diffMs = now - date;
-        const diffMins = Math.round(diffMs / 60000);
-        const diffHours = Math.round(diffMs / 3600000);
-        const diffDays = Math.round(diffMs / 86400000);
-
-        if (diffMins < 1) return "Just now";
-        if (diffMins < 60) return diffMins + "m";
-        if (diffHours < 24) return diffHours + "h";
-        if (diffDays < 7) return diffDays + "d";
-        return date.toLocaleDateString(undefined, { day: "numeric", month: "short" });
-    }
-
-    function renderComments() {
-        const list = document.getElementById("commentsList");
-        const countEl = document.getElementById("commentsCount");
-        const sortOrder = document.getElementById("sortSelect").value;
-
-        // Reorder without mutating the underlying data array's stored order
-        const ordered = [...comments].sort((a, b) => {
-            return sortOrder === "newest"
-                ? b.timestamp - a.timestamp
-                : a.timestamp - b.timestamp;
-        });
-
-        countEl.textContent = comments.length === 1
-            ? "1 comment"
-            : comments.length + " comments";
-
-        if (ordered.length === 0) {
-            list.innerHTML = '<p class="comments-empty">No comments yet. Be the first to comment.</p>';
-            return;
-        }
-
-        list.innerHTML = ordered.map(c => `
-            <div class="comment-box" data-id="${c.id}">
-                <div class="comment-avatar ${c.avatarStyle}">${escapeHtml(c.initials)}</div>
-                <div class="comment-body">
-                    <div class="comment-bubble">
-                        <div class="comment-name">${escapeHtml(c.name)}</div>
-                        <div class="comment-text">${escapeHtml(c.text)}</div>
-                    </div>
-                    <div class="comment-meta">
-                        <span>${formatTimestamp(c.timestamp)}</span>
-                        <span class="like-btn${c.liked ? " liked" : ""}" onclick="likeComment(${c.id})">${c.liked ? "Liked" : "Like"}</span>
-                    </div>
+        `).join("")}</div>`;
+    },
+    jobs: () => {
+        if (jobs.length === 0) return `<div class="empty-state">No open roles listed yet.</div>`;
+        return jobs.map(j => `
+            <div class="simple-row">
+                <div>
+                    <div class="simple-row-title">${escapeHtml(j.title)}</div>
+                    <div class="simple-row-sub">${escapeHtml(j.location)}</div>
                 </div>
+                <div class="simple-row-value">${escapeHtml(j.posted)}</div>
             </div>
         `).join("");
+    },
+    salaries: () => {
+        if (salaries.length === 0) return `<div class="empty-state">No salary data yet.</div>`;
+        return salaries.map(s => `
+            <div class="simple-row">
+                <div class="simple-row-title">${escapeHtml(s.role)}</div>
+                <div class="simple-row-value">${escapeHtml(s.range)}</div>
+            </div>
+        `).join("");
+    },
+    benefits: () => {
+        if (benefits.length === 0) return `<div class="empty-state">No benefits listed yet.</div>`;
+        return `<div class="pill-list">${benefits.map(b => `<span>${escapeHtml(b)}</span>`).join("")}</div>`;
+    },
+    culture: () => {
+        if (culture.length === 0) return `<div class="empty-state">No culture notes yet.</div>`;
+        return culture.map(p => `<div class="culture-para">${escapeHtml(p)}</div>`).join("");
+    },
+    photos: () => {
+        if (photos.length === 0) return `<div class="empty-state">No photos yet.</div>`;
+        return `<div class="photo-grid">${photos.map(p => `
+            <div class="photo-tile" style="background-color:${p.color}">${escapeHtml(p.label)}</div>
+        `).join("")}</div>`;
     }
+};
 
-    function addComment() {
-        const input = document.getElementById("commentInput");
-        const text = input.value.trim();
-        if (!text) return;
-
-        // New comments are pushed into the data array; renderComments()
-        // handles putting them in the right visual position per the
-        // current sort order.
-        comments.push({
-            id: nextId++,
-            name: "You",
-            initials: "You",
-            avatarStyle: "blue",
-            text: text,
-            timestamp: new Date(),
-            liked: false
-        });
-
-        input.value = "";
-        autoGrow(input);
-        toggleButton();
-
-        // Make sure the newly added comment is visible
-        document.getElementById("sortSelect").value = "newest";
-        renderComments();
-    }
-
-    function likeComment(id) {
-        const comment = comments.find(c => c.id === id);
-        if (!comment) return;
-        comment.liked = !comment.liked;
-        renderComments();
-    }
-
-    function focusComposer() {
-        document.getElementById("commentInput").focus();
-    }
-
-    function autoGrow(el) {
-        el.style.height = "auto";
-        el.style.height = el.scrollHeight + "px";
-    }
-
-    function toggleButton() {
-        const input = document.getElementById("commentInput");
-        const btn = document.getElementById("postBtn");
-        btn.disabled = input.value.trim().length === 0;
-    }
-
-    function handleComposerKeydown(event) {
-        if (event.key === "Enter" && !event.shiftKey) {
-            event.preventDefault();
-            addComment();
-        }
-    }
-
-    renderPastReviews();
-    renderRatingMetrics();
-    renderComments();
+/* =====================================================
+   INIT
+===================================================== */
+renderRatingSummary();
+renderCategories();
+renderStarPicker();
+renderTabBar();
+renderTabPanel();
 
 </script>
 </body>

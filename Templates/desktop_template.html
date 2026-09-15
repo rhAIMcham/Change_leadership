@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Workspace simulation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* =====================
+    COLOUR TOKENS
+===================== */
+:root {
+  --AIMblue: #4353A3;
+  --darkBlue: #38416D;
+  --teal: #5DC8B9;
+  --cream: #F1EEDE;
+  --rust: #AF4510;
+  --navy: #12195C;
+  --white: #ffffff;
+  --lightBlue: #AEBAE4;
+
+  --bg-app:          #f0ede8;
+  --bg-sidebar:      #e8e4de;
+  --bg-activity-pane:#454545;
+  --bg-panel:        #ffffff;
+  --bg-message-head: #f5f3f0;
+  --bg-private-tag:  #fff0ee;
+  --bg-unread-dot:   #378add;
+  --bg-selected-row: #e6f1fb;
+  --bg-badge:        #d85a30;
+  --bg-input:        #f5f3f0;
+  --bg-secondary:    #f5f5f5;
+  --bg-primary:      #ffffff;
+  --chat-bg:         #ffffff;
+  --channel-bg:      #252538;
+
+  --text-primary:    #1a1a1a;
+  --text-secondary:  #555;
+  --text-muted:      #999994;
+  --text-private:    #993c1d;
+  --text-badge:      #ffffff;
+
+  --border-subtle:   #dedad3;
+  --border-medium:   #ccc8c0;
+  --border:          rgba(0,0,0,0.1);
+
+  --purple-mid:  #6264A7;
+  --purple-light:#9EA2D4;
+
+  --radius-sm:  6px;
+  --radius-md:  8px;
+  --radius-lg:  12px;
+  --radius-pill:99px;
+
+  --online: #6EBB8A;
+  --away:   #F4A540;
+  --busy:   #E04D4D;
+}
+
+body { font-family: 'Inter', sans-serif; }
+
+.workspace { max-width: 1300px; margin: auto; }
+
+.laptopScreen {
+  border-radius: 8px;
+  border: solid 3px rgba(0, 0, 0, 0.376);
+  box-shadow: -1px 3px 18px 0px rgba(0,0,0,0.75);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.desktop {
+  border: solid grey 2px;
+  background-image: url('https://s3.ap-southeast-2.amazonaws.com/learn.aim.com.au/Guided+Pathways/New+Leader/desktop_background.jpg');
+  min-height: 800px;
+  border-radius: 6px;
+  background-size: 120%;
+}
+
+svg { fill: white; cursor: pointer; transition: 300ms ease; width: 30px; margin: 5px; }
+svg:hover { fill: var(--teal); }
+
+.topBarDesktop {
+  display: flex;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  justify-content: space-evenly;
+  margin-bottom: 50px;
+}
+
+/* ── LOCK OVERLAY ── */
+.lock-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  transition: opacity 0.5s ease;
+  background: rgba(0, 0, 0, 0.15);
+}
+.lock-overlay.hidden { opacity: 0; }
+.lock-blur {
+  position: absolute; inset: 0;
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  background: rgba(10, 10, 20, 0.35);
+  border-radius: 6px;
+}
+.lock-content { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.lock-time { color: #fff; font-size: 52px; font-weight: 300; letter-spacing: -1px; text-shadow: 0 2px 16px rgba(0,0,0,0.4); }
+.lock-date { color: rgba(255,255,255,0.75); font-size: 15px; }
+.lock-btn {
+  margin-top: 8px; width: 56px; height: 56px; border-radius: 50%;
+  background: rgba(255,255,255,0.18); border: 1.5px solid rgba(255,255,255,0.45);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background 0.2s, transform 0.15s; color: #fff;
+}
+.lock-btn:hover { background: rgba(255,255,255,0.3); transform: scale(1.06); }
+.lock-hint { color: rgba(255,255,255,0.55); font-size: 12px; }
+#lockOpen { display: none; }
+
+/* ── WORK ZONES ── */
+#work1, #work2, #work3 { position: relative; display: block; }
+
+.hideMe {
+  opacity: 0; position: relative; left: 20px; bottom: 30px;
+  transition: opacity 0.5s ease; z-index: 999; overflow: hidden;
+}
+.emailAppear { opacity: 1; position: relative; left: 20px; bottom: 30px; transition: opacity 0.5s ease; z-index: 999; }
+
+.emailAlert {
+  position: absolute; width: 300px; min-height: 100px; z-index: 999; cursor: pointer;
+  background: rgba(255,255,255,0.5); border-radius: 4px;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+  backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 15px; text-align: center; line-height: 2.5; right: 40px;
+}
+
+.username { text-transform: capitalize; }
+
+.workArea1 { color: white; font-size: 4rem; }
+.workArea2 { font-size: 14px; color: var(--text-primary); display: flex; align-items: center; justify-content: center; }
+.workArea3 { font-size: 14px; display: flex; align-items: center; justify-content: center; padding: 20px; }
+
+/* =====================
+    MAIL APP
+===================== */
+.mail-app {
+  display: flex; width: 900px; height: 580px;
+  border: 1px solid var(--border-medium);
+  background: var(--bg-panel);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+
+.sidebar {
+  width: 100px; flex-shrink: 0; background: var(--bg-sidebar);
+  border-right: 1px solid var(--border-subtle);
+  padding: 16px 0; display: flex; flex-direction: column;
+}
+.sidebar-title { font-size: 16px; font-weight: 600; padding: 0 16px 14px; color: var(--text-primary); }
+.sidebar-item {
+  display: flex; align-items: center; gap: 10px; padding: 7px 16px;
+  font-size: 13px; color: var(--text-secondary); cursor: pointer; user-select: none;
+}
+.sidebar-item.active { background: var(--bg-panel); color: var(--text-primary); font-weight: 600; }
+.sidebar-icon { font-size: 15px; width: 16px; text-align: center; }
+.sidebar-badge {
+  margin-left: auto; background: var(--bg-badge); color: var(--text-badge);
+  font-size: 11px; font-weight: 600; padding: 1px 6px; border-radius: var(--radius-pill);
+}
+
+.emailInboxThread { display: flex; min-width: 0; flex: 1; }
+
+.inbox-list {
+  width: 260px; flex-shrink: 0;
+  border-right: 1px solid var(--border-subtle);
+  overflow-y: auto; background: var(--bg-panel);
+}
+.inbox-toolbar {
+  display: flex; align-items: center; padding: 12px 14px;
+  border-bottom: 1px solid var(--border-subtle); gap: 8px;
+}
+.inbox-toolbar-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.inbox-toolbar-count { font-size: 12px; color: var(--text-muted); margin-left: auto; }
+
+.email-row { padding: 11px 14px; border-bottom: 1px solid var(--border-subtle); cursor: pointer; opacity: 0.8; }
+.email-row.selected { background: var(--bg-selected-row); opacity: 1; }
+.email-row-top { display: flex; align-items: flex-start; gap: 5px; margin-bottom: 3px; }
+.unread-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--bg-unread-dot); flex-shrink: 0; margin-top: 4px; }
+.email-sender { flex: 1; font-size: 13px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.email-time { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+.email-subject { font-size: 12px; color: var(--text-primary); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.email-preview { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.thread-count-pill {
+  display: inline-block; font-size: 10px; color: var(--text-muted);
+  background: var(--bg-message-head); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill); padding: 0 5px; margin-left: 4px; vertical-align: middle;
+}
+
+.thread-pane { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg-panel); min-width: 0; }
+.thread-header { padding: 14px 20px 12px; border-bottom: 1px solid var(--border-subtle); }
+.thread-subject { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+.thread-meta { display: flex; align-items: center; gap: 6px; }
+
+.tag { font-size: 11px; padding: 2px 8px; border-radius: var(--radius-pill); }
+.tag-inbox { background: var(--bg-message-head); color: var(--text-secondary); border: 1px solid var(--border-subtle); }
+.tag-private { background: var(--bg-private-tag); color: var(--text-private); }
+
+.thread-actions { margin-left: auto; display: flex; gap: 6px; }
+
+.btn {
+  background: var(--bg-message-head); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md); padding: 4px 12px; font-size: 12px;
+  color: var(--text-secondary); cursor: pointer; font-family: inherit;
+}
+.btn:hover { border-color: black; }
+.btn:focus-visible { outline: 2px solid var(--AIMblue); outline-offset: 2px; }
+
+.thread-body { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; }
+
+.message-card { border: 1px solid var(--border-subtle); }
+.message-header {
+  display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+  background: var(--bg-message-head); border-bottom: 1px solid var(--border-subtle);
+}
+.avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0; cursor: pointer;
+}
+.avatar.no-card { cursor: default; }
+.message-from { flex: 1; }
+.message-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.message-name-to { font-size: 11px; font-weight: 400; color: var(--text-muted); }
+.message-address { font-size: 11px; color: var(--text-muted); }
+.message-time { font-size: 11px; color: var(--text-muted); margin-left: 6px; }
+.message-body { padding: 12px 14px; font-size: 13px; color: var(--text-primary); line-height: 1.65; }
+.message-body p + p, .message-body ul + p { margin-top: 8px; }
+.message-body ul, .message-body ol { margin: 8px 0 0 20px; }
+
+/* ── COMPOSE ── */
+.compose-bar { display: flex; gap: 8px; align-items: center; padding: 0 0 10px; }
+.compose-input {
+  flex: 1; padding: 8px 12px; font-size: 13px; font-family: inherit;
+  background: var(--bg-input); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md); color: var(--text-primary); outline: none;
+  min-height: 220px; resize: vertical;
+}
+.compose-input:focus { border-color: var(--border-medium); }
+.compose-send {
+  padding: 8px 16px; font-size: 13px; background: var(--navy); color: #fff;
+  border: none; border-radius: var(--radius-md); cursor: pointer; font-family: inherit;
+}
+.compose-send:hover { opacity: 0.85; }
+.compose-send.sent { background-color: var(--text-muted); cursor: not-allowed; }
+
+/* ── PROFILE CARDS ── */
+.messageHidden { display: none; }
+.messageRevealed {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  position: absolute; width: 550px; min-height: 250px; display: block; z-index: 50;
+}
+.topBar { display: flex; justify-content: space-between; border-bottom: solid 1px var(--border-subtle); }
+.keyPoints { margin: 15px; padding: 10px; }
+.imageContainer { display: flex; align-items: center; justify-content: center; padding: 20px; }
+.imageContainer .avatar { width: 64px; height: 64px; font-size: 18px; cursor: default; }
+.description { flex: 2; margin: 10px; padding: 10px; }
+.description > p { margin: 5px; }
+
+/* ── PULSE ── */
+.pulse-btn, .pulse-alert {
+  background-color: var(--navy); color: white; border: none;
+  border-radius: 4px; cursor: pointer; animation: pulse-border 2s infinite;
+}
+.pulse-btn:hover, .pulse-alert:hover { color: var(--navy); background-color: var(--lightBlue); }
+
+@keyframes pulse-border {
+  0%   { box-shadow: 0 0 0 0 #12195C70; }
+  70%  { box-shadow: 0 0 0 15px #12195C00; }
+  100% { box-shadow: 0 0 0 0 #12195C00; }
+}
+
+textarea { font-family: 'Inter', sans-serif; }
+
+/* =====================
+    CHAT APP
+===================== */
+.teams-app {
+  display: flex; width: 960px; height: 600px; overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.18); background: var(--bg-panel);
+}
+
+.activity-bar {
+  width: 65px; flex-shrink: 0; background: var(--bg-activity-pane);
+  display: flex; flex-direction: column; align-items: center; padding: 8px 0; gap: 2px;
+}
+.activity-bar-top { display: flex; flex-direction: column; align-items: center; gap: 15px; flex: 1; margin-top: 15px; }
+.activity-icon {
+  width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+  border-radius: 8px; cursor: pointer; color: rgba(255,255,255,0.55); font-size: 18px;
+  position: relative; transition: background 0.15s, color 0.15s;
+}
+.activity-icon:hover, .activity-icon.active { background: rgba(255,255,255,0.13); color: #fff; }
+
+.left-sidebar {
+  color: black; width: 210px; flex-shrink: 0; background: var(--bg-app);
+  display: flex; flex-direction: column; overflow: hidden;
+  border-right: 1px solid rgba(255,255,255,0.05);
+}
+.sidebar-header { padding: 14px 12px 8px; display: flex; align-items: center; gap: 8px; }
+.sidebar-header-title { font-size: 1.4rem; font-weight: 600; flex: 1; }
+
+.dm-item {
+  display: flex; align-items: center; gap: 8px; padding: 8px 12px; cursor: pointer;
+  border-radius: 5px; margin: 1px 5px; transition: background 0.1s;
+}
+.dm-item:hover { color: var(--AIMblue); }
+.dm-item.active { background: white; }
+.dm-avatar {
+  width: 24px; height: 24px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700; flex-shrink: 0; position: relative;
+}
+.dm-avatar > svg { fill: black; width: 14px; margin: 0; }
+.status-dot { position: absolute; bottom: -1px; right: -1px; width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid var(--channel-bg); }
+.status-online { background: var(--online); }
+.status-away   { background: var(--away); }
+.status-busy   { background: var(--busy); }
+.dm-name { font-size: 12px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dm-item.active .dm-name { color: var(--navy); }
+.dm-item:hover .dm-name { color: var(--AIMblue); }
+
+.chat-pane { flex: 1; display: flex; flex-direction: column; background: var(--chat-bg); min-width: 0; }
+.chat-header {
+  padding: 10px 16px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px; background: var(--bg-message-head);
+}
+.chat-header-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+.chat-header-name { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+.chat-header-desc { font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.chat-body { flex: 1; overflow-y: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 2px; }
+.date-divider { display: flex; align-items: center; gap: 8px; margin: 10px 0; font-size: 11px; color: var(--text-muted); }
+.date-divider::before, .date-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.chat-group { display: flex; gap: 10px; padding: 3px 0; align-items: flex-start; border-radius: 6px; }
+.chat-group:hover { background: var(--bg-secondary); margin: 0 -8px; padding: 3px 8px; }
+.chat-avatar {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; margin-top: 2px;
+  display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;
+}
+.chat-content { flex: 1; min-width: 0; }
+.chat-meta { display: flex; align-items: baseline; gap: 8px; margin-bottom: 2px; }
+.chat-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.chat-time { font-size: 11px; color: var(--text-muted); }
+.chat-text { font-size: 13px; color: var(--text-primary); line-height: 1.55; }
+.chat-text p + p { margin-top: 4px; }
+
+/* ── AVATAR COLOURS ── */
+.av-blue   { background: #B5D4F4; color: #0C447C; }
+.av-teal   { background: #9FE1CB; color: #085041; }
+.av-coral  { background: #F5C4B3; color: #712B13; }
+.av-purple { background: #9EA2D4; color: #3C3489; }
+.av-navy   { background: var(--navy); color: #fff; }
+
+/* ── CALLS / CONTACTS ── */
+.pane-header { padding: 10px 16px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; gap: 10px; background: var(--bg-message-head); }
+.pane-header-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.pane-header-desc { font-size: 12px; color: var(--text-muted); }
+.pane-body { flex: 1; overflow-y: auto; }
+
+.no-calls { display: flex; justify-content: space-around; margin: 20px; color: var(--text-muted); font-size: 12px; }
+
+.search-bar { padding: 10px 16px; border-bottom: 1px solid var(--border-subtle); }
+.search-input {
+  width: 100%; background: #f0ede8; border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 6px; padding: 6px 10px; font-size: 13px; outline: none;
+  font-family: inherit; color: var(--text-primary);
+}
+.contact-group-label {
+  padding: 8px 16px 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+  text-transform: uppercase; color: var(--text-muted); background: #faf9f7;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+.contact-item { display: flex; align-items: center; gap: 12px; padding: 9px 16px; border-bottom: 1px solid rgba(0,0,0,0.04); cursor: pointer; }
+.contact-item:hover { background: #f5f3f0; }
+.contact-avatar {
+  width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; position: relative;
+}
+.contact-info { flex: 1; min-width: 0; }
+.contact-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.contact-role { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+#chatSection { display: flex; width: 895px; }
+#phoneSection { display: none; width: 895px; }
+
+@media only screen and (max-width: 767px) {
+  .workspace { width: auto; }
+  .desktop { background-size: 500%; }
+  .mail-app { margin: auto 40px; height: 90%; flex-direction: column; }
+  .chat-header-desc { text-wrap: wrap; }
+  .inbox-list { width: auto; max-height: 200px; }
+  .sidebar { width: auto; flex-direction: row; }
+  .sidebar-item { display: none; }
+  .sidebar-item.active { display: flex !important; }
+  .emailInboxThread { flex-direction: column; }
+  .thread-body { overflow-x: hidden; }
+  .thread-pane { max-height: 500px; }
+  .messageRevealed { width: auto; }
+  .teams-app { flex-direction: column; height: auto; width: 100%; max-width: 100%; }
+  .activity-bar { width: auto; flex-direction: row; }
+  .activity-bar-top { flex-direction: row; justify-content: space-around; margin: 0; }
+  #chatSection, #phoneSection { width: 100%; }
+  .left-sidebar { width: 80px; flex-direction: column; }
+  .dm-item { flex-direction: column; }
+  .chat-pane { width: auto; overflow: auto; }
+  .chat-body { max-height: 300px; overflow-x: hidden; }
+}
+</style>
+</head>
+<body>
+<div class="workspace">
+  <div class="laptopScreen">
+
+    <!-- ── LOCK SCREEN ── -->
+    <div class="lock-overlay" id="lockOverlay">
+      <div class="lock-blur"></div>
+      <div class="lock-content">
+        <div class="lock-time" id="lockTime">12:15</div>
+        <div class="lock-date" id="lockDate">Wednesday</div>
+        <button class="lock-btn" id="unlockBtn" aria-label="Unlock desktop">
+          <svg id="lockClosed" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><defs><style>.fa-secondary{opacity:.4}</style></defs><path d="M152 225H72v-72C72 69.2 140.2 1 224 1s152 68.2 152 152v72h-80v-72a72 72 0 0 0-144 0z" class="fa-secondary"/><path d="M400 225H48a48 48 0 0 0-48 48v192a48 48 0 0 0 48 48h352a48 48 0 0 0 48-48V273a48 48 0 0 0-48-48zM264 392a40 40 0 0 1-80 0v-48a40 40 0 0 1 80 0z" class="fa-primary"/></svg>
+          <svg id="lockOpen" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><defs><style>.fa-secondary{opacity:.4}</style></defs><path d="M576 152v80a23.94 23.94 0 0 1-24 24h-32a23.94 23.94 0 0 1-24-24v-80a72.11 72.11 0 0 0-72.7-72c-39.6.4-71.3 33.3-71.3 72.9V224h-80v-70.5C272 69.5 339.5.3 423.5 0S576 68 576 152z" class="fa-secondary"/><path d="M400 224H48a48 48 0 0 0-48 48v192a48 48 0 0 0 48 48h352a48 48 0 0 0 48-48V272a48 48 0 0 0-48-48zM264 392a40 40 0 0 1-80 0v-48a40 40 0 0 1 80 0z" class="fa-primary"/></svg>
+        </button>
+        <div class="lock-hint">click to unlock</div>
+      </div>
+    </div>
+
+    <!-- ── DESKTOP ── -->
+    <div class="desktop">
+      <div class="topBarDesktop">
+        <a class="topBarIcon home" onclick="openApps(1)" tabindex="0" role="button" aria-label="Desktop">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><defs><style>.fa-secondary{opacity:.4}</style></defs><path d="M496 512H368a16 16 0 0 1-16-16V368a16 16 0 0 0-16-16h-96a16 16 0 0 0-16 16v128a16 16 0 0 1-16 16H80a16 16 0 0 1-16-16V311c1.78-1.21 3.85-1.89 5.47-3.35L288 115l218.74 192.9c1.54 1.38 3.56 2 5.26 3.2V496a16 16 0 0 1-16 16z" class="fa-secondary"/><path d="M527.92 283.88L298.6 81.61a16 16 0 0 0-21.17 0L48.11 283.89a16 16 0 0 1-22.59-1.21L4.1 258.89a16 16 0 0 1 1.21-22.59l256-226a39.85 39.85 0 0 1 53.45 0L416 99.67V48a16 16 0 0 1 16-16h64a16 16 0 0 1 16 16v136.43l58.69 51.83a16 16 0 0 1 1.22 22.59l-21.4 23.82a16 16 0 0 1-22.59 1.21z" class="fa-primary"/></svg>
+        </a>
+        <a class="topBarIcon mail" onclick="openApps(2)" tabindex="0" role="button" aria-label="Mail">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><style>.fa-secondary{opacity:.4}</style></defs><path d="M256.47 352h-.94c-30.1 0-60.41-23.42-82.54-40.52C169.39 308.7 24.77 202.7 0 183.33V400a48 48 0 0 0 48 48h416a48 48 0 0 0 48-48V183.36c-24.46 19.17-169.4 125.34-173 128.12-22.12 17.1-52.43 40.52-82.53 40.52zM464 64H48a48 48 0 0 0-48 48v19a24.08 24.08 0 0 0 9.2 18.9c30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4 23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7A23.93 23.93 0 0 0 512 131v-19a48 48 0 0 0-48-48z" class="fa-secondary"/><path d="M512 131v52.36c-24.46 19.17-169.4 125.34-173 128.12-22.12 17.1-52.43 40.52-82.53 40.52h-.94c-30.1 0-60.41-23.42-82.54-40.52C169.39 308.7 24.77 202.7 0 183.33V131a24.08 24.08 0 0 0 9.2 18.9c30.6 23.9 40.7 32.4 173.4 128.7 16.69 12.12 49.75 41.4 72.93 41.4h.94c23.18 0 56.24-29.28 72.93-41.4 132.7-96.3 142.8-104.7 173.4-128.7A23.93 23.93 0 0 0 512 131z" class="fa-primary"/></svg>
+        </a>
+        <a class="topBarIcon teams" onclick="openApps(3)" tabindex="0" role="button" aria-label="Chat">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><defs><style>.fa-secondary{opacity:.4}</style></defs><path d="M448 384c-.1 16.4-13 32-32.1 32H32.08C13 416 .09 400.4 0 384a31.25 31.25 0 0 1 8.61-21.71c19.32-20.76 55.47-52 55.47-154.29 0-77.7 54.48-139.9 127.94-155.16V32a32 32 0 1 1 64 0v20.84C329.42 68.1 383.9 130.3 383.9 208c0 102.3 36.15 133.53 55.47 154.29A31.27 31.27 0 0 1 448 384z" class="fa-secondary"/><path d="M160 448h128a64 64 0 0 1-128 0z" class="fa-primary"/></svg>
+        </a>
+      </div>
+
+      <!-- ── NEW MAIL TOAST ── -->
+      <div id="emailAlert" class="hideMe" onclick="clickEmailAlert()" tabindex="0" role="button">
+        <div class="emailAlert pulse-alert">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><style>.fa-secondary{opacity:.4}</style></defs><path d="M256.47 352h-.94c-30.1 0-60.41-23.42-82.54-40.52C169.39 308.7 24.77 202.7 0 183.33V400a48 48 0 0 0 48 48h416a48 48 0 0 0 48-48V183.36c-24.46 19.17-169.4 125.34-173 128.12-22.12 17.1-52.43 40.52-82.53 40.52zM464 64H48a48 48 0 0 0-48 48v19a24.08 24.08 0 0 0 9.2 18.9c30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4 23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7A23.93 23.93 0 0 0 512 131v-19a48 48 0 0 0-48-48z" class="fa-secondary"/><path d="M512 131v52.36c-24.46 19.17-169.4 125.34-173 128.12-22.12 17.1-52.43 40.52-82.53 40.52h-.94c-30.1 0-60.41-23.42-82.54-40.52C169.39 308.7 24.77 202.7 0 183.33V131a24.08 24.08 0 0 0 9.2 18.9c30.6 23.9 40.7 32.4 173.4 128.7 16.69 12.12 49.75 41.4 72.93 41.4h.94c23.18 0 56.24-29.28 72.93-41.4 132.7-96.3 142.8-104.7 173.4-128.7A23.93 23.93 0 0 0 512 131z" class="fa-primary"/></svg>
+          <p>New Email</p>
+        </div>
+      </div>
+
+      <!-- ── WORK AREA 1: bare desktop ── -->
+      <div class="workArea1" id="work1"></div>
+
+      <!-- ── WORK AREA 2: mail ── -->
+      <div class="workArea2" id="work2">
+        <div class="mail-app">
+          <nav class="sidebar">
+            <div class="sidebar-title">Mail</div>
+            <div class="sidebar-item active"><span class="sidebar-icon">&#9711;</span> Inbox</div>
+            <div class="sidebar-item"><span class="sidebar-icon">&#10148;</span> Sent</div>
+            <div class="sidebar-item"><span class="sidebar-icon">&#9998;</span> Drafts</div>
+            <div class="sidebar-item"><span class="sidebar-icon">&#9707;</span> Archive</div>
+            <div class="sidebar-item"><span class="sidebar-icon">&#128465;</span> Trash</div>
+          </nav>
+
+          <div class="emailInboxThread">
+            <div class="inbox-list">
+              <div class="inbox-toolbar">
+                <span class="inbox-toolbar-title">Inbox</span>
+                <span class="inbox-toolbar-count" id="inboxCount"></span>
+              </div>
+              <div id="inboxRows"><!-- built by renderInbox() --></div>
+            </div>
+
+            <div class="thread-pane">
+              <div id="threadHeader"><!-- built by selectEmail() --></div>
+              <div id="threadBody" class="thread-body" tabindex="0"><!-- built by selectEmail() --></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="profileCards"><!-- built by renderProfileCards() --></div>
+      </div>
+
+      <!-- ── WORK AREA 3: chat / calls ── -->
+      <div class="workArea3" id="work3">
+        <div class="teams-app">
+          <div class="activity-bar">
+            <div class="activity-bar-top">
+              <div class="activity-icon active" title="Chat" onclick="setActive(this)" tabindex="0" role="button">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><style>.fa-secondary{opacity:.4}</style></defs><path d="M256 32C114.6 32 0 125.1 0 240c0 49.6 21.4 95 57 130.7C44.5 421.1 2.7 466 2.2 466.5a8 8 0 0 0-1.5 8.7A7.83 7.83 0 0 0 8 480c66.3 0 116-31.8 140.6-51.4A305 305 0 0 0 256 448c141.4 0 256-93.1 256-208S397.4 32 256 32zM128 272a32 32 0 1 1 32-32 32 32 0 0 1-32 32zm128 0a32 32 0 1 1 32-32 32 32 0 0 1-32 32zm128 0a32 32 0 1 1 32-32 32 32 0 0 1-32 32z" class="fa-secondary"/><path d="M128 208a32 32 0 1 0 32 32 32 32 0 0 0-32-32zm128 0a32 32 0 1 0 32 32 32 32 0 0 0-32-32zm128 0a32 32 0 1 0 32 32 32 32 0 0 0-32-32z" class="fa-primary"/></svg>
+              </div>
+              <div class="activity-icon" title="Calls" onclick="setActive(this)" tabindex="0" role="button">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><style>.fa-secondary{opacity:.4}</style></defs><path d="M336.23 167.12L406 4.43 389.41.61a24.16 24.16 0 0 0-27.5 13.9l-48 112a23.9 23.9 0 0 0 6.91 28zM154.6 320.71a24 24 0 0 0-28-6.91l-112 48a24.3 24.3 0 0 0-14 27.61l3.8 16.49 162.81-69.77zm338.81-296.1l-55.75-12.87L362 188.23l19.39 15.87A370.59 370.59 0 0 1 204.2 381.3l-15.88-19.4-176.6 75.69 12.89 55.82A24 24 0 0 0 48 512c256.1 0 464-207.49 464-464a24 24 0 0 0-18.59-23.39z" class="fa-secondary"/><path d="M406 4.43l-69.77 162.69L362 188.23l75.66-176.49zM4.41 405.9l7.31 31.69 176.6-75.69-21.1-25.77z" class="fa-primary"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div id="chatSection">
+            <div class="left-sidebar">
+              <div class="sidebar-header"><span class="sidebar-header-title">Chats</span></div>
+              <div id="dmList"><!-- built by renderDMs() --></div>
+            </div>
+
+            <div class="chat-pane">
+              <div class="chat-header">
+                <div class="chat-header-left">
+                  <span id="header-icon"></span>
+                  <div>
+                    <div class="chat-header-name" id="chat-title"></div>
+                    <div class="chat-header-desc" id="chat-desc"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="chat-body" id="chat-body"></div>
+            </div>
+          </div>
+
+          <div id="phoneSection">
+            <div class="left-sidebar">
+              <div class="sidebar-header"><span class="sidebar-header-title">Calls</span></div>
+              <div class="dm-item active" id="tab-calls" onclick="switchPhoneTab('calls', this)" tabindex="0" role="button">
+                <div class="dm-avatar av-blue">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><style>.fa-secondary{opacity:.4}</style></defs><path d="M256 240a72 72 0 1 0 72 72 72 72 0 0 0-72-72zm250.18-117C436.76 65 347.38 32 256 32S75.24 65 5.82 123A16.45 16.45 0 0 0 0 135.64V192a16 16 0 0 0 16 16h70.11a16 16 0 0 0 14.31-8.85L128 128c39.9-17.28 83.2-24 128-24 44.77 0 88.07 6.72 128 24l27.58 71.15a16 16 0 0 0 14.31 8.85H496a16 16 0 0 0 16-16v-56.36a16.45 16.45 0 0 0-5.82-12.64z" class="fa-secondary"/><path d="M475.78 376.62L370.43 192.25A64 64 0 0 0 314.86 160H197.14a64 64 0 0 0-55.57 32.25L36.22 376.62A32 32 0 0 0 32 392.5V448a32 32 0 0 0 32 32h384a32 32 0 0 0 32-32v-55.5a32 32 0 0 0-4.22-15.88zM256 384a72 72 0 1 1 72-72 72 72 0 0 1-72 72z" class="fa-primary"/></svg>
+                </div>
+                <span class="dm-name">Recent calls</span>
+              </div>
+              <div class="dm-item" id="tab-contacts" onclick="switchPhoneTab('contacts', this)" tabindex="0" role="button">
+                <div class="dm-avatar av-teal">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><defs><style>.fa-secondary{opacity:.4}</style></defs><path d="M96 224a64 64 0 1 0-64-64 64.06 64.06 0 0 0 64 64zm480 32h-64a63.81 63.81 0 0 0-45.1 18.6A146.27 146.27 0 0 1 542 384h66a32 32 0 0 0 32-32v-32a64.06 64.06 0 0 0-64-64zm-512 0a64.06 64.06 0 0 0-64 64v32a32 32 0 0 0 32 32h65.9a146.64 146.64 0 0 1 75.2-109.4A63.81 63.81 0 0 0 128 256zm480-32a64 64 0 1 0-64-64 64.06 64.06 0 0 0 64 64z" class="fa-secondary"/><path d="M396.8 288h-8.3a157.53 157.53 0 0 1-68.5 16c-24.6 0-47.6-6-68.5-16h-8.3A115.23 115.23 0 0 0 128 403.2V432a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48v-28.8A115.23 115.23 0 0 0 396.8 288zM320 256a112 112 0 1 0-112-112 111.94 111.94 0 0 0 112 112z" class="fa-primary"/></svg>
+                </div>
+                <span class="dm-name">Contacts</span>
+              </div>
+            </div>
+
+            <div class="chat-pane">
+              <div id="calls-pane">
+                <div class="pane-header">
+                  <div>
+                    <div class="pane-header-name">Recent calls</div>
+                    <div class="pane-header-desc">All calls — today and earlier</div>
+                  </div>
+                </div>
+                <div class="pane-body">
+                  <div class="no-calls"><p>No calls to display</p></div>
+                </div>
+              </div>
+
+              <div id="contacts-pane" style="display:none; flex-direction:column; height:100%;">
+                <div class="pane-header">
+                  <div>
+                    <div class="pane-header-name">Contacts</div>
+                    <div class="pane-header-desc" id="contactCount"></div>
+                  </div>
+                </div>
+                <div class="search-bar">
+                  <input class="search-input" type="text" placeholder="Search contacts…" aria-label="Search contacts" oninput="filterContacts(this.value)" />
+                </div>
+                <div class="pane-body" id="contacts-list"><!-- built by renderContacts() --></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /desktop -->
+  </div><!-- /laptopScreen -->
+</div><!-- /workspace -->
+
+<script>
+/* =========================================================
+   1. DATA — edit here, the interface rebuilds itself
+   ========================================================= */
+
+// The learner. Name is overwritten at load from localStorage if present.
+const currentUser = {
+  name: 'New Leader',
+  initials: 'NL',
+  email: 'newleader@organisation.com',
+  avatarClass: 'av-teal'
+};
+
+// Three generic employees. Add or remove entries and every list updates.
+const people = [
+  {
+    id: 'employeeOne',
+    name: 'Employee One',
+    initials: 'E1',
+    email: 'employee.one@organisation.com',
+    avatarClass: 'av-blue',
+    pronouns: 'Pronouns',
+    status: 'online',
+    availability: '9am – 5pm, Monday to Friday',
+    tenure: 'Join date: placeholder',
+    trait: 'Short descriptor',
+    notes: 'Placeholder background note about this employee. Replace with the detail the learner needs to make a decision.'
+  },
+  {
+    id: 'employeeTwo',
+    name: 'Employee Two',
+    initials: 'E2',
+    email: 'employee.two@organisation.com',
+    avatarClass: 'av-coral',
+    pronouns: 'Pronouns',
+    status: 'away',
+    availability: '8am – 4pm, Monday to Friday',
+    tenure: 'Join date: placeholder',
+    trait: 'Short descriptor',
+    notes: 'Placeholder background note about this employee. Replace with the detail the learner needs to make a decision.'
+  },
+  {
+    id: 'employeeThree',
+    name: 'Employee Three',
+    initials: 'E3',
+    email: 'employee.three@organisation.com',
+    avatarClass: 'av-purple',
+    pronouns: 'Pronouns',
+    status: 'busy',
+    availability: '8:30am – 5pm, Monday to Friday',
+    tenure: 'Join date: placeholder',
+    trait: 'Short descriptor',
+    notes: 'Placeholder background note about this employee. Replace with the detail the learner needs to make a decision.'
+  }
+];
+
+const peopleById = Object.fromEntries(people.map(p => [p.id, p]));
+
+/*
+  EMAILS
+  fromId   : person id, or 'currentUser'
+  arrival  : 'inbox' shows immediately; 'later' stays hidden until the
+             unlock timer fires the new-mail alert
+  reply    : true adds a Reply button and a saved draft box to the thread
+  messages : newest first; body is an array of strings or {list:[...]}
+*/
+const emails = [
+  {
+    id: 'emailOne',
+    fromId: 'employeeOne',
+    time: '12:03 pm',
+    subject: 'Email subject one',
+    preview: 'Opening line of the first placeholder email…',
+    unread: true,
+    arrival: 'later',
+    reply: true,
+    replyPrompt: 'Write your reply…',
+    messages: [
+      {
+        fromId: 'employeeOne',
+        toName: currentUser.name,
+        toEmail: currentUser.email,
+        time: '12:03 pm',
+        body: [
+          'Opening line of the first placeholder email. Replace this paragraph with the scenario content.',
+          'A second paragraph for any extra context the learner needs before they respond.',
+          { list: ['Placeholder prompt one', 'Placeholder prompt two', 'Placeholder prompt three'] },
+          'Closing line.'
+        ]
+      }
+    ]
+  },
+  {
+    id: 'emailTwo',
+    fromId: 'employeeTwo',
+    time: '11:47 am',
+    subject: 'Email subject two',
+    preview: 'Opening line of the second placeholder email…',
+    arrival: 'inbox',
+    messages: [
+      {
+        fromId: 'employeeTwo',
+        toName: currentUser.name,
+        toEmail: currentUser.email,
+        time: 'Today, 11:47 am',
+        body: [
+          'Opening line of the second placeholder email — this is the reply sitting at the top of the thread.',
+          'A second paragraph of placeholder content.'
+        ]
+      },
+      {
+        fromId: 'currentUser',
+        toName: '',
+        toEmail: people.map(p => p.email).join(', '),
+        time: 'Today, 10:42 am',
+        body: [
+          'Placeholder text for the message the learner is treated as having sent to the team.',
+          'Replace with the original email that started this thread.'
+        ]
+      }
+    ]
+  },
+  {
+    id: 'emailThree',
+    fromId: 'employeeThree',
+    time: '11:29 am',
+    subject: 'Email subject three',
+    preview: 'Opening line of the third placeholder email…',
+    arrival: 'inbox',
+    messages: [
+      {
+        fromId: 'employeeThree',
+        toName: currentUser.name,
+        toEmail: currentUser.email,
+        time: 'Today, 11:29 am',
+        body: [
+          'Opening line of the third placeholder email.',
+          'A second paragraph of placeholder content.'
+        ]
+      },
+      {
+        fromId: 'currentUser',
+        toName: '',
+        toEmail: people.map(p => p.email).join(', '),
+        time: 'Today, 10:42 am',
+        body: [
+          'Placeholder text for the message the learner is treated as having sent to the team.',
+          'Replace with the original email that started this thread.'
+        ]
+      }
+    ]
+  }
+];
+
+const emailsById = Object.fromEntries(emails.map(e => [e.id, e]));
+
+// One placeholder chat message per employee.
+const chats = {
+  employeeOne:   { time: '10:58 AM', text: 'Placeholder direct message from Employee One.' },
+  employeeTwo:   { time: '10:37 AM', text: 'Placeholder direct message from Employee Two.' },
+  employeeThree: { time: '9:29 AM',  text: 'Placeholder direct message from Employee Three.' }
+};
+
+/* =========================================================
+   2. MAIL — rendered from the data above
+   ========================================================= */
+
+let visibleEmails = emails.filter(e => e.arrival !== 'later').map(e => e.id);
+let selectedEmailId = null;
+
+function senderOf(email) {
+  return email.fromId === 'currentUser' ? currentUser : peopleById[email.fromId];
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, c => (
+    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+  ));
+}
+
+function renderInbox() {
+  const list = emails.filter(e => visibleEmails.includes(e.id));
+  document.getElementById('inboxCount').textContent =
+    list.length + (list.length === 1 ? ' message' : ' messages');
+
+  document.getElementById('inboxRows').innerHTML = list.map(email => {
+    const sender = senderOf(email);
+    const count = email.messages.length > 1
+      ? `<span class="thread-count-pill">${email.messages.length}</span>` : '';
+    const dot = email.unread ? '<span class="unread-dot"></span>' : '';
+    return `
+      <div class="email-row${email.id === selectedEmailId ? ' selected' : ''}"
+           data-email-id="${email.id}" tabindex="0" role="button">
+        <div class="email-row-top">
+          ${dot}
+          <span class="email-sender">${escapeHtml(sender.name)}</span>
+          <span class="email-time">${escapeHtml(email.time)}</span>
+        </div>
+        <div class="email-subject">${escapeHtml(email.subject)} ${count}</div>
+        <div class="email-preview">${escapeHtml(email.preview)}</div>
+      </div>`;
+  }).join('');
+}
+
+function renderBody(parts) {
+  return parts.map(part => {
+    if (typeof part === 'string') return `<p>${escapeHtml(part)}</p>`;
+    if (part.list) return `<ul>${part.list.map(i => `<li>${escapeHtml(i)}</li>`).join('')}</ul>`;
+    return '';
+  }).join('');
+}
+
+function renderMessageCard(message) {
+  const person = message.fromId === 'currentUser' ? currentUser : peopleById[message.fromId];
+  const isLearner = message.fromId === 'currentUser';
+  const to = message.toName
+    ? `<span class="message-name-to">to ${escapeHtml(message.toName)}</span>` : '';
+  return `
+    <div class="message-card">
+      <div class="message-header">
+        <div class="avatar ${person.avatarClass}${isLearner ? ' no-card' : ''}"
+             ${isLearner ? '' : `data-person-id="${message.fromId}" tabindex="0" role="button"
+             aria-label="Profile for ${escapeHtml(person.name)}"`}>${escapeHtml(person.initials)}</div>
+        <div class="message-from">
+          <div class="message-name">${escapeHtml(person.name)} ${to}</div>
+          <div class="message-address">${escapeHtml(message.toEmail)}</div>
+        </div>
+        <span class="message-time">${escapeHtml(message.time)}</span>
+      </div>
+      <div class="message-body">${renderBody(message.body)}</div>
+    </div>`;
+}
+
+function renderReplyCard(email) {
+  const sender = senderOf(email);
+  return `
+    <div class="message-card" id="replyBody" style="display:none;">
+      <div class="message-header">
+        <div class="avatar ${currentUser.avatarClass} no-card">${escapeHtml(currentUser.initials)}</div>
+        <div class="message-from">
+          <div class="message-name">${escapeHtml(currentUser.name)}
+            <span class="message-name-to">to ${escapeHtml(sender.name)}</span></div>
+          <div class="message-address">${escapeHtml(sender.email)}</div>
+        </div>
+      </div>
+      <div class="message-body">
+        <div class="compose-bar">
+          <textarea class="compose-input" id="replyInput"
+                    placeholder="${escapeHtml(email.replyPrompt || 'Write your reply…')}"
+                    maxlength="50000" aria-label="Reply"></textarea>
+        </div>
+        <button class="compose-send" id="sendBtn">Send</button>
+      </div>
+    </div>`;
+}
+
+function selectEmail(emailId) {
+  const email = emailsById[emailId];
+  if (!email) return;
+  selectedEmailId = emailId;
+  email.unread = false;
+
+  document.getElementById('threadHeader').innerHTML = `
+    <div class="thread-header">
+      <div class="thread-subject">${escapeHtml(email.subject)}</div>
+      <div class="thread-meta">
+        <span class="tag tag-inbox">Inbox</span>
+        <div class="thread-actions">
+          ${email.reply ? '<button class="btn pulse-btn" id="replyBtn">&#8617; Reply</button>' : ''}
+          <button class="btn" aria-label="More actions">&#8943;</button>
+        </div>
+      </div>
+    </div>`;
+
+  document.getElementById('threadBody').innerHTML =
+    (email.reply ? renderReplyCard(email) : '') +
+    email.messages.map(renderMessageCard).join('');
+
+  if (email.reply) {
+    document.getElementById('replyBtn').addEventListener('click', openReply);
+    setupDraft(email.id);
+  }
+  renderInbox();
+}
+
+function openReply() {
+  document.getElementById('replyBody').style.display = 'block';
+  document.getElementById('replyBtn').classList.remove('pulse-btn');
+  document.getElementById('replyInput').focus();
+}
+
+// Draft saving, keyed per email so each reply box keeps its own text.
+function setupDraft(emailId) {
+  const key = 'draft:' + emailId;
+  const input = document.getElementById('replyInput');
+  const sendBtn = document.getElementById('sendBtn');
+  let saved = null;
+  try { saved = localStorage.getItem(key); } catch (e) { /* storage unavailable */ }
+  if (saved) input.value = saved;
+
+  input.addEventListener('input', () => {
+    try { localStorage.setItem(key, input.value); } catch (e) { /* ignore */ }
+  });
+
+  sendBtn.addEventListener('click', () => {
+    if (sendBtn.classList.contains('sent')) return;
+    try { localStorage.setItem(key, input.value.trim()); } catch (e) { /* ignore */ }
+    sendBtn.classList.add('sent');
+    sendBtn.textContent = 'Sent';
+  });
+}
+
+// Inbox row clicks and keyboard activation
+document.getElementById('inboxRows').addEventListener('click', e => {
+  const row = e.target.closest('.email-row');
+  if (row) selectEmail(row.dataset.emailId);
+});
+document.getElementById('inboxRows').addEventListener('keydown', e => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const row = e.target.closest('.email-row');
+  if (row) { e.preventDefault(); selectEmail(row.dataset.emailId); }
+});
+
+/* =========================================================
+   3. PROFILE CARDS
+   ========================================================= */
+function renderProfileCards() {
+  document.getElementById('profileCards').innerHTML = people.map(p => `
+    <div id="${p.id}_info_card" class="messageHidden">
+      <div class="topBar">
+        <div class="imageContainer">
+          <div class="avatar ${p.avatarClass}">${escapeHtml(p.initials)}</div>
+        </div>
+        <div class="description">
+          <p>${escapeHtml(p.name)}</p>
+          <p>${escapeHtml(p.pronouns)}</p>
+          <p>Available ${escapeHtml(p.availability)}</p>
+          <p>${escapeHtml(p.tenure)}</p>
+          <p>${escapeHtml(p.trait)}</p>
+        </div>
+      </div>
+      <div class="keyPoints"><p>${escapeHtml(p.notes)}</p></div>
+    </div>`).join('');
+}
+
+function toggleProfile(personId) {
+  const card = document.getElementById(personId + '_info_card');
+  if (!card) return;
+  document.querySelectorAll('[id$="_info_card"]').forEach(c => {
+    if (c !== card) c.classList.remove('messageRevealed');
+  });
+  card.classList.toggle('messageRevealed');
+}
+
+document.addEventListener('click', e => {
+  const trigger = e.target.closest('[data-person-id]');
+  if (trigger) { toggleProfile(trigger.dataset.personId); return; }
+  if (!e.target.closest('[id$="_info_card"]')) {
+    document.querySelectorAll('[id$="_info_card"]').forEach(c => c.classList.remove('messageRevealed'));
+  }
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('[id$="_info_card"]').forEach(c => c.classList.remove('messageRevealed'));
+    return;
+  }
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const trigger = e.target.closest('[data-person-id]');
+  if (trigger) { e.preventDefault(); toggleProfile(trigger.dataset.personId); }
+});
+
+/* =========================================================
+   4. CHAT + CONTACTS
+   ========================================================= */
+function renderDMs() {
+  document.getElementById('dmList').innerHTML = people.map((p, i) => `
+    <div class="dm-item${i === 0 ? ' active' : ''}" data-dm-id="${p.id}" tabindex="0" role="button">
+      <div class="dm-avatar ${p.avatarClass}">${escapeHtml(p.initials)}<span class="status-dot status-${p.status}"></span></div>
+      <span class="dm-name">${escapeHtml(p.name)}</span>
+    </div>`).join('');
+}
+
+function setChat(personId) {
+  const p = peopleById[personId];
+  const msg = chats[personId] || { time: '', text: '' };
+  document.getElementById('chat-title').textContent = p.name;
+  document.getElementById('chat-desc').textContent =
+    `${p.status.charAt(0).toUpperCase() + p.status.slice(1)} · ${p.pronouns} · ${p.tenure}`;
+  document.getElementById('header-icon').innerHTML =
+    `<div class="chat-avatar ${p.avatarClass}">${escapeHtml(p.initials)}</div>`;
+  document.getElementById('chat-body').innerHTML = `
+    <div class="date-divider">Today</div>
+    <div class="chat-group">
+      <div class="chat-avatar ${p.avatarClass}">${escapeHtml(p.initials)}</div>
+      <div class="chat-content">
+        <div class="chat-meta">
+          <span class="chat-name">${escapeHtml(p.name)}</span>
+          <span class="chat-time">${escapeHtml(msg.time)}</span>
+        </div>
+        <div class="chat-text">${escapeHtml(msg.text)}</div>
+      </div>
+    </div>`;
+}
+
+document.getElementById('dmList').addEventListener('click', e => {
+  const item = e.target.closest('[data-dm-id]');
+  if (!item) return;
+  document.querySelectorAll('#dmList .dm-item').forEach(el => el.classList.remove('active'));
+  item.classList.add('active');
+  setChat(item.dataset.dmId);
+});
+document.getElementById('dmList').addEventListener('keydown', e => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const item = e.target.closest('[data-dm-id]');
+  if (item) { e.preventDefault(); item.click(); }
+});
+
+function renderContacts() {
+  const sorted = [...people].sort((a, b) => a.name.localeCompare(b.name));
+  let lastLetter = '';
+  document.getElementById('contactCount').textContent =
+    sorted.length + (sorted.length === 1 ? ' contact' : ' contacts');
+  document.getElementById('contacts-list').innerHTML = sorted.map(p => {
+    const letter = p.name.charAt(0).toUpperCase();
+    const label = letter !== lastLetter ? `<div class="contact-group-label">${letter}</div>` : '';
+    lastLetter = letter;
+    return label + `
+      <div class="contact-item" data-name="${escapeHtml(p.name.toLowerCase())}" tabindex="0">
+        <div class="contact-avatar ${p.avatarClass}">${escapeHtml(p.initials)}<span class="status-dot status-${p.status}"></span></div>
+        <div class="contact-info">
+          <div class="contact-name">${escapeHtml(p.name)}</div>
+          <div class="contact-role">${escapeHtml(p.trait)}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function filterContacts(val) {
+  const query = val.toLowerCase();
+  document.querySelectorAll('#contacts-list .contact-item').forEach(item => {
+    item.style.display = item.dataset.name.includes(query) ? 'flex' : 'none';
+  });
+  document.querySelectorAll('#contacts-list .contact-group-label').forEach(label => {
+    const next = label.nextElementSibling;
+    label.style.display = (next && next.style.display !== 'none') ? 'block' : 'none';
+  });
+}
+
+function switchPhoneTab(tab, el) {
+  document.querySelectorAll('#phoneSection .dm-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('calls-pane').style.display    = tab === 'calls'    ? 'block' : 'none';
+  document.getElementById('contacts-pane').style.display = tab === 'contacts' ? 'flex'  : 'none';
+}
+
+function setActive(el) {
+  const icons = [...document.querySelectorAll('.activity-icon')];
+  icons.forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  const isChat = icons.indexOf(el) === 0;
+  document.getElementById('chatSection').style.display  = isChat ? 'flex' : 'none';
+  document.getElementById('phoneSection').style.display = isChat ? 'none' : 'flex';
+}
+
+/* =========================================================
+   5. DESKTOP SHELL
+   ========================================================= */
+function openApps(appNumber) {
+  for (let i = 1; i <= 3; i++) document.getElementById('work' + i).style.display = 'none';
+  document.getElementById('work' + appNumber).style.display = 'flex';
+}
+
+function openEmailAlert() {
+  const alertEl = document.getElementById('emailAlert');
+  alertEl.classList.add('emailAppear');
+  alertEl.classList.remove('hideMe');
+}
+
+function closeEmailAlert() {
+  const alertEl = document.getElementById('emailAlert');
+  alertEl.classList.remove('emailAppear');
+  alertEl.classList.add('hideMe');
+}
+
+// Delivers any email marked arrival: 'later'
+function deliverPendingEmail() {
+  const pending = emails.find(e => e.arrival === 'later' && !visibleEmails.includes(e.id));
+  if (!pending) return;
+  visibleEmails.unshift(pending.id);
+  renderInbox();
+}
+
+function clickEmailAlert() {
+  openApps(2);
+  const pending = emails.find(e => e.arrival === 'later');
+  selectEmail(pending ? pending.id : visibleEmails[0]);
+  closeEmailAlert();
+}
+
+document.getElementById('emailAlert').addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); clickEmailAlert(); }
+});
+
+document.getElementById('unlockBtn').addEventListener('click', function () {
+  const overlay = document.getElementById('lockOverlay');
+  overlay.classList.add('hidden');
+  setTimeout(() => overlay.style.display = 'none', 500);
+  setTimeout(() => { deliverPendingEmail(); openEmailAlert(); }, 3000);
+});
+
+// Pull the learner's name from the host LMS if it was stored there.
+(function loadLearnerName() {
+  let first = null, lastInitial = '';
+  try {
+    first = localStorage.getItem('riseUserName');
+    lastInitial = (localStorage.getItem('lastInitialToken') || '').toUpperCase();
+  } catch (e) { return; }
+  if (!first || !first.trim()) return;
+  currentUser.name = lastInitial ? `${first} ${lastInitial}` : first;
+  currentUser.initials = first.trim().charAt(0).toUpperCase() + lastInitial;
+})();
+
+/* =========================================================
+   6. BOOT
+   ========================================================= */
+renderProfileCards();
+renderInbox();
+selectEmail(visibleEmails[0]);
+renderDMs();
+setChat(people[0].id);
+renderContacts();
+openApps(2);
+</script>
+</body>
+</html>
