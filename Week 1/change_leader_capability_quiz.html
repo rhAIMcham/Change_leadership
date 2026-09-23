@@ -7,49 +7,201 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
 <title>Change Readiness Assessment</title>
 <style>
-:root{
-    --AIMblue:#4353A3;
-    --darkBlue:#38416D;
-    --teal:#5DC8B9;
-    --cream:#F1EEDE;
-    --rust:#AF4510;
-    --navy:#12195C;
-    --white:#fff;
-    --lightBlue:#AEBAE4;
+:root {
+  --AIMblue: #4353A3;
+  --darkBlue: #38416D;
+  --teal: #5DC8B9;
+  --cream: #F1EEDE;
+  --rust: #AF4510;
+  --navy: #12195C;
+  --white: #fff;
+  --lightBlue: #AEBAE4;
 }
+
 * {
-    box-sizing:border-box;
+  box-sizing: border-box;
 }
+
 body {
-    font-family:"IBM Plex Sans",sans-serif;
-    margin:0;
-    padding:20px 10px;
-    display:flex;flex-direction:column;align-items:center;background:var(--white);color:var(--navy);}
-.wrap{width:100%;max-width:900px;}
-h1{text-align:center;color:var(--navy);font-size:1.5rem;}
-.intro{text-align:center;color:var(--darkBlue);margin-bottom:10px;}
-.navigation{margin:5px 0 20px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap;}
-.nav-button{background:var(--cream);color:var(--darkBlue);border:2px solid var(--darkBlue);padding:8px 16px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.9rem;font-weight:500;min-width:110px;}
-.nav-button.active{background:var(--AIMblue);color:var(--white);border-color:var(--AIMblue);}
-.CardSlide{display:none;}
-.CardSlide.active{display:block;}
-fieldset{border:none;padding:0;margin:0 0 25px;}
-legend{font-size:1.2rem;font-weight:600;color:var(--rust);margin-bottom:8px;padding:0;}
-.question{border-bottom:2px dotted #ccc;padding:12px 0;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
-.question p{margin:0;flex:1 1 260px;text-align:left;}
-.scale{display:flex;gap:6px;}
-.scale label{cursor:pointer;}
-.scale input{position:absolute;opacity:0;width:0;height:0;}
-.scale span{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border:2px solid var(--darkBlue);border-radius:50%;color:var(--darkBlue);font-weight:600;}
-.scale input:checked + span{background:var(--AIMblue);color:var(--white);border-color:var(--AIMblue);}
-.scale input:focus-visible + span{outline:2px solid var(--teal);outline-offset:2px;}
-.scale-key{text-align:right;font-size:.75rem;color:#666;margin-top:-8px;margin-bottom:6px;}
-.submit-button{font-family:inherit;margin:20px auto;background:var(--navy);color:var(--white);width:220px;border:2px solid var(--cream);border-radius:8px;cursor:pointer;padding:10px;font-size:1rem;display:block;}
-.submit-button:hover{background:var(--lightBlue);color:var(--navy);border-color:var(--navy);}
-.canvasCard{width:100%;max-width:600px;margin:0 auto;}
-.hidden{display:none;}
-#results{max-width:600px;margin:15px auto;font-size:.95rem;line-height:1.5;}
-#results ul{padding-left:20px;}
+  font-family: "IBM Plex Sans", sans-serif;
+  margin: 0;
+  padding: 20px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--white);
+  color: var(--navy);
+}
+
+.wrap {
+  width: 100%;
+  max-width: 900px;
+}
+
+h1 {
+  text-align: center;
+  color: var(--navy);
+  font-size: 1.5rem;
+}
+
+.intro {
+  text-align: center;
+  color: var(--darkBlue);
+  margin-bottom: 10px;
+}
+
+.navigation {
+  margin: 5px 0 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.nav-button {
+  background: var(--cream);
+  color: var(--darkBlue);
+  border: 2px solid var(--darkBlue);
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: .9rem;
+  font-weight: 500;
+  min-width: 110px;
+}
+
+.nav-button.active {
+  background: var(--AIMblue);
+  color: var(--white);
+  border-color: var(--AIMblue);
+}
+
+.CardSlide {
+  display: none;
+}
+
+.CardSlide.active {
+  display: block;
+}
+
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0 0 25px;
+}
+
+legend {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--rust);
+  margin-bottom: 8px;
+  padding: 0;
+}
+
+.question {
+  border-bottom: 2px dotted #ccc;
+  padding: 12px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.question p {
+  margin: 0;
+  flex: 1 1 260px;
+  text-align: left;
+}
+
+.scale {
+  display: flex;
+  gap: 6px;
+}
+
+.scale label {
+  cursor: pointer;
+}
+
+.scale input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.scale span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--darkBlue);
+  border-radius: 50%;
+  color: var(--darkBlue);
+  font-weight: 600;
+}
+
+.scale input:checked + span {
+  background: var(--AIMblue);
+  color: var(--white);
+  border-color: var(--AIMblue);
+}
+
+.scale input:focus-visible + span {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+
+.scale-key {
+  text-align: right;
+  font-size: .75rem;
+  color: #666;
+  margin-top: -8px;
+  margin-bottom: 6px;
+}
+
+.submit-button {
+  font-family: inherit;
+  margin: 20px auto;
+  background: var(--navy);
+  color: var(--white);
+  width: 220px;
+  border: 2px solid var(--cream);
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 10px;
+  font-size: 1rem;
+  display: block;
+}
+
+.submit-button:hover {
+  background: var(--lightBlue);
+  color: var(--navy);
+  border-color: var(--navy);
+}
+
+.canvasCard {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.hidden {
+  display: none;
+}
+
+#results {
+  max-width: 600px;
+  margin: 15px auto;
+  font-size: .95rem;
+  line-height: 1.5;
+}
+
+#results ul {
+  padding-left: 20px;
+}
 </style>
 </head>
 <body>
