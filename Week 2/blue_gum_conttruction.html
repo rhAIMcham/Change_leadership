@@ -416,8 +416,8 @@ textarea.composer-input:focus, input.composer-input:focus { outline: none; borde
 
         <div class="categories-card" id="categoriesCard"></div>
 
-        <div class="composer-card">
-            <div class="composer-title">Leave a review</div>
+          <!-- <div class="composer-card">
+          <div class="composer-title">Leave a review</div>
             <div class="star-picker" id="starPicker"></div>
             <label class="field-label" for="titleInput">Headline</label>
             <input class="composer-input" id="titleInput" placeholder="Sum it up in a sentence" oninput="toggleSubmit()" />
@@ -426,8 +426,8 @@ textarea.composer-input:focus, input.composer-input:focus { outline: none; borde
             <label class="field-label" for="consInput">Cons</label>
             <textarea class="composer-input" id="consInput" placeholder="What could be better?" oninput="toggleSubmit()"></textarea>
             <button class="post-comment-btn" id="submitBtn" onclick="submitReview()" disabled>Post review</button>
-            <div class="composer-hint">Your review appears at the top of the Reviews tab.</div>
-        </div>
+            <div class="composer-hint">Your review appears at the top of the Reviews tab.</div> 
+        </div>-->
     </section>
 
 </div>
@@ -531,8 +531,7 @@ const tabs = [
     { key: "jobs",     label: "Jobs"     },
     { key: "salaries", label: "Salaries" },
     { key: "benefits", label: "Benefits" },
-    { key: "culture",  label: "Culture"  },
-    { key: "photos",   label: "Photos"   }
+    { key: "culture",  label: "Culture"  }
 ];
 let activeTab = "reviews";
 let selectedStars = 0;
@@ -564,7 +563,8 @@ function formatTimestamp(date) {
     if (diffMins < 60) return diffMins + "m";
     if (diffHours < 24) return diffHours + "h";
     if (diffDays < 7) return diffDays + "d";
-    return date.toLocaleDateString(undefined, { day: "numeric", month: "short" });
+
+    return date.toISOString().slice(0, 10); // YYYY-MM-DD
 }
 
 /* =====================================================
@@ -741,7 +741,7 @@ const tabContent = {
 ===================================================== */
 renderRatingSummary();
 renderCategories();
-renderStarPicker();
+// renderStarPicker();
 renderTabBar();
 renderTabPanel();
 
