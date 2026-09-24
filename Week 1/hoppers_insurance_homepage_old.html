@@ -166,7 +166,112 @@ nav li {
     font-size: 1.05rem;
     color: var(--text-primary);
 }
+.enquiry {
+    margin-top: 32px;
+    max-width: 68ch;
+    padding: clamp(20px, 4vw, 36px);
+    background-color: var(--white);
+    border: 1px solid var(--border-subtle);
+    border-top: 3px solid var(--rust);
+    border-radius: var(--radius-md);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 16px;
+}
 
+.enquiry .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.enquiry .field.full,
+.enquiry .form-actions {
+    grid-column: 1 / -1;
+}
+
+.enquiry label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.enquiry input,
+.enquiry textarea {
+    width: 100%;
+    padding: 11px 14px;
+    font-family: "Inter", sans-serif;
+    font-size: 1rem;
+    color: var(--text-primary);
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-sm);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.enquiry textarea {
+    min-height: 130px;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+.enquiry ::placeholder {
+    color: var(--text-muted);
+}
+
+.enquiry input:hover,
+.enquiry textarea:hover {
+    border-color: var(--text-muted);
+}
+
+.enquiry input:focus,
+.enquiry textarea:focus {
+    outline: none;
+    background-color: var(--white);
+    border-color: var(--rust);
+    box-shadow: 0 0 0 3px rgba(175, 69, 16, 0.18);
+}
+
+.enquiry .form-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.enquiry button[type="submit"] {
+    padding: 12px 26px;
+    font-family: "Inter", sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--white);
+    background-color: var(--rust);
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.enquiry button[type="submit"]:hover {
+    background-color: var(--rustDark);
+}
+
+.enquiry button[type="submit"]:focus-visible {
+    outline: 3px solid var(--AIMblue);
+    outline-offset: 3px;
+}
+
+.enquiry .form-note {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+@media (max-width: 520px) {
+    .enquiry {
+        grid-template-columns: 1fr;
+    }
+}
 /*-----------------------*/
 /*---Widget styling----*/
 /*-----------------------*/
@@ -364,53 +469,81 @@ footer p { color: var(--text-secondary); }
     <main class="faq">
       <div class="faq-intro">
         <h1>Frequently asked questions</h1>
-        <p>Welcome to Hoppers Insurance. We're making your insurance simpler to access with a new AI-powered support experience.</p>
-        <p>Meet Roo, your personal support officer, who can help you process your claim.</p>
+        <p>Welcome to Hoppers Insurance. We have proudly supported Australians at home and work for the last 30 years – let us support you next.</p>
+        <p>Read through the FAQs below and if you can’t find what you need, contact our friendly support staff for assistance. </p>
       </div>
 
       <section class="faq-item">
         <h2>How do I make a claim?</h2>
-        <p>Roo can help you lodge a claim and will guide you through the process, providing information relevant to your situation.</p>
-        <p class="ask-roo"><span>Ask Roo</span>"How do I make a claim?"</p>
+        <p>To make a claim, contact one of our agents. You will need your policy number and proof of identification.</p>
       </section>
 
       <section class="faq-item">
         <h2>How do I check the progress of my claim?</h2>
-        <p>To access information about an existing claim, ask Roo for assistance. You may be asked to provide additional information first.</p>
-        <p class="ask-roo"><span>Ask Roo</span>"What is the progress of my claim?"</p>
+        <p>To check on the progress of your claim, contact your appointed agent via the email they provided in the first instance of your making a claim. If you can’t find or don’t have access to the email, submit a request via our support email and one of our staff will be in contact with you soon.</p>
       </section>
 
       <section class="faq-item">
         <h2>What documents do I need to provide for a claim?</h2>
-        <p>The documents required vary depending on your circumstances. Roo can identify which ones apply to you.</p>
-        <p class="ask-roo"><span>Ask Roo</span>"What documents do I need?"</p>
+        <p>The documents required vary depending on your circumstances. Your policy documents should contain these details, and are mailed to you each time the policy is renewed. Refer to your most recent policy to find specifics.</p>
       </section>
 
       <section class="faq-item">
         <h2>How long will my claim take?</h2>
-        <p>Timeframes depend on the complexity of your claim. For the most accurate estimate, Roo can provide details specific to your claim.</p>
-        <p class="ask-roo"><span>Ask Roo</span>"How long will my claim take?"</p>
+        <p>Timeframes depend on the complexity of your claim. In your initial discussion with your agent, they will provide you with a timeline. Email or phone enquiries will be returned within 2 working days, and a timeline provided within that window.</p>
       </section>
 
       <section class="faq-item">
         <h2>How do I update my personal details?</h2>
-        <p>Roo can walk you through updating your information.</p>
-        <p class="ask-roo"><span>Ask Roo</span>"How do I update my details?"</p>
-      </section>
-
-      <section class="faq-item">
-        <h2>How do I speak to someone about my claim?</h2>
-        <p>Roo is available 24/7 and can resolve most enquiries. If Roo determines you need further assistance, it may offer additional options.</p>
-        <p class="ask-roo"><span>Ask Roo</span>"I need to speak to someone about my claim."</p>
+        <p>Download a request for information change form <a href="#">here</a>, and submit it via email. It will be implemented within 10 working days. </p>
       </section>
 
       <section class="faq-item">
         <h2>I can't find the answer to my question. What should I do?</h2>
-        <p>Roo is designed to answer customer questions and direct you to the right support option. Please ask Roo first before contacting us through another channel.</p>
+        <p>Contact our support team via phone or email, or use the form below.</p>
       </section>
 
       <div class="faq-closing">
-        <p>Start a conversation with Roo using the chat button in the corner of the page.</p>
+        <p>Use the form below to submit an inquiry. </p>
+        <p>(02) 5556 – 3847 | Office hours are 9 – 5 AEST, Monday to Friday. </p>
+        <p>support@hoppersinsurance.com.au | For out of hours questions.</p>
+</p>
+        </div>
+        <section>
+            <!--
+  1. In your <style> block, DELETE the old "#Problem { width: 150px; }" rule
+     and paste the CSS below anywhere after the .faq-closing rules.
+  2. In the page body, replace everything from the stray "</p>" after the
+     support@ line through the closing "</form>" with the markup at the bottom.
+-->
+
+
+<form class="enquiry" action="/action_page.php" method="post">
+    <div class="field">
+        <label for="fname">First name</label>
+        <input type="text" id="fname" name="fname" placeholder="Jane" autocomplete="given-name" required>
+    </div>
+
+    <div class="field">
+        <label for="lname">Last name</label>
+        <input type="text" id="lname" name="lname" placeholder="Citizen" autocomplete="family-name" required>
+    </div>
+
+    <div class="field full">
+        <label for="contact">Email address</label>
+        <input type="email" id="contact" name="contact" placeholder="name@email.com" autocomplete="email" required>
+    </div>
+
+    <div class="field full">
+        <label for="Problem">How can we help?</label>
+        <textarea id="Problem" name="Problem" placeholder="For example: I need help making a claim." required></textarea>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit">Send enquiry</button>
+        <span class="form-note">We reply within 2 working days.</span>
+    </div>
+</form></section>
       </div>
     </main>
   </div>

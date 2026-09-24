@@ -1,0 +1,184 @@
+<style>
+
+  :root {
+  --AIMblue: #4353A3;
+  --darkBlue: #38416D;
+  --teal: #5DC8B9;
+  --cream: #F1EEDE;
+  --grey: #e7e9ec;
+  --rust: #AF4510;
+  --navy: #12195C;
+  --white: #ffffff;
+  --lightBlue: #AEBAE4;
+  }
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+.notesBox {
+ max-width: 700px; 
+ margin: 30px auto; 
+ padding: 1rem; 
+ background: #f8f9fa; 
+ border-radius: 12px; 
+ box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+textarea {
+width: 95%;
+padding: 0.75rem;
+border-radius: 8px;
+border: 1px solid #ccc;
+resize: vertical;
+font-size: 1rem; 
+font-family: 'Inter', sans-serif;
+}
+ .saved {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
+    margin-top: 0.5rem;
+ }
+
+ .savedMsg {
+ font-size: 0.9rem;
+color: var(--lightBlue);
+ opacity: 0;
+ transition: opacity 0.4s ease;
+ margin: 0;
+ min-width: 60px;   
+ }
+
+ .saveBtn {
+background-color: var(--navy); 
+color: white; 
+border: none; 
+border-radius: 6px;
+      padding: 0.5rem 1.25rem; 
+      font-size: 1rem; 
+      cursor: pointer;
+ }
+
+.questionText {
+margin-bottom: 0.5rem;
+font-size: 1rem;
+padding: 5px;
+}
+
+.modelAnswer {
+  display: none;
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--cream);
+  border-left: 4px solid var(--teal);
+  border-radius: 6px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--navy);
+}
+
+.modelAnswer.visible {
+  display: block;
+}
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+<div class="notesBox">
+    <h3>Types of organisational change</h3>
+  <p class="questionText">What type of organisational change is taking place in this case, and how might the type of change influence how leaders respond?</p>
+
+  <textarea id="notesInput1" rows="8"
+    ></textarea>
+
+  <!-- Flexbox row: Saved! stays left, Save button stays right -->
+  <div class="saved" >
+    <p id="statusMsg1" class="savedMsg">Saved!</p>
+    <button id="saveBtn1" class="saveBtn">Save</button>
+  </div>
+
+  <div id="modelAnswer1" class="modelAnswer">
+  Organisational change can take different forms and the approach to managing change needs to reflect its scale and complexity. A major strategic shift can involve transformational change across technology, products, culture and organisational direction, rather than simply improving an existing process. Reflecting on this case, consider whether Meta’s approach matched the type of change it was attempting to achieve and whether a different approach may have identified these challenges earlier.
+  </div>
+</div>
+
+
+<div class="notesBox">
+    <h3>Traditional change methodologies</h3>
+  <p class="questionText">How could traditional change management frameworks and methodologies help organisations manage change effectively if the initial vision struggles to translate into market value?</p>
+
+  <textarea id="notesInput2" rows="8"
+    ></textarea>
+
+  <div class="saved" >
+    <p id="statusMsg2" class="savedMsg">Saved!</p>
+    <button id="saveBtn2" class="saveBtn">Save</button>
+  </div>
+
+  <div id="modelAnswer2" class="modelAnswer">
+    Existing change methodologies and other frameworks can provide leaders with a structured means of planning, communicating, and implementing change. This can assist with establishing clear objectives for an organisation, understanding stakeholder needs, identifying potential points of resistance and monitor whether the change is achieving its intended outcomes. In this case, a structured change process might have helped test Meta’s assumptions, father feedback and adjust its approach while recognising that frameworks must be adapted to the circumstances rather than applied rigidly.
+  </div>
+</div>
+
+<div class="notesBox">
+    <h3>Factors for and against change</h3>
+  <p class="questionText">What factors should leaders consider when deciding whether an organisation should pursue change, and what factors could have suggested the organisation should adjust its approach?</p>
+
+  <textarea id="notesInput3" rows="8"
+    ></textarea>
+
+  <div class="saved" >
+    <p id="statusMsg3" class="savedMsg">Saved!</p>
+    <button id="saveBtn3" class="saveBtn">Save</button>
+  </div>
+
+  <div id="modelAnswer3" class="modelAnswer">
+  Factors supporting change could include emerging technology, changing consumer behaviours, competitive pressures, opportunities to enter new markets and the potential for long-term innovation. Factors against the change could include limited customer demand, technical challenges, significant investment requirements, negative reputations of the organisation itself and evidence that existing products or technologies already meet similar needs. 
+  </div>
+</div>
+
+<script>
+function initNotesBox(inputId, btnId, msgId, storageKey, answerId) {
+  const textArea = document.getElementById(inputId);
+  const saveBtn = document.getElementById(btnId);
+  const statusMsg = document.getElementById(msgId);
+  const answerBox = document.getElementById(answerId);
+
+  const STORAGE_KEY = storageKey;
+  const ANSWER_SHOWN_KEY_META = storageKey + '_answerShown';
+
+  // Load existing note (if any)
+  const savedNote = localStorage.getItem(STORAGE_KEY);
+  if (savedNote) textArea.value = savedNote;
+
+  // If the answer was already revealed in a previous visit, keep it visible
+  if (localStorage.getItem(ANSWER_SHOWN_KEY_META) === 'true') {
+    answerBox.classList.add('visible');
+  }
+
+  // Save on button click
+  saveBtn.addEventListener('click', () => {
+    const value = textArea.value.trim();
+    localStorage.setItem(STORAGE_KEY, value);
+
+    // Fade in "Saved!"
+    statusMsg.style.opacity = '1';
+    setTimeout(() => statusMsg.style.opacity = '0', 1500);
+
+    // Reveal the suggested answer once the question has been answered and saved
+    if (value.length > 0) {
+      answerBox.classList.add('visible');
+      localStorage.setItem(ANSWER_SHOWN_KEY_META, 'true');
+    }
+  });
+
+  // Optional: auto-save while typing
+  textArea.addEventListener('input', () => {
+    localStorage.setItem(STORAGE_KEY, textArea.value.trim());
+  });
+}
+
+initNotesBox('notesInput1', 'saveBtn1', 'statusMsg1', 'metaQ1', 'modelAnswer1');
+initNotesBox('notesInput2', 'saveBtn2', 'statusMsg2', 'metaQ2', 'modelAnswer2');
+initNotesBox('notesInput3', 'saveBtn3', 'statusMsg3', 'metaQ3', 'modelAnswer3');
+</script>
