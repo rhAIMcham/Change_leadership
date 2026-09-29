@@ -1,94 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=IBM+Plex+Sans:wght@400;700&family=Lora:ital,wght@0,400..700;1,400..700&family=Playfair+Display:wght@600&family=Space+Grotesk:wght@600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Meta and the metaverse</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* =====================================================
+       1. SETTINGS - change colours and sizes here
+       ===================================================== */
+    :root {
+      /* Colours */
+      --AIMblue:   #4353A3;
+      --darkBlue:  #38416D;
+      --teal:      #5DC8B9;
+      --navy:      #070812;
+      --white:     #ffffff;
+      --lightBlue: #AEBAE4;
+
+      /* Layout */
+      --slide-padding:    2rem;    /* space inside each slide card */
+      --column-gap:       2rem;    /* space between text and media */
+      --media-min-height: 280px;   /* smallest height for image/video */
+      --media-radius:     10px;    /* rounded corners on image/video */
+    }
+
+    /* =====================================================
+       2. PAGE BASICS
+       ===================================================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "IBM Plex Sans", sans-serif;
+      background-color: #060732;
+    }
+
+    .displayFolder {
+      margin: 30px 40px;
+    }
+
+    /* =====================================================
+       3. CAROUSEL (the sliding container)
+       ===================================================== */
+
+    /* Row holding: [prev arrow] [slides] [next arrow] */
+    .carousel-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .carousel {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 100%;      /* one slide visible at a time */
+      align-items: stretch;
+      gap: 1rem;
+
+      flex: 1;
+      min-width: 0;
+      padding: 1rem;
+      list-style: none;
+
+      /* Scrolling and snapping */
+      overflow-x: hidden;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+
+      /* Hide scrollbar (Firefox, then Chrome/Safari below) */
+      scrollbar-width: none;
+    }
+
+    .carousel::-webkit-scrollbar {
+      display: none;
+    }
+
+    .carousel:focus-visible {
+      outline: 2px solid var(--teal);
+      outline-offset: 2px;
+      border-radius: 12px;
+    }
+
+    /* =====================================================
+       4. SLIDES (the cards)
+       ===================================================== */
+    .carousel .slide {
+      display: flex;
+      scroll-snap-align: center;
+
+      padding: var(--slide-padding);
+      border-radius: 12px;
+      background: #f0f0f0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Two columns: text on the left, image/video on the right */
+    .side-by-side {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);  /* text slightly wider */
+      gap: var(--column-gap);
+      align-items: stretch;   /* media column matches the text height */
+      width: 100%;
+    }
+
+    /* Left column: text */
+    .side-a {
+      align-self: center;     /* centres text vertically */
+      line-height: 1.6;
+    }
+
+    .side-a h3 {
+      margin-bottom: 0.75rem;
+    }
+
+    /* Right column: image or video frame */
+    .side-b {
+      position: relative;
+      min-height: var(--media-min-height);
+      border-radius: var(--media-radius);
+      overflow: hidden;
+      background: #000;
+    }
+
+    /* Image and video fill the whole frame */
+    .side-b img,
+    .side-b iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+    }
+
+    .side-b img {
+      object-fit: cover;      /* crop to fill; use "contain" to show the whole image */
+    }
+
+    /* =====================================================
+       5. ARROWS, DOTS AND COUNTER
+       ===================================================== */
+    .arrow {
+      flex: none;
+      width: 48px;
+      height: 48px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: none;
+      border-radius: 50%;
+      background-color: var(--lightBlue);
+      color: var(--navy);
+      cursor: pointer;
+      transition: background-color 0.15s, color 0.15s;
+    }
+
+    .arrow svg {
+      width: 24px;
+      height: 24px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .arrow:hover:not(:disabled) {
+      background-color: var(--AIMblue);
+      color: var(--white);
+    }
+
+    .arrow:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+
+    .arrow:focus-visible,
+    .dot:focus-visible {
+      outline: 2px solid var(--teal);
+      outline-offset: 3px;
+    }
+
+    .indicator {
+      margin-top: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .dots {
+      display: flex;
+      justify-content: center;
+      gap: 0.6rem;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      padding: 0;
+      border: none;
+      border-radius: 999px;
+      background-color: var(--darkBlue);
+      cursor: pointer;
+      transition: width 0.25s ease, background-color 0.25s ease;
+    }
+
+    .dot:hover {
+      background-color: var(--lightBlue);
+    }
+
+    /* The current slide's dot: longer, brighter pill */
+    .dot[aria-current="true"] {
+      width: 32px;
+      background-color: var(--teal);
+    }
+
+    #counter {
+      color: var(--lightBlue);
+      font-size: 0.9rem;
+    }
+
+    /* =====================================================
+       6. RESPONSIVE (tablet and phone)
+       ===================================================== */
+
+    /* Tablet and below: stack text above the image/video */
+    @media (max-width: 800px) {
+      .side-by-side {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+      }
+      .side-b {
+        min-height: 0;
+        aspect-ratio: 16 / 9;
+      }
+    }
+
+    /* Phone: tighter spacing, smaller arrows */
+    @media (max-width: 600px) {
+      .displayFolder { margin: 20px 12px; }
+      .carousel-wrap { gap: 0.4rem; }
+      .arrow { width: 36px; height: 36px; }
+      .arrow svg { width: 20px; height: 20px; }
+      .carousel { padding: 0.5rem 0; }
+      .carousel .slide { padding: 1.25rem; }
+    }
+
+    /* Respect "reduce motion" accessibility setting */
+    @media (prefers-reduced-motion: reduce) {
+      .dot, .arrow { transition: none; }
+    }
+  </style>
 </head>
-<style>
-* {
- margin: 0; 
- padding: 0; 
- box-sizing: border-box;
-}
 
-body { 
-    font-family: "IBM Plex Sans", sans-serif; 
-    background-color: #060732;
-}
-/* 
-.displayFolder {
-    width: 900px;
-    margin: auto;
-    background: white;
-    padding: 15px;
-} */
-.carousel {
-  /* Layout configuration */
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 85%; /* Shows one main card + a peek of the next. Tweak as needed. */
-  gap: 1rem;              /* Spacing between slides */
-  
-  /* Sizing and spacing */
-  width: 100%;
-  padding: 1rem;
-  margin: 0;
-  list-style: none;
-  
-  /* Scroll & Snap functionality */
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  
-  /* Hide standard scrollbars for a cleaner UI (Optional) */
-  scrollbar-width: none; /* Firefox */
-}
-
-/* Hide scrollbars for Chrome, Safari, and Opera */
-.carousel::-webkit-scrollbar {
-  display: none;
-}
-
-.carousel .slide {
-  /* Snap alignment forces the item to lock into the container center */
-  scroll-snap-align: center;
-  
-  /* Slide presentation styling */
-  padding: 2rem;
-  border-radius: 12px;
-  background: #f0f0f0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  
-  /* Prevent content squeezing */
-  box-sizing: border-box;
-}
-</style>
 <body>
-<div class="displayFolder">
-    <ul class="carousel">
-        <li class="slide">
-<div>
-    <p><strong>Meta’s</strong> transition from the <strong>Facebook</strong> brand toward the <strong>metaverse</strong> is an example of how ambitious organisational change becomes a challenge when the proposed future does not align with customer needs or market behaviour. In October 2021, Facebook officially changed its corporate name to Meta and positioned the metaverse as the company’s new technological focus. CEO Mark Zuckerberg described the metaverse as a more immersive form of Internet use that could unite socialising, work, entertainment, education and commerce into one platform. Rather than launch another product, Meta’s strategy was to transform the company’s identity and position it as the innovator of a new generation of computing.</p>
+
+<div class="displayFolder" role="region" aria-roledescription="carousel" aria-label="Meta and the metaverse">
+
+  <div class="carousel-wrap">
+
+    <!-- Previous button -->
+    <button type="button" class="arrow" id="prev" aria-label="Previous slide">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+
+    <!-- =====================================================
+         SLIDES - edit the content here.
+         To add a slide, copy one whole <li> ... </li> block.
+         To remove one, delete its <li> ... </li> block.
+         The dots and "Slide X of Y" update automatically.
+
+         Slide template (image version):
+           <li class="slide">
+             <div class="side-by-side">
+               <div class="side-a">
+                 <h3>Heading</h3>
+                 <p>Your text.</p>
+               </div>
+               <div class="side-b">
+                 <img src="IMAGE-URL" alt="Describe the image">
+               </div>
+             </div>
+           </li>
+         For a video, replace the <img> with an <iframe> (see slide 2).
+         ===================================================== -->
+    <ul class="carousel" id="carousel" tabindex="0"
+        aria-label="Slides. Use the left and right arrow keys to move between them.">
+
+      <!-- ---------- SLIDE 1: Changing the narrative ---------- -->
+      <li class="slide" aria-roledescription="slide">
+        <div class="side-by-side">
+          <div class="side-a">
+            <h3>Changing the narrative</h3>
+            <p>
+              <strong>Meta’s</strong> transition from the <strong>Facebook</strong> brand toward the
+              <strong>metaverse</strong> is an example of how ambitious organisational change becomes
+              a challenge when the proposed future does not align with customer needs or market
+              behaviour. In October 2021, Facebook officially changed its corporate name to Meta and
+              positioned the metaverse as the company’s new technological focus. CEO Mark Zuckerberg
+              described the metaverse as a more immersive form of Internet use that could unite
+              socialising, work, entertainment, education and commerce into one platform. Rather than
+              launch another product, Meta’s strategy was to transform the company’s identity and
+              position it as the innovator of a new generation of computing.
+            </p>
+          </div>
+          <div class="side-b">
+            <img src="https://s3.ap-southeast-2.amazonaws.com/learn.aim.com.au/Guided+Pathways/Change+Leadership/Module+1/FB-META.png"
+                 alt="visual of the old facebook logo and the new meta logo">
+          </div>
+        </div>
+      </li>
+
+      <!-- ---------- SLIDE 2: What is a metaverse? (video) ---------- -->
+      <li class="slide" aria-roledescription="slide">
+        <div class="side-by-side">
+          <div class="side-a">
+            <h3>What is a 'metaverse?'</h3>
+            <p>
+              The metaverse is a term referring to a shared online virtual world where users create
+              customisable avatars and interact with 3D environments such as cities or shops. The Meta
+              specific virtual reality platform was an $80 billion video game called
+              <em><strong>Horizon Worlds</strong></em>, and at the peak of its hype there were
+              projections that as many as
+              <a href="https://altindex.com/news/metaversa-hit-billion-users">2.6 billion users would be online by 2030.</a>
+            </p>
+            <p style="margin-top: 0.75rem;">
+              The video alongside is a promotional video from Meta, released in 2022. It shows an
+              artistic rendition of how Meta leadership imagined the metaverse might look. It is
+              important to note that the real user experience was not this seamless - legs did not
+              arrive for user avatars until September 2023,
+              <a href="https://au.pcmag.com/vr/101669/avatars-in-meta-horizons-finally-get-legs-this-time-for-real">almost a year after they were first shown to users</a>.
+            </p>
+          </div>
+          <div class="side-b">
+            <iframe
+              src="https://www.youtube.com/embed/afdnbXXbBTg?si=kMTprMEg6s0keYhc"
+              title="Meta metaverse promotional video (2022)"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen></iframe>
+          </div>
+        </div>
+      </li>
+
+      <!-- ---------- SLIDE 3: Reception to becoming Meta ---------- -->
+      <li class="slide" aria-roledescription="slide">
+        <div class="side-by-side">
+          <div class="side-a">
+            <h3>Reception to becoming 'Meta'</h3>
+            <p>
+              This change was met with significant criticism. The Facebook brand had been embroiled in
+              several high-profile scandals, such as the
+              <a href="https://bipartisanpolicy.org/article/cambridge-analytica-controversy/">Cambridge Analytica leaks</a>
+              and other ongoing privacy concerns culminating in a
+              <a href="https://www.ftc.gov/news-events/news/press-releases/2019/07/ftc-imposes-5-billion-penalty-sweeping-new-privacy-restrictions-facebook">$5 billion fine from the FTC in 2019</a>,
+              so many consumers viewed this rebrand as an attempt for Meta to distance itself from
+              controversy. Customers were reluctant to share additional personal data with an
+              organisation known for hacking and leaks, and although initial estimates of user
+              engagement were high, others did not feel Meta would be capable of digitally replicating
+              actual human interaction in an enjoyable way. Meta also had not made any significant
+              technological developments in the virtual reality (VR) space, which already had an
+              activity community of users engaged on other platforms, and thus failed to attract their
+              own userbase. While there was significant corporate and celebrity interest in
+              <strong>Horizon Worlds</strong>, without the initial popular initial appeal of Facebook,
+              the metaverse would not be viable long term.
+            </p>
+          </div>
+          <div class="side-b">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKAFwmilMwSs4g2T2cdA4CIULGoInwK0LqSd0gtL7mNc240c1f-VBbP3TX&s=10"
+                 alt="Mark Zuckerberg's Horizon worlds avatar looking at the user.">
+          </div>
+        </div>
+      </li>
+
+      <!-- ---------- SLIDE 4: Challenges adapting internally ---------- -->
+      <li class="slide" aria-roledescription="slide">
+        <div class="side-by-side">
+          <div class="side-a">
+            <h3>Challenges adapting internally</h3>
+            <p>
+              The change also created challenges within the organisation, as using the metaverse was
+              incorporated as a work tool for meetings and other communication despite its inefficiency
+              and frequent stalling during use. The company’s 2021 strategy involved significant
+              long-term investment into their future platform, but there was a gap between the
+              ambition of the strategy and the practical experience of using the product itself.
+              Limited adoption and unclear use cases can reinforce each other; fewer users can mean
+              fewer reasons for creators and businesses to invest, while limited content and
+              participation can make the product less attractive for potential users. Combined with
+              marketplace redundancy, despite being positioned as a revolutionary technology, Horizon
+              Worlds and Meta’s metaverse was left without a relevant spot in the VR space, and in
+              March 2026 Meta announced that while existing games would continue to be supported, no
+              new products would be added to the platform.
+            </p>
+          </div>
+          <div class="side-b">
+            <img src="https://media.wired.com/photos/669182a92827c100f534e5f3/3:2/w_2560%2Cc_limit/Meataverse-Office-Business-1357691779.jpg"
+                 alt="visual of the old facebook logo and the new meta logo">
+          </div>
+        </div>
+      </li>
+
+      <!-- ---------- SLIDE 5: Lessons learnt ---------- -->
+      <li class="slide" aria-roledescription="slide">
+        <div class="side-by-side">
+          <div class="side-a">
+            <h3>Lessons learnt</h3>
+            <p>
+              From a change-leadership perspective, Meta shows the importance of testing assumptions
+              and continuously responding to evidence. The organisation identified a technological
+              trend and committed to becoming an early leader, but the experience demonstrates that
+              technological innovation alone does not guarantee successful organisational change.
+              Leaders must also understand what customers actually find important, distinguish an
+              emerging trend from a sustainable market need, and be prepared to adjust their strategy
+              when data challenges their original assumptions.
+            </p>
+          </div>
+          <div class="side-b">
+            <img src="https://images.pexels.com/photos/39853088/pexels-photo-39853088.jpeg"
+                 alt="visual of the old facebook logo and the new meta logo">
+          </div>
+        </div>
+      </li>
+
+    </ul>
+
+    <!-- Next button -->
+    <button type="button" class="arrow" id="next" aria-label="Next slide">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
+
+  </div>
+
+  <!-- Slide position indicator: dots + text counter (filled in by the script below) -->
+  <div class="indicator">
+    <div class="dots" id="dots" role="group" aria-label="Choose a slide"></div>
+    <span id="counter" aria-live="polite"></span>
+  </div>
+
 </div>
-<li class="slide">
-<div>
-    <h3>What is a 'metaverse?'</h3>
-    <p>
-        The metaverse is a term referring to a shared online virtual world where users create customisable avatars and interact with 3D environments such as cities or shops. The Meta specific virtual reality platform was an $80 billion video game called <em><strong>Horizon Worlds</strong></em>, and at the peak of its hype there were projections that as many as <a href="https://altindex.com/news/metaversa-hit-billion-users" >2.6 billion users would be online by 2030.</a>
-    </p>
-</div>
-<li class="slide">
-<div>
-    <p>
-        This change was met with significant criticism. The Facebook brand had been embroiled in several high-profile scandals, such as the <a href="https://bipartisanpolicy.org/article/cambridge-analytica-controversy/">Cambridge Analytica leaks</a> and other ongoing privacy concerns culminating in a <a href="https://www.ftc.gov/news-events/news/press-releases/2019/07/ftc-imposes-5-billion-penalty-sweeping-new-privacy-restrictions-facebook">$5 billion fine from the FTC in 2019</a>, so many consumers viewed this rebrand as an attempt for Meta to distance itself from controversy. Customers were reluctant to share additional personal data with an organisation known for hacking and leaks, and although initial estimates of user engagement were high, others did not feel Meta would be capable of digitally replicating actual human interaction in an enjoyable way. Meta also had not made any significant technological developments in the virtual reality (VR) space, which already had an activity community of users engaged on other platforms, and thus failed to attract their own userbase. While there was significant corporate and celebrity interest in <strong>Horizon Worlds</strong>, without the initial popular initial appeal of Facebook, the metaverse would not be viable long term.
-    </p>
-</div>
-<li class="slide"> 
-<div>
-    <p>The change also created challenges within the organisation, as using the metaverse was incorporated as a work tool for meetings and other communication despite its inefficiency and frequent stalling during use. The company’s 2021 strategy involved significant long-term investment into their future platform, but there was a gap between the ambition of the strategy and the practical experience of using the product itself. Limited adoption and unclear use cases can reinforce each other; fewer users can mean fewer reasons for creators and businesses to invest, while limited content and participation can make the product less attractive for potential users. Combined with marketplace redundancy, despite being positioned as a revolutionary technology, Horizon Worlds and Meta’s metaverse was left without a relevant spot in the VR space, and in March 2026 Meta announced that while existing games would continue to be supported, no new products would be added to the platform.</p>
-</div>
-<li class="slide">
-<div>
-    <p>From a change-leadership perspective, Meta shows the importance of testing assumptions and continuously responding to evidence. The organisation identified a technological trend and committed to becoming an early leader, but the experience demonstrates that technological innovation alone does not guarantee successful organisational change. Leaders must also understand what customers actually find important, distinguish an emerging trend from a sustainable market need, and be prepared to adjust their strategy when data challenges their original assumptions.</p>
-</div>
-</ul>
-</div>
+
+<!-- =====================================================
+     SCRIPT - carousel behaviour. You shouldn't need to
+     edit this when changing slide content.
+     ===================================================== -->
+<script>
+(function () {
+  // --- Grab the elements we need ---
+  var carousel  = document.getElementById('carousel');
+  var slides    = Array.prototype.slice.call(carousel.querySelectorAll('.slide'));
+  var prevBtn   = document.getElementById('prev');
+  var nextBtn   = document.getElementById('next');
+  var counter   = document.getElementById('counter');
+  var dotsWrap  = document.getElementById('dots');
+  var total     = slides.length;
+  var current   = 0;
+  var ticking   = false;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  // --- Label each slide for screen readers ---
+  slides.forEach(function (slide, i) {
+    slide.setAttribute('role', 'group');
+    slide.setAttribute('aria-label', 'Slide ' + (i + 1) + ' of ' + total);
+  });
+
+  // --- Build one dot per slide ---
+  var dots = slides.map(function (_, i) {
+    var button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'dot';
+    button.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+    button.addEventListener('click', function () { goTo(i); });
+    dotsWrap.appendChild(button);
+    return button;
+  });
+
+  // --- Scroll to a given slide ---
+  function goTo(index) {
+    index = Math.max(0, Math.min(total - 1, index));
+    slides[index].scrollIntoView({
+      behavior: reduceMotion.matches ? 'auto' : 'smooth',
+      inline: 'center',
+      block: 'nearest'   // never scrolls the page vertically
+    });
+  }
+
+  // --- Update arrows, dots, counter and accessibility state ---
+  function update(index) {
+    current = index;
+    counter.textContent = 'Slide ' + (index + 1) + ' of ' + total;
+    prevBtn.disabled = (index === 0);
+    nextBtn.disabled = (index === total - 1);
+
+    dots.forEach(function (dot, i) {
+      if (i === index) dot.setAttribute('aria-current', 'true');
+      else dot.removeAttribute('aria-current');
+    });
+
+    // Keep off-screen slides out of the tab order
+    slides.forEach(function (slide, i) {
+      slide.querySelectorAll('a').forEach(function (link) {
+        link.tabIndex = (i === index) ? 0 : -1;
+      });
+      if (i === index) slide.removeAttribute('aria-hidden');
+      else slide.setAttribute('aria-hidden', 'true');
+    });
+  }
+
+  // --- Work out which slide is closest to the centre ---
+  function detectCurrent() {
+    var centre = carousel.scrollLeft + carousel.clientWidth / 2;
+    var best = 0;
+    var bestDistance = Infinity;
+
+    slides.forEach(function (slide, i) {
+      var middle = slide.offsetLeft + slide.offsetWidth / 2;
+      var distance = Math.abs(middle - centre);
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        best = i;
+      }
+    });
+
+    // Snap to the ends when scrolled fully left/right
+    if (carousel.scrollLeft <= 1) best = 0;
+    else if (carousel.scrollLeft + carousel.clientWidth >= carousel.scrollWidth - 1) best = total - 1;
+
+    if (best !== current) update(best);
+  }
+
+  // --- Event listeners ---
+  carousel.addEventListener('scroll', function () {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () {
+      detectCurrent();
+      ticking = false;
+    });
+  }, { passive: true });
+
+  window.addEventListener('resize', function () { goTo(current); });
+  prevBtn.addEventListener('click', function () { goTo(current - 1); });
+  nextBtn.addEventListener('click', function () { goTo(current + 1); });
+
+  // Keyboard: arrows, Home, End when the carousel has focus
+  carousel.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight')     { e.preventDefault(); goTo(current + 1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
+    else if (e.key === 'Home')      { e.preventDefault(); goTo(0); }
+    else if (e.key === 'End')       { e.preventDefault(); goTo(total - 1); }
+  });
+
+  // --- Start on slide 1 ---
+  update(0);
+})();
+</script>
+
 </body>
+</html>
