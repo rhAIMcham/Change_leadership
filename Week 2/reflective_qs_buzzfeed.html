@@ -1,0 +1,184 @@
+<style>
+
+  :root {
+  --AIMblue: #4353A3;
+  --darkBlue: #38416D;
+  --teal: #5DC8B9;
+  --cream: #F1EEDE;
+  --grey: #e7e9ec;
+  --rust: #AF4510;
+  --navy: #12195C;
+  --white: #ffffff;
+  --lightBlue: #AEBAE4;
+  }
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+.notesBox {
+ max-width: 700px; 
+ margin: 30px auto; 
+ padding: 1rem; 
+ background: #f8f9fa; 
+ border-radius: 12px; 
+ box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+textarea {
+width: 95%;
+padding: 0.75rem;
+border-radius: 8px;
+border: 1px solid #ccc;
+resize: vertical;
+font-size: 1rem; 
+font-family: 'Inter', sans-serif;
+}
+ .saved {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
+    margin-top: 0.5rem;
+ }
+
+ .savedMsg {
+ font-size: 0.9rem;
+color: var(--lightBlue);
+ opacity: 0;
+ transition: opacity 0.4s ease;
+ margin: 0;
+ min-width: 60px;   
+ }
+
+ .saveBtn {
+background-color: var(--navy); 
+color: white; 
+border: none; 
+border-radius: 6px;
+      padding: 0.5rem 1.25rem; 
+      font-size: 1rem; 
+      cursor: pointer;
+ }
+
+.questionText {
+margin-bottom: 0.5rem;
+font-size: 1rem;
+padding: 5px;
+}
+
+.modelAnswer {
+  display: none;
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--cream);
+  border-left: 4px solid var(--teal);
+  border-radius: 6px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--navy);
+}
+
+.modelAnswer.visible {
+  display: block;
+}
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+<div class="notesBox">
+    <h3>Technical challenges vs. adaptive challenges</h3>
+  <p class="questionText">What factors should leaders consider when deciding whether a challenge requires a technical solution, an adaptive response, or a combination of both?</p>
+
+  <textarea id="notesInput1" rows="8"
+    ></textarea>
+
+  <!-- Flexbox row: Saved! stays left, Save button stays right -->
+  <div class="saved" >
+    <p id="statusMsg1" class="savedMsg">Saved!</p>
+    <button id="saveBtn1" class="saveBtn">Save</button>
+  </div>
+
+  <div id="modelAnswer1" class="modelAnswer">
+  Buzzfeed’s changing business environment included technical issues that could be addressed through established processes and experience, such as adapting content production methods. However, other challenges were more adaptive because they involved changing business models, creative culture, and the organisation’s relationship with its creators.
+  </div>
+</div>
+
+
+<div class="notesBox">
+    <h3>Visible problems and underlying issues</h3>
+  <p class="questionText">How can leaders distinguish between the visible problems they are facing and the underlying causes of those problems?</p>
+
+  <textarea id="notesInput2" rows="8"
+    ></textarea>
+
+  <div class="saved" >
+    <p id="statusMsg2" class="savedMsg">Saved!</p>
+    <button id="saveBtn2" class="saveBtn">Save</button>
+  </div>
+
+  <div id="modelAnswer2" class="modelAnswer">
+Effective leaders look beyond immediate symptoms and take time to identify what is driving the problem. Declining advertising revenue, changes in site traffic, the loss of creators and the eventual closure of Buzzfeed were all visible problems. Other, significant issues might be a reliance on social media platforms, and the organisation’s ability to retain talent. It is important to question what is driving the problem rather than simply responding to its most obvious effects.
+  </div>
+</div>
+
+<div class="notesBox">
+    <h3>Change in a rapidly transforming world</h3>
+  <p class="questionText">How can leaders create the conditions for an organisation to adapt when existing approaches are no longer working?</p>
+
+  <textarea id="notesInput3" rows="8"
+    ></textarea>
+
+  <div class="saved" >
+    <p id="statusMsg3" class="savedMsg">Saved!</p>
+    <button id="saveBtn3" class="saveBtn">Save</button>
+  </div>
+
+  <div id="modelAnswer3" class="modelAnswer">
+Consider how leaders could have encouraged experimentation and better involved team members and creators in identifying emerging risks and opportunities. Think about the importance of retaining and developing creative talent, exploring alternative revenue models, monitoring changes in audience behaviour and testing new approaches before making major commitments.
+  </div>
+</div>
+
+<script>
+function initNotesBox(inputId, btnId, msgId, storageKey, answerId) {
+  const textArea = document.getElementById(inputId);
+  const saveBtn = document.getElementById(btnId);
+  const statusMsg = document.getElementById(msgId);
+  const answerBox = document.getElementById(answerId);
+
+  const STORAGE_KEY = storageKey;
+  const ANSWER_SHOWN_KEY_BUZZFEED = storageKey + '_answerShown';
+
+  // Load existing note (if any)
+  const savedNote = localStorage.getItem(STORAGE_KEY);
+  if (savedNote) textArea.value = savedNote;
+
+  // If the answer was already revealed in a previous visit, keep it visible
+  if (localStorage.getItem(ANSWER_SHOWN_KEY_BUZZFEED) === 'true') {
+    answerBox.classList.add('visible');
+  }
+
+  // Save on button click
+  saveBtn.addEventListener('click', () => {
+    const value = textArea.value.trim();
+    localStorage.setItem(STORAGE_KEY, value);
+
+    // Fade in "Saved!"
+    statusMsg.style.opacity = '1';
+    setTimeout(() => statusMsg.style.opacity = '0', 1500);
+
+    // Reveal the suggested answer once the question has been answered and saved
+    if (value.length > 0) {
+      answerBox.classList.add('visible');
+      localStorage.setItem(ANSWER_SHOWN_KEY_BUZZFEED, 'true');
+    }
+  });
+
+  // Optional: auto-save while typing
+  textArea.addEventListener('input', () => {
+    localStorage.setItem(STORAGE_KEY, textArea.value.trim());
+  });
+}
+
+initNotesBox('notesInput1', 'saveBtn1', 'statusMsg1', 'buzzfeedQ1', 'modelAnswer1');
+initNotesBox('notesInput2', 'saveBtn2', 'statusMsg2', 'buzzfeedQ2', 'modelAnswer2');
+initNotesBox('notesInput3', 'saveBtn3', 'statusMsg3', 'buzzfeedQ3', 'modelAnswer3');
+</script>
