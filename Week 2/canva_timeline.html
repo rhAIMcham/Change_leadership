@@ -1,0 +1,499 @@
+<head>
+<style>
+    :root {
+      --AIMblue: #4353A3;
+      --navy: #12195C;
+      --lightBlue: #AEBAE4;
+      --grey: #e7e9ec;
+      --cream: #F1EEDE;
+      --text-secondary: #666660;
+      --text-link: #185fa5;
+      --border-subtle: #dedad3;
+      --bg-message-head: #f5f3f0;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+    }
+
+    body {
+      margin: 0 170px;
+      color: #768390;
+      background: #FFF;
+      font-family: "Effra",Helvetica,sans-serif;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+      font-size: 19px;
+      line-height: 1.6;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: #3D4351;
+      margin-top: 0;
+    }
+
+    h2.timeline-title {
+      font-size: 2em;
+    }
+
+    h3.timeline-title {
+      font-size: 1.5em;
+    }
+
+    .timeline-content p {
+      font-size: 1em;
+    }
+
+    .timeline-info span {
+      font-size: 1.05em;
+    }
+
+    a {
+      color: var(--AIMblue);
+    }
+
+    a:hover {
+      color: var(--lightBlue);
+      text-decoration: none;
+    }
+
+    .container-fluid .row {
+      padding: 4rem 0;
+    }
+
+    .timeline {
+      line-height: 1.4em;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+    }
+
+    .timeline h1,
+    .timeline h2,
+    .timeline h3 {
+      line-height: inherit;
+    }
+
+    .timeline-item {
+      padding-left: 40px;
+      position: relative;
+    }
+
+    .timeline-item:last-child {
+      padding-bottom: 0;
+    }
+
+    .timeline-info {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      margin: 0 0 .5em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .timeline-marker {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 15px;
+    }
+
+    .timeline-marker:before {
+      background: var(--AIMblue);
+      border: 3px solid transparent;
+      border-radius: 100%;
+      content: "";
+      display: block;
+      height: 15px;
+      position: absolute;
+      top: 4px;
+      left: 0;
+      width: 15px;
+      transition: background .3s,border .3s;
+    }
+
+    .timeline-marker:after {
+      content: "";
+      width: 3px;
+      background: #CCD5DB;
+      display: block;
+      position: absolute;
+      top: 24px;
+      bottom: 0;
+      left: 6px;
+    }
+
+    .timeline-item:last-child .timeline-marker:after {
+      content: none;
+    }
+
+    .timeline-item:not(.period):hover .timeline-marker:before {
+      background: transparent;
+      border: 3px solid var(--lightBlue);
+    }
+
+    .timeline-content {
+      padding-bottom: 40px;
+    }
+
+    .timeline-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    .timeline-content>table {
+      width: 100%;
+    }
+
+    .period {
+      padding: 0;
+    }
+
+    .period .timeline-info {
+      display: none;
+    }
+
+    .period .timeline-marker:before {
+      background: transparent;
+      content: "";
+      width: 15px;
+      height: auto;
+      border: none;
+      border-radius: 0;
+      top: 0;
+      bottom: 30px;
+      position: absolute;
+      border-top: 3px solid #CCD5DB;
+      border-bottom: 3px solid #CCD5DB;
+    }
+
+    .period .timeline-marker:after {
+      content: "";
+      height: 32px;
+      top: auto;
+    }
+
+    .period .timeline-content {
+      padding: 40px 0 70px;
+    }
+
+    .period .timeline-title {
+      margin: 0;
+    }
+
+    @media(min-width:768px) {
+      .timeline-split .timeline,
+      .timeline-centered .timeline {
+        display: table;
+      }
+      .timeline-split .timeline-item,
+      .timeline-centered .timeline-item {
+        display: table-row;
+        padding: 0;
+      }
+      .timeline-split .timeline-info,
+      .timeline-centered .timeline-info,
+      .timeline-split .timeline-marker,
+      .timeline-centered .timeline-marker,
+      .timeline-split .timeline-content,
+      .timeline-centered .timeline-content,
+      .timeline-split .period .timeline-info {
+        display: table-cell;
+        vertical-align: top;
+      }
+      .timeline-split .timeline-marker,
+      .timeline-centered .timeline-marker {
+        position: relative;
+      }
+      .timeline-split .timeline-content,
+      .timeline-centered .timeline-content {
+        padding-left: 30px;
+      }
+      .timeline-split .timeline-info,
+      .timeline-centered .timeline-info {
+        padding-right: 30px;
+      }
+      .timeline-split .period .timeline-title,
+      .timeline-centered .period .timeline-title {
+        position: relative;
+        left: -45px;
+      }
+    }
+
+    .single-image-panel {
+      margin: 0;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: var(--grey);
+      box-shadow: 0 1px 3px rgba(0,0,0,.08);
+    }
+
+    .single-image-panel.period-image {
+      max-width: 100%;
+      margin-top: 16px;
+    }
+
+    .single-image-panel img {
+      display: block;
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+    }
+
+    .img-placeholder {
+      height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .gallery-caption {
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      border-top: 3px solid var(--AIMblue);
+    }
+
+    .read-more-wrap {
+      position: relative;
+      max-height: 130px;
+      overflow: hidden;
+      transition: max-height .45s ease;
+    }
+
+    .read-more-wrap:not(.expanded)::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 48px;
+      background: linear-gradient(to bottom,rgba(255,255,255,0),#fff);
+    }
+
+    .read-more-wrap.expanded {
+      max-height: 3000px;
+    }
+
+    .read-more-btn {
+      display: inline-block;
+      margin-top: 10px;
+      background: none;
+      border: none;
+      padding: 0;
+      color: var(--text-link);
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .read-more-btn:hover {
+      color: var(--lightBlue);
+    }
+
+    .detail-toggle {
+      margin: 14px 0;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .detail-toggle summary {
+      cursor: pointer;
+      padding: 10px 14px;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--navy);
+      background: var(--bg-message-head);
+      list-style: none;
+    }
+
+    .detail-toggle summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .detail-toggle summary:before {
+      content: "+  ";
+      color: var(--AIMblue);
+    }
+
+    .detail-toggle[open] summary:before {
+      content: "\2013  ";
+    }
+
+    .detail-toggle>div {
+      padding: 12px 14px;
+    }
+
+    .cost-table {
+      border-collapse: collapse;
+      margin-top: 14px;
+      font-size: .9em;
+    }
+
+    .cost-table th,
+    .cost-table td {
+      text-align: left;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .cost-table th {
+      background: var(--cream);
+      color: var(--navy);
+      font-size: 13px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .cost-table td:last-child {
+      font-weight: 700;
+      color: var(--AIMblue);
+    }
+</style>
+</head>
+<body>
+<div class="container-fluid"><div class="row example-basic"><div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+<ul class="timeline">
+
+<li class="timeline-item period"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<h2 class="timeline-title">2007</h2><p>Identifying a need</p>
+<div class="single-image-panel period-image"><img src="https://s3.ap-southeast-2.amazonaws.com/learn.aim.com.au/Guided+Pathways/Change+Leadership/Module+2/Canva/canva_1.png" alt="The founders in 2007" ><div class="gallery-caption">Caption: Identifying a need, 2007</div></div>
+<!-- Swap the placeholder div for: <img src="URL" alt="..." loading="lazy"> -->
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>2007</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">A problem worth solving</h3>
+<p>In 2007, founder and future CEO Melanie Perkins was a student at the University of Western Australia studying communications, psychology and commerce. When assisting her classmates with different design software, she experienced how difficult and complex these programs were. Even creating simple designs required significant skill as the tools were intended for professionals or experienced hobbyists, not the casual user trying to solve a simple problem.<br>
+This sparked an idea – simplifying design tools and serving the average consumer directly. Rapid technological innovation, such as Facebook’s launch in 2004 and the release of the first iPhone in 2007, integrated the Internet as an accessible resource. Perkins identified that a web-based tool with a free offering would be popular.</p>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>Fusion Books</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">The first iteration</h3>
+<p>The first iteration of this idea was Fusion Books. This tool was designed to create yearbooks, targeted at high school and university students. The interface was purposely simple, with users uploading images that were placed in pre-built templates.<br>The success of this venture convinced Perkins and co-founder Cliff Obrecht that something with a much broader scope was possible.</p>
+</div></li>
+
+<li class="timeline-item period"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<h2 class="timeline-title">2010</h2><p>Fusion Books to Canva</p>
+<div class="single-image-panel period-image"><img src="https://s3.ap-southeast-2.amazonaws.com/learn.aim.com.au/Guided+Pathways/Change+Leadership/Module+2/Canva/canva_2.png" alt="The Canva logo" ><div class="gallery-caption">Caption: Fusion Books to Canva, 2010</div></div>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>2010</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Searching for investment</h3>
+<p>Perkins and Obrecht brainstormed ideas for their new online design tool and began looking for potential investors. This kind of tool would require highly skilled engineers to build and maintain, requiring a significant capital investment to get started.</p>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>2010</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">A chance meeting</h3>
+<p>Funding did not arrive quickly. After being rejected numerous times, early Zoom backer Bill Tai encountered Perkins and Obrecht by chance at a networking event in Perth and chose to support the project. Using his connections to other potential investors in Silicon Valley, they began recruiting engineering talent to build out their new platform, Canva.</p>
+</div></li>
+
+<li class="timeline-item period"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<h2 class="timeline-title">2013 – 2019</h2><p>Massive growth</p>
+<div class="single-image-panel period-image"><img src="https://s3.ap-southeast-2.amazonaws.com/learn.aim.com.au/Guided+Pathways/Change+Leadership/Module+2/Canva/canva_3.png" alt="The founders in 2007" ><div class="gallery-caption">Caption: Massive growth, 2013–2019</div></div>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>2013</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Launch</h3>
+<p>Canva’s first 6 years were incredibly successful. They launched in August 2013 to a waitlist of 50,000 Australian users, and by early 2015 they had over 100,000 users. The intuitive interface and comprehensive suite of templates, icons, stock images and other resources made personalised digital media successful and intuitive. With its free tier, Canva also gave users access to experiment with the tool before signing up for the subscription service.</p>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>2015</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Canva for Work</h3>
+<p>In 2015, they launched Canva for Work (now Canva Pro). This paid tier was a change in delivery model – the platform had originally operated with the main functions free, while premium photos, fonts and other assets behind a small paywall. Introducing this subscription service granted access to higher quality access for a fixed price. Canva experienced rapid success, with its user base growing to 3.6 million by the end of 2016.</p>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>2017</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">First profit</h3>
+<p>By 2017, Canva recorded its first profit, reaching the milestone of 10 million users and 1 billion USD valuation the following year. As the capability of the Canva platform expanded, different tools were integrated such as animation and presentation functionalities, increasing Canva’s appeal to larger businesses and organisations.</p>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>2019</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Enterprise offering</h3>
+<p>In 2019, Canva capitalised on this growth by launching an enterprise offering, allowing the integration of Canva into workflows for businesses, rising their monthly users to 24 million.</p>
+</div></li>
+
+<li class="timeline-item period"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<h2 class="timeline-title">2020</h2><p>The pandemic and new user heights</p>
+<div class="single-image-panel period-image"><img src="https://s3.ap-southeast-2.amazonaws.com/learn.aim.com.au/Guided+Pathways/Change+Leadership/Module+2/Canva/canva_4.png" alt="The founders in 2007" ><div class="gallery-caption">Caption: The pandemic and new user heights, 2020</div></div>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>2020</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Pandemic surge</h3>
+<p>In 2020, the pandemic facilitated the popularisation of digital presentation and online communication. Canva usage soared as workplaces transitioned to a digital, online format. This new user base pushed Canva’s valuation to 6 billion USD.</p>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>2020 – 2021</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Video editing</h3>
+<p>Canva also added video editing capability onto its platform in 2020. With TikTok and shortform video sites growing in popularity, Canva’s export pipeline and prebuilt templates made it a very attractive tool for posting on social media. This positive growth continued, with 2021 seeing 75 million monthly users and a 40B USD valuation.</p>
+</div></li>
+
+<li class="timeline-item period"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<h2 class="timeline-title">2022</h2><p>Canva for Teams</p>
+<div class="single-image-panel period-image"><img src="https://s3.ap-southeast-2.amazonaws.com/learn.aim.com.au/Guided+Pathways/Change+Leadership/Module+2/Canva/canva_5.png" alt="The founders in 2007" ><div class="gallery-caption">Caption: Canva for Teams, 2022</div></div>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>2022</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Teams and the Visual Worksuite</h3>
+<p>Canva for Teams was launched in 2022 to capitalise on the new enterprise user base. In late 2022, Canva also expanded to the Canva Visual Worksuite, offering different design creation tools for documents, presentations, social media posts and videos.</p>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>2022</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Market turbulence</h3>
+<p>When the broader tech industry saw valuation and tumbling stock prices, Canva was not immune to this change. Their valuation dipped significantly, but by the end of 2022 had largely recovered.</p>
+</div></li>
+
+<li class="timeline-item period"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<h2 class="timeline-title">2023 – 2024</h2><p>Introduction of AI</p>
+<div class="single-image-panel period-image"><img src="https://s3.ap-southeast-2.amazonaws.com/learn.aim.com.au/Guided+Pathways/Change+Leadership/Module+2/Canva/canva_6.png" alt="The founders in 2007" ><div class="gallery-caption">Caption: Introduction of AI, 2023–2024</div></div>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>2023</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">First AI tools</h3>
+<p>By 2023, Canva hit 135 million monthly users, and launched their first AI tools to their existing suite of products.<br>With Text to Image and copywriting assistance, Canva tested the appetite of its userbase for integrated AI tools. These tools were powered by OpenAI, but the positive reception to their inclusion stoked appetite within Canva to expand their AI capabilities.</p>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>2024</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Price rises and AI investment</h3>
+<p>In 2024, Canva significantly increased subscription prices, with some individual users and smaller businesses facing increases of up to 300%. The additional revenue supported major investment in AI, including the acquisition of Sydney-based AI generation tool Leonardo and the development of Canva 2.0, a ground-up rebuild designed to make text-driven AI generation central to the platform. However, these changes were initially internal, with AI tools remaining optional rather than becoming the focus of the everyday user experience.</p>
+</div></li>
+
+<li class="timeline-item period"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<h2 class="timeline-title">2026</h2><p>Canva 2.0 and the cost of AI</p>
+<div class="single-image-panel period-image"><img src="https://s3.ap-southeast-2.amazonaws.com/learn.aim.com.au/Guided+Pathways/Change+Leadership/Module+2/Canva/canva_7.png" alt="The founders in 2007" ><div class="gallery-caption">Caption: Canva 2.0 and the cost of AI, 2026</div></div>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>April 2026</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Canva 2.0 launches</h3>
+<p>Canva launched Canva 2.0, putting AI generation at the centre of its platform. This received generally positive user feedback as its monthly user base reached 265 million. This updated version also streamlined integration across workflows, allowing users to port information and styling from other tools directly into Canva AI, creating a more seamless experience. However, this increased functionality introduced a significant obstacle: AI inference is expensive, and Canva’s reliance on external frontier models while its own models were still developing meant that even limited AI use by free users was generating substantial and unexpected costs.</p>
+<details class="detail-toggle"><summary>What is AI inference?</summary><div>
+<p>AI inference is the process of an AI model using what it has learned to generate a new output, such as text, images or other data, in response to a user’s request. Each inference requires computing power and resources, meaning every AI interaction can create a cost for the organisation providing the service.</p>
+</div></details>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>2026</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Resetting the growth target</h3>
+<p>Canva’s growing AI expenses challenged its traditional free-to-paid business model, prompting CEO Melanie Perkins to reduce the 2026 revenue growth target from 30% to 20% while slowing the AI rollout to rebuild infrastructure, reduce costs and create a more sustainable business model.</p>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>2026</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Investor and industry reaction</h3>
+<div class="read-more-wrap" id="readMore1">
+<p>This had an immediate impact on their valuations; key American investment firms T. Rowe Price and Franklin Templeton dropped their valuations of Canva by 9 and 6 percent respectively since the start of 2026. These firms manage 1.9 and 1.8 trillion USD between them, and their valuation of Canva at 42 billion USD had been crucial in establishing its peak valuation.<br><br>
+Although Canva is privately owned, lowering its growth forecast could still affect investor confidence and the funding needed for its costly AI transition. Similar forecast reductions from Figma and challenges facing Adobe highlighted broader pressures across the design industry, while Canva responded by accelerating investment in its internal AI capabilities, expanding its team to more than 200 staff to reduce reliance on costly external models and make AI generation more financially sustainable.</p>
+</div>
+<button class="read-more-btn" type="button" onclick="toggleReadMore('readMore1', this)">Read more</button>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>Several months later</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Cost reductions</h3>
+<p>Several months later, Canva had transformed this investment into results. Internal models were now more efficient, and the cheapest possible models were being successfully assigned to simple problems so complex tasks could be managed by the more expensive and powerful AI tools.</p>
+<p style="margin-top:14px">Overview of Canva’s cost reductions across their AI functionality:</p>
+<table class="cost-table">
+<tr><th>Measure</th><th>Result</th></tr>
+<tr><td>AI-task cost reduction</td><td>~90% over ~3 months</td></tr>
+<tr><td>Image model cost vs. frontier</td><td>~30x cheaper</td></tr>
+<tr><td>Video model cost vs. frontier</td><td>~17x cheaper</td></tr>
+<tr><td>Style-transfer model cost vs. frontier</td><td>~23x cheaper</td></tr>
+</table>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>Present</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Towards Canva 2.1</h3>
+<p>Canva is preparing to launch Canva 2.1 with the AI functionality users value at a more sustainable cost. By developing their own AI tools internally, Canva ensured their content aligned with Canva’s brand and values. While this is a positive outcome, AI disruption remains an issue for other design platforms, and stock fall for Canva’s publicly listed peers Figma and Adobe indicates that this is a broader trend that will continue.<br>
+However, Canva’s decision to slow down, address its financial and technical challenges, and invest in its own AI capabilities has reportedly reduced AI production costs by 90 percent, strengthening the platform’s ability to scale AI sustainably into the future.</p>
+</div></li>
+
+</ul></div></div></div>
+<script>
+function toggleReadMore(id,btn){var el=document.getElementById(id);var e=el.classList.toggle('expanded');btn.textContent=e?'Read less':'Read more';}
+</script>
+</body>

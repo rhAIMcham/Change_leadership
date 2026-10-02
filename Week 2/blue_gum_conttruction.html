@@ -43,7 +43,7 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-body {
+.bluegumBody {
     font-family: "IBM Plex Sans", sans-serif;
     background-color: var(--bg-app);
     color: var(--text-primary);
@@ -181,9 +181,19 @@ body {
 .avatar.teal { background-color: var(--bg-avatar-teal); color: var(--text-avatar-teal); }
 .avatar.blue { background-color: var(--bg-avatar-blue); color: var(--text-avatar-blue); }
 .feed-body { flex: 1; }
-.feed-top { display: flex; justify-content: space-between; align-items: center; }
+.feed-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
 .feed-name { font-size: 13px; font-weight: 600; }
-.feed-time { font-size: 11px; color: var(--text-muted); }
+.feed-date {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--AIMblue);
+    background-color: var(--bg-avatar-blue);
+    border-radius: var(--radius-pill);
+    padding: 4px 12px;
+    white-space: nowrap;
+}
 .feed-stars { font-size: 12px; letter-spacing: 1px; margin-top: 2px; }
 .feed-stars .filled, .category-stars .filled { color: var(--star-fill); }
 .feed-stars .empty,  .category-stars .empty  { color: var(--star-empty); }
@@ -295,7 +305,7 @@ textarea.composer-input:focus, input.composer-input:focus { outline: none; borde
 }
 </style>
 </head>
-<body>
+<div class="bluegumBody">
 
 <nav class="navbar">
     <div class="logo">
@@ -478,15 +488,15 @@ const photos = [
     { label: "Fitout project", color: "#AF4510" }
 ];
 
-// Employee review feed — data-driven, newest posted reviews are unshifted
-// onto the front of this array so they render at the top. The overall
+// Employee review feed — data-driven. The feed is sorted chronologically
+// (newest first) at render time, so array order doesn't matter. The overall
 // rating (right panel) is derived live from this array every time it changes.
 let reviews = [
     { id: 1, name: "Former Consultant", initials: "FC", avatarStyle: "teal", rating: 2,
       tenure: "Five years as a consultant",
       title: "Change is happening faster than the people can adapt",
       pros: "Sometimes we had pizza parties and ice cream. I like my colleagues.",
-      cons: "Bluegum says the new technology will make building faster and safer, but the reality on the ground has been very different. New processes are introduced so quickly that many of us are still trying to understand how they affect our roles. The people who actually use these systems every day don't seem to have much input into the decisions. We've raised concerns about the project quality and why these processes were created in the first place and for good reason, but it feels like the decisions have already been made. There's also a divide between the teams pushing for change and those of us who want to be more careful. The technology itself isn't necessarily the problem, but the lack of consultation and the assumption that changing things automatically changes the way people work is already causing problems. I hope leadership takes the feedback seriously before things escalate.",
+      cons: "Bluegum says the new technology will make building faster and safer, but the reality on the ground has been very different. New processes are introduced so quickly that many of us are still trying to understand how they affect our roles. The people who actually use these systems every day don’t seem to have much input into the decisions. We’ve raised concerns about the project quality and why these processes were created in the first place and for good reason, but it feels like the decisions have already been made. There’s also a divide between the teams pushing for change and those of us who want to be more careful. The technology itself isn’t necessarily the problem, but the lack of consultation and the assumption that changing things automatically changes the way people work is already causing problems. I hope leadership takes the feedback seriously before things escalate.",
       timestamp: new Date("2026-09-11T08:03:00"), liked: false },
 
     { id: 2, name: "Former Electrician", initials: "FE", avatarStyle: "blue", rating: 1,
@@ -521,7 +531,7 @@ let reviews = [
       tenure: "Thirteen years as a project manager",
       title: "A company that really cares about people",
       pros: "Leadership understands that this industry is ultimately about people, not just projects and deadlines. Our staff were supported when challenges arise, and there is a strong emphasis that everyone's contributions matter equally. Bluegum also takes a lot of pride in their relationships with clients. We're encouraged to develop a rapport and communicate openly with clients, staff and the leadership team. It creates a good culture where you feel trusted to do your job.",
-      cons: "Like any construction company, there can be long days when projects get busy.",
+      cons: "We had a really hard time communicating across different sites. There was no strictly regulated process, so we spent a lot of time shouting at each other on the phone while driving in different directions. We always got the job done, but it was a bit of a time sink when you couldn't keep track of who had talked to who, and what they'd said.",
       timestamp: new Date("2023-01-05T10:30:00"), liked: false }
 ];
 let nextId = reviews.length + 1;
@@ -554,17 +564,9 @@ function starString(rating, cls) {
     return `<span class="${cls || ""}">${out}</span>`;
 }
 
-function formatTimestamp(date) {
-    const diffMs = new Date() - date;
-    const diffMins = Math.round(diffMs / 60000);
-    const diffHours = Math.round(diffMs / 3600000);
-    const diffDays = Math.round(diffMs / 86400000);
-    if (diffMins < 1) return "Just now";
-    if (diffMins < 60) return diffMins + "m";
-    if (diffHours < 24) return diffHours + "h";
-    if (diffDays < 7) return diffDays + "d";
-
-    return date.toISOString().slice(0, 10); // YYYY-MM-DD
+// Month + year shown on each review, e.g. "September 2026"
+function formatMonthYear(date) {
+    return date.toLocaleDateString("en-AU", { month: "long", year: "numeric" });
 }
 
 /* =====================================================
@@ -619,9 +621,9 @@ function submitReview() {
     const cons = document.getElementById("consInput").value.trim();
     if (!(selectedStars > 0 && (pros || cons))) return;
 
-    // New reviews go to the front of the array so they appear
-    // at the top of the feed — nothing about the render logic changes.
-    reviews.unshift({
+    // The feed is sorted by timestamp at render time, so a new review
+    // lands at the top (newest) automatically.
+    reviews.push({
         id: nextId++,
         name: "You",
         initials: "You",
@@ -679,13 +681,15 @@ function renderTabPanel() {
 const tabContent = {
     reviews: () => {
         if (reviews.length === 0) return `<div class="empty-state">No reviews yet. Be the first to leave one.</div>`;
-        return `<div class="reviews-list">${reviews.map(r => `
+        // Newest first. Swap to (a - b) for oldest first.
+        const sorted = [...reviews].sort((a, b) => b.timestamp - a.timestamp);
+        return `<div class="reviews-list">${sorted.map(r => `
             <div class="feed-review">
                 <div class="avatar ${r.avatarStyle}">${escapeHtml(r.initials)}</div>
                 <div class="feed-body">
                     <div class="feed-top">
                         <div class="feed-name">${escapeHtml(r.name)}</div>
-                        <div class="feed-time">${formatTimestamp(r.timestamp)}</div>
+                        <div class="feed-date">${escapeHtml(formatMonthYear(r.timestamp))}</div>
                     </div>
                     <div class="feed-stars">${starString(r.rating)}</div>
                     ${r.title ? `<div class="feed-title">${escapeHtml(r.title)}</div>` : ""}
@@ -746,5 +750,5 @@ renderTabBar();
 renderTabPanel();
 
 </script>
-</body>
+</div>
 </html>

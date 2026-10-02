@@ -79,7 +79,7 @@ body {
 }
 
 .container {
-    max-width: 600px;
+    max-width: 800px;
     margin: 0 auto;
     transition: margin-right 0.3s ease;
     overflow: hidden;
@@ -261,27 +261,6 @@ body {
     font-weight: 600;
 }
 
-.sort-select {
-    font-family: inherit;
-    font-size: 13px;
-    color: var(--text-secondary);
-    background-color: var(--bg-input);
-    border: var(--border-subtle) solid 1px;
-    border-radius: var(--radius-pill);
-    padding: 4px 10px;
-    cursor: pointer;
-}
-
-/* --- add comment composer --- */
-.comment-composer {
-    display: flex;
-    gap: 8px;
-    align-items: flex-start;
-    padding-bottom: 14px;
-    margin-bottom: 14px;
-    border-bottom: var(--border-subtle) solid 1px;
-}
-
 .comment-avatar {
     width: 36px;
     height: 36px;
@@ -299,57 +278,6 @@ body {
 .comment-avatar.blue {
     background-color: var(--bg-avatar-blue);
     color: var(--text-avatar-blue);
-}
-
-.composer-input-wrap {
-    flex: 1;
-}
-
-.comment-input {
-    width: 100%;
-    font-family: inherit;
-    font-size: 14px;
-    color: var(--text-primary);
-    background-color: var(--bg-input);
-    border: var(--border-subtle) solid 1px;
-    border-radius: var(--radius-lg);
-    padding: 10px 14px;
-    resize: none;
-    min-height: 38px;
-    line-height: 1.4;
-}
-
-.comment-input:focus {
-    outline: none;
-    border-color: var(--AIMblue);
-    background-color: var(--white);
-}
-
-.composer-actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 6px;
-}
-
-.post-comment-btn {
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--white);
-    background-color: var(--AIMblue);
-    border: none;
-    border-radius: var(--radius-pill);
-    padding: 6px 16px;
-    cursor: pointer;
-}
-
-.post-comment-btn:disabled {
-    background-color: var(--border-medium);
-    cursor: not-allowed;
-}
-
-.post-comment-btn:not(:disabled):hover {
-    background-color: var(--darkBlue);
 }
 
 /* --- comment list --- */
@@ -419,13 +347,6 @@ body {
     color: var(--darkBlue);
 }
 
-.comments-empty {
-    color: var(--text-muted);
-    font-size: 13px;
-    text-align: center;
-    padding: 10px 0 4px;
-}
-
 /*BUTTONS*/
 .pill-btn {
 border-radius: var(--radius-pill);
@@ -452,7 +373,7 @@ border-radius: var(--radius-pill);
 }
 </style>
 </head>
-<body>
+<div class="linkedIN_body">
 <div class="container">
     <div class="post-card">
         <div class="header">
@@ -474,64 +395,87 @@ border-radius: var(--radius-pill);
             <div class="post-details">
             <div class="header-details">
             <div class="header-text">
-                <h4>Changing for the future</h4>
-<p>Anderson Sun posted on date 8th August 2026</p>
+                <h4>The world is moving faster than ever.</h4>
+<p>Anderson Sun posted on 18th August 2026</p>
             </div>
             </div>
-            <!-- <div class="header-interactive">
-                <button class="pill-btn">***</button>
-                <button class="pill-btn">X</button>
-            </div> -->
         </div>
         </div>
         <div class="card-content">
             <div class="card-content-text">
-            <p>At Bluegum, we pride ourselves on going above and beyond for our customers, contractors, and staff. As the construction industry continues to evolve, we’re invested in new digital systems and innovative technology to help our teams work more efficiently and deliver better outcomes.</p>
-                <br>
-                <p>This transformation will help us modernise the way we work, strengthen collaboration across our projects and ensure we’re ready to meet the demands of a rapidly changing industry.</p>
-                <br>
-                <p>
-                Change brings new opportunities to learn, improve and build for the future. We’re proud of our people and excited to take this next step together!</p>
+            <p>Clients expect shorter turnarounds. Projects are becoming more complex. Teams need to communicate quickly, often across multiple sits with multiple contractors.</p>
+            <br>
+            <p>Yet many of the systems and processes we rely on were designed for a very different industry.
+Outdated software, fragmented communication channels and manual processes can make it harder to get information where it needs to go – and when it needs to get there.</p>
+<br>
+<p>For us, this reinforces an important lesson: standing still is not an option.
+Improvement means regularly asking whether our systems and communication processes are still helping our people do their jobs effectively. Sometimes the best improvement tool is a new tool. Sometimes it’s a simpler process. Sometimes it’s listening to the people doing the work and changing something that no longer makes sense.</p>
+<br>
+<p>Our industry continues to evolve, and so should the way we lead, communicate and work.
+</p>
                 <br>
                  <div class="hash-tag-list">
-                <p>#Leadership</p> <p>#Innovation</p> <p>#DigitalInnovation</p> <p>#FutureOfWork</p></div>
+                <p>#Leadership</p> <p>#Construction</p> <p>#FutureOfWork</p></div>
             </div>
             <div class="card-content-image_video">
-                <img src="https://images.pexels.com/photos/39204846/pexels-photo-39204846.jpeg" alt="Image of bear">
+                <img src="https://s3.ap-southeast-2.amazonaws.com/learn.aim.com.au/Guided+Pathways/Change+Leadership/Module+2/Bluegum/Construction-linkedin.jpg" alt="Image of a construction worker reading from an iPad">
             </div>
             <div class="card-reactions" id="reactionsBar"></div>
         </div>
     </div>
 
-    <!-- COMMENTS -->
+    <!-- COMMENTS (static) -->
     <div class="comments-container" id="commentsContainer">
 
         <div class="comments-toolbar">
-            <h5 id="commentsCount">0 comments</h5>
-            <select class="sort-select" id="sortSelect" onchange="renderComments()">
-                <option value="newest">Newest first</option>
-                <option value="oldest">Oldest first</option>
-            </select>
+            <h5>3 comments</h5>
         </div>
 
-        <div class="comment-composer">
-            <div class="comment-avatar blue">You</div>
-            <div class="composer-input-wrap">
-                <textarea
-                    class="comment-input"
-                    id="commentInput"
-                    placeholder="Add a comment..."
-                    rows="1"
-                    oninput="autoGrow(this); toggleButton();"
-                    onkeydown="handleComposerKeydown(event)"
-                ></textarea>
-                <div class="composer-actions">
-                    <button class="post-comment-btn" id="postBtn" onclick="addComment()" disabled>Post</button>
+        <div class="comments-list">
+
+            <div class="comment-box">
+                <div class="comment-avatar teal">JL</div>
+                <div class="comment-body">
+                    <div class="comment-bubble">
+                        <div class="comment-name">Jordan Lee</div>
+                        <div class="comment-text">Can't wait to see where this exciting new direction takes you.</div>
+                    </div>
+                    <div class="comment-meta">
+                        <span>8 Aug</span>
+                        <span class="like-btn" onclick="likeComment(this)">Like</span>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="comments-list" id="commentsList"></div>
+            <div class="comment-box">
+                <div class="comment-avatar blue">PN</div>
+                <div class="comment-body">
+                    <div class="comment-bubble">
+                        <div class="comment-name">Priya Nair</div>
+                        <div class="comment-text">Can't wait to see how this evolves! A really important evolution.</div>
+                    </div>
+                    <div class="comment-meta">
+                        <span>8 Aug</span>
+                        <span class="like-btn" onclick="likeComment(this)">Like</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comment-box">
+                <div class="comment-avatar teal">SO</div>
+                <div class="comment-body">
+                    <div class="comment-bubble">
+                        <div class="comment-name">Sam Okafor</div>
+                        <div class="comment-text">Best of luck on your transformation.</div>
+                    </div>
+                    <div class="comment-meta">
+                        <span>9 Aug</span>
+                        <span class="like-btn" onclick="likeComment(this)">Like</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
 
     </div>
 
@@ -575,216 +519,19 @@ border-radius: var(--radius-pill);
 
     function toggleReaction(index) {
         const r = reactions[index];
-        // Toggle: if the user already reacted with this emoji, remove it
-        // (count back down); otherwise add it (count up). Either way this
-        // is the only reaction of this emoji the user can register.
         r.reacted = !r.reacted;
         r.count += r.reacted ? 1 : -1;
         renderReactions();
     }
 
-    /* =====================
-        COMMENT DATA
-        Reorderable array: change `order` (or just splice/sort this
-        array) to control render order. renderComments() always
-        rebuilds the DOM from this array, so it's the single
-        source of truth.
-    ===================== */
-    let comments = [
-        {
-            id: 1,
-            name: "Jordan Lee",
-            initials: "JL",
-            avatarStyle: "teal",
-            text: "Great post, really enjoyed reading this!",
-            timestamp: new Date("2026-08-08T09:15:00"),
-            liked: false
-        },
-        {
-            id: 2,
-            name: "Priya Nair",
-            initials: "PN",
-            avatarStyle: "blue",
-            text: "Thanks for sharing, this is super helpful.",
-            timestamp: new Date("2026-08-08T10:42:00"),
-            liked: false
-        },
-        {
-            id: 3,
-            name: "Sam Okafor",
-            initials: "SO",
-            avatarStyle: "teal",
-            text: "Couldn't agree more with this take.",
-            timestamp: new Date("2026-08-09T08:03:00"),
-            liked: false
-        }
-    ];
-
-    let nextId = comments.length + 1;
-
-    const additionalCommentQueue = [
-        {
-            name: "Mary Croft",
-            initials: "MC",
-            avatarStyle: "blue",
-            text: "How will this impact other small businesses? I can't believe you are ok with this"
-        },
-        {
-            name: "Alex Morgan",
-            initials: "AM",
-            avatarStyle: "teal",
-            text: "I would be interested to hear how this affects smaller suppliers."
-        }
-    ];
-
-    function escapeHtml(str) {
-        const div = document.createElement("div");
-        div.textContent = str;
-        return div.innerHTML;
-    }
-
-    function formatTimestamp(date) {
-        const now = new Date();
-        const diffMs = now - date;
-        const diffMins = Math.round(diffMs / 60000);
-        const diffHours = Math.round(diffMs / 3600000);
-        const diffDays = Math.round(diffMs / 86400000);
-
-        if (diffMins < 1) return "Just now";
-        if (diffMins < 60) return diffMins + "m";
-        if (diffHours < 24) return diffHours + "h";
-        if (diffDays < 7) return diffDays + "d";
-        return date.toLocaleDateString(undefined, { day: "numeric", month: "short" });
-    }
-
-    function renderComments() {
-        const list = document.getElementById("commentsList");
-        const countEl = document.getElementById("commentsCount");
-        const sortOrder = document.getElementById("sortSelect").value;
-
-        // Reorder without mutating the underlying data array's stored order
-        const ordered = [...comments].sort((a, b) => {
-            return sortOrder === "newest"
-                ? b.timestamp - a.timestamp
-                : a.timestamp - b.timestamp;
-        });
-
-        countEl.textContent = comments.length === 1
-            ? "1 comment"
-            : comments.length + " comments";
-
-        if (ordered.length === 0) {
-            list.innerHTML = '<p class="comments-empty">No comments yet. Be the first to comment.</p>';
-            return;
-        }
-
-        list.innerHTML = ordered.map(c => `
-            <div class="comment-box" data-id="${c.id}">
-                <div class="comment-avatar ${c.avatarStyle}">${escapeHtml(c.initials)}</div>
-                <div class="comment-body">
-                    <div class="comment-bubble">
-                        <div class="comment-name">${escapeHtml(c.name)}</div>
-                        <div class="comment-text">${escapeHtml(c.text)}</div>
-                    </div>
-                    <div class="comment-meta">
-                        <span>${formatTimestamp(c.timestamp)}</span>
-                        <span class="like-btn${c.liked ? " liked" : ""}" onclick="likeComment(${c.id})">${c.liked ? "Liked" : "Like"}</span>
-                    </div>
-                </div>
-            </div>
-        `).join("");
-    }
-
-    function addComment() {
-        const input = document.getElementById("commentInput");
-        const text = input.value.trim();
-        if (!text) return;
-
-        // New comments are pushed into the data array; renderComments()
-        // handles putting them in the right visual position per the
-        // current sort order.
-        comments.push({
-            id: nextId++,
-            name: "You",
-            initials: "You",
-            avatarStyle: "blue",
-            text: text,
-            timestamp: new Date()
-        });
-
-        input.value = "";
-        autoGrow(input);
-        toggleButton();
-
-        // Make sure the newly added comment is visible
-        document.getElementById("sortSelect").value = "newest";
-        renderComments();
-    }
-
-    const triggerBtn = document.getElementById("postBtn");
-
-    triggerBtn.addEventListener("click", () => {
-        setTimeout(additionalComments, 1500);
-    });
-
-    function additionalComments() {
-        const nextComment = additionalCommentQueue.shift();
-
-        // Stop when there are no queued comments left
-        if (!nextComment) return;
-
-        comments.push({
-            id: nextId++,
-            name: nextComment.name,
-            initials: nextComment.initials,
-            avatarStyle: nextComment.avatarStyle,
-            text: nextComment.text,
-            timestamp: new Date(),
-            liked: false
-        });
-
-        document.getElementById("sortSelect").value = "newest";
-        renderComments();
-    }
-
-    function likeComment(id) {
-        const comment = comments.find(c => c.id === id);
-        if (!comment) return;
-        comment.liked = !comment.liked;
-        renderComments();
-    }
-
-    function focusComposer() {
-        document.getElementById("commentInput").focus();
-    }
-
-    function autoGrow(el) {
-        el.style.height = "auto";
-        el.style.height = el.scrollHeight + "px";
-    }
-
-    function toggleButton() {
-        const input = document.getElementById("commentInput");
-        const btn = document.getElementById("postBtn");
-        btn.disabled = input.value.trim().length === 0;
-    }
-
-    function handleComposerKeydown(event) {
-        if (event.key === "Enter" && !event.shiftKey) {
-            event.preventDefault();
-            addComment();
-        }
-    }
-
-    function toggleComments() {
-        const el = document.getElementById("commentsContainer");
-        el.scrollIntoView({ behavior: "smooth", block: "nearest" });
-        focusComposer();
+    /* Like toggle for the static comments */
+    function likeComment(el) {
+        const liked = el.classList.toggle("liked");
+        el.textContent = liked ? "Liked" : "Like";
     }
 
     renderReactions();
-    renderComments();
 
 </script>
-</body>
+</div>
 </html>

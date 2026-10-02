@@ -1,538 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hoppers Insurance – page comparison</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=IBM+Plex+Sans:wght@400;700&family=Lora:ital,wght@0,400..700;1,400..700&family=Playfair+Display:wght@600&family=Space+Grotesk:wght@600&display=swap" rel="stylesheet">
 <style>
+/* =====================
+   GLOBAL / SHELL
+===================== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: "IBM Plex Sans", sans-serif; }
 
-/*Cards*/
+.stage { display: grid; margin-left: 200px; }
 
-body {
-    font-family: "IBM-Plex-Sans", sans-serif;
-        display: flex;
-    min-height: 700px;
-    overflow: scroll;
-}
-
-/* All pages share the same show/hide + slide-in behaviour.
-   To add another page: give it class="page hideme", a unique id,
-   and add a matching menu card with data-page="<that id>". */
 .page {
-    position: absolute;
+    grid-area: 1 / 1;
+    min-width: 0;
     display: none;
     opacity: 0;
     transform: translateY(-400px);
     transition: opacity 0.45s ease, transform 0.45s ease;
-        margin-left: 200px;
-
+    max-height: 900px;
+    overflow: scroll;
 }
-
-.page.showme {
-    display: block;
-}
-
-.page.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.hideme {
-    display: none;
-}
-
-.showme {
-    display: block;
-}
+.page.showme { display: block; }
+.page.visible { opacity: 1; transform: none; }
+.hideme { display: none; }
 
 /* Left-hand menu */
-.expandable-card {
-    color: white;
-      font-family: "Lora", serif;
-    background: #060732;
-    text-align: center;
-    padding: 30px;
-    cursor: pointer;
-        flex-grow: 1;
-}
-
-/* Highlights the card whose page is currently open */
-.expandable-card.active {
-    background: white;
-    color:#060732;
-}
-
 .button-case {
-        align-items: stretch;
-    display: flex;
-    flex-direction: column;
+    margin: 0 10px;
     width: 200px;
     position: fixed;
     top: 0;
     bottom: 0;
     overflow-x: hidden;
-    overflow-y: auto; /* keeps every button reachable on short screens */
+    overflow-y: auto;
     z-index: 999;
 }
-
-/* Placeholder pages */
-.body_placeholder {
-    width: 60vw;
-    min-height: 100vh;
-    padding: 40px;
-    background-color: #ffffff;
-    border-left: 1px solid #dedad3;
-    border-right: 1px solid #dedad3;
-    color: #1a1a1a;
-    font-family: "IBM Plex Sans", sans-serif;
-}
-
-.placeholder-title {
-    font-size: 24px;
-    font-weight: 700;
-}
-
-.placeholder-text {
-    margin-top: 8px;
-    color: #555;
-    line-height: 1.5;
-}
-
-/*page 1 threads*/
-
-/* =====================
-    COLOUR TOKENS (Twitter/Threads inspired)
-===================== */
-:root {
-    --bg-app:           #ffffff;
-    --bg-panel:         #ffffff;
-    --bg-hover:         #f7f7f7;
-    --bg-input:         #eff3f4;
-    --bg-trend-card:    #f7f9f9;
-    --accent:           #1d9bf0;
-    --accent-hover:     #1a8cd8;
-    --accent-tint:      #e8f5fe;
-    --like-red:         #f91880;
-    --repost-green:     #00ba7c;
-    --text-primary:     #0f1419;
-    --text-secondary:   #536471;
-    --text-muted:       #8b98a5;
-    --border-subtle:    #eff3f4;
-    --border-medium:    #cfd9de;
-    --avatar-blue:      #7ea6d9;
-    --avatar-teal:      #6fc2ac;
-    --avatar-coral:     #e3987b;
-    --avatar-purple:    #a9a4dd;
-    --radius-sm:  8px;
-    --radius-md:  16px;
-    --radius-pill:9999px;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-.body_threads {
-    font-family: "IBM Plex Sans", sans-serif;
-    min-height: 100vh;
-    background-color: var(--bg-app);
-    color: var(--text-primary);
-        width: 60vw
-}
-
-a { color: inherit; text-decoration: none; }
-
-/* =====================
-    NAVBAR
-===================== */
-.navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 53px;
-    background-color: rgba(255,255,255,0.9);
-    backdrop-filter: blur(8px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    border-bottom: 1px solid var(--border-subtle);
-}
-
-.nav-inner {
-    width: 100%;
-    max-width: 990px;
-    padding: 0 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.nav-brand {
-    font-size: 1.3rem;
-    font-weight: 800;
-    color: var(--text-primary);
-    letter-spacing: -0.02em;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.nav-brand .dot {
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background-color: var(--accent);
-    display: inline-block;
-}
-
-/* =====================
-    LAYOUT — center feed + right rail
-===================== */
-.page-shell {
-    max-width: 990px;
-    margin: 0 auto;
-    padding-top: 53px;
-    display: flex;
-    align-items: flex-start;
-    gap: 0;
-}
-
-.feed-container {
-    width: 600px;
-    max-width: 600px;
-    min-width: 0;
-    border-left: 1px solid var(--border-subtle);
-    border-right: 1px solid var(--border-subtle);
-    padding-bottom: 60px;
-}
-
-.panel-title {
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--text-primary);
-    padding: 14px 16px;
-    letter-spacing: -0.01em;
-    border-bottom: 1px solid var(--border-subtle);
-    /* position: sticky; */
-    top: 53px;
-    background: rgba(255,255,255,0.9);
-    backdrop-filter: blur(8px);
-    z-index: 5;
-}
-
-/* =====================
-    COMPOSE CARD
-===================== */
-.compose-card {
-    background-color: var(--bg-panel);
-    border-bottom: 1px solid var(--border-subtle);
-    padding: 12px 16px;
-}
-
-.compose-row {
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-}
-
-.avatar {
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 700;
-    color: #fff;
-}
-
-.avatar.sm { width: 44px; height: 44px; min-width: 44px; font-size: 13px; }
-.avatar.xs { width: 32px; height: 32px; min-width: 32px; font-size: 11px; }
-
-.av-blue   { background-color: var(--avatar-blue); }
-.av-teal   { background-color: var(--avatar-teal); }
-.av-coral  { background-color: var(--avatar-coral); }
-.av-purple { background-color: var(--avatar-purple); }
-
-.compose-input-wrap {
-    flex: 1;
-    padding-top: 8px;
-}
-
-.compose-input {
-    width: 100%;
-    font-family: inherit;
-    font-size: 19px;
-    color: var(--text-primary);
-    background: none;
-    border: none;
-    resize: none;
-    min-height: 44px;
-    line-height: 1.4;
-}
-
-.compose-input::placeholder { color: var(--text-muted); }
-.compose-input:focus { outline: none; }
-
-.compose-footer {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 14px;
-    margin-top: 8px;
-    padding-top: 10px;
-    border-top: 1px solid var(--border-subtle);
-}
-
-.char-count { font-size: 13px; color: var(--text-muted); }
-.char-count.near-limit { color: var(--like-red); font-weight: 600; }
-
-.post-btn {
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 700;
-    color: #fff;
-    background-color: var(--accent);
-    border: none;
-    border-radius: var(--radius-pill);
-    padding: 8px 20px;
+.expandable-card {
+    color: white;
+    font-family: "Lora", serif;
+    width: 150px;
+    height: 80px;
+    background: #060732;
+    border-radius: 8px;
+    margin: 20px;
+    text-align: center;
+    padding: 30px;
     cursor: pointer;
-    transition: background-color 0.15s ease;
+    position: relative;
+    transition: background-color .2s, color .2s, opacity .2s;
 }
-
-.post-btn:disabled { background-color: var(--accent); opacity: 0.5; cursor: not-allowed; }
-.post-btn:not(:disabled):hover { background-color: var(--accent-hover); }
+.expandable-card.active { outline: 3px solid #12195C; outline-offset: 2px; }
+.expandable-card:hover { background-color: #AEBAE4; color: black; }
+.expandable-card .lock-icon { display: none; position: absolute; top: 10px; right: 12px; font-size: 14px; }
+.expandable-card.locked { background: #3a3d5c; color: #9a9db8; cursor: not-allowed; opacity: .7; }
+.expandable-card.locked:hover { background: #3a3d5c; color: #9a9db8; }
+.expandable-card.locked .lock-icon { display: block; }
+.expandable-card.shake { animation: shake .35s; }
+.expandable-card.just-unlocked { animation: unlockPulse 1.2s ease-out 3; }
+.expandable-card .new-badge {
+    position: absolute; top: -8px; right: -8px;
+    background: #5DC8B9; color: #0A0E1C;
+    font-family: "IBM Plex Sans", sans-serif; font-size: 11px; font-weight: 700;
+    padding: 3px 8px; border-radius: 999px;
+}
+/* Unlock progress bar (time-based unlock) */
+.expandable-card .unlock-progress {
+    display: none; position: absolute; left: 14px; right: 14px; bottom: 10px;
+    height: 4px; border-radius: 2px; background: rgba(255,255,255,.2); overflow: hidden;
+}
+.expandable-card .unlock-progress.counting { display: block; }
+.expandable-card .unlock-progress > span {
+    display: block; height: 100%; width: 0; background: #5DC8B9;
+    transition: width .25s linear;
+}
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+}
+@keyframes unlockPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(93,200,185,.8); }
+    100% { box-shadow: 0 0 0 18px rgba(93,200,185,0); }
+}
 
 /* =====================
-    FEED / POST CARDS
+   PAGES 1 & 2 – shared tokens + styles
+   (pages 1 and 2 had identical CSS; now one set of rules)
 ===================== */
-.feed-list { display: flex; flex-direction: column; }
-
-.post-card {
-    background-color: var(--bg-panel);
-    border-bottom: 1px solid var(--border-subtle);
-    padding: 12px 16px;
-    transition: background-color 0.1s ease;
-}
-
-.post-card:hover { background-color: var(--bg-hover); }
-
-.post-card.new-post { animation: postIn 0.25s ease; }
-
-@keyframes postIn {
-    from { opacity: 0; transform: translateY(-6px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-.post-row { display: flex; gap: 12px; }
-
-.post-body { flex: 1; min-width: 0; margin-right: 4px; }
-
-.post-meta { display: flex; align-items: baseline; gap: 5px; flex-wrap: wrap; }
-
-.post-name { font-size: 15px; font-weight: 700; color: var(--text-primary); }
-
-.post-handle, .post-time { font-size: 15px; color: var(--text-muted); }
-
-.post-time::before { content: "·"; margin-right: 5px; color: var(--text-muted); }
-
-.post-text {
-    font-size: 15px;
-    color: var(--text-primary);
-    line-height: 1.4;
-    margin-top: 2px;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-}
-
-.post-image {
-    margin-top: 10px;
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    border: 1px solid var(--border-subtle);
-}
-
-.post-image img { width: 100%; display: block; }
-
-.post-actions {
-    display: flex;
-    justify-content: space-between;
-    max-width: 340px;
-    margin-top: 10px;
-}
-
-.action-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: none;
-    border: none;
-    font-family: inherit;
-    font-size: 13px;
-    color: var(--text-muted);
-    cursor: pointer;
-    padding: 6px 8px;
-    border-radius: var(--radius-pill);
-    transition: background-color 0.15s ease, color 0.15s ease;
-}
-
-.action-btn:hover { background-color: var(--accent-tint); color: var(--accent); }
-.action-btn.repost:hover { background-color: #e5f9f2; color: var(--repost-green); }
-.action-btn.like:hover { background-color: #fde2ec; color: var(--like-red); }
-
-.action-btn .icon { font-size: 15px; line-height: 1; }
-
-.action-btn.like.liked { color: var(--like-red); font-weight: 600; }
-.action-btn.repost.reposted { color: var(--repost-green); font-weight: 600; }
-
-.feed-empty { color: var(--text-muted); font-size: 14px; text-align: center; padding: 30px 0; }
-
-/* =====================
-    REPLIES THREAD
-===================== */
-.action-btn.reply .caret {
-    font-size: 10px;
-    margin-left: 2px;
-    transition: transform 0.15s ease;
-    display: inline-block;
-}
-
-.action-btn.reply.open .caret { transform: rotate(180deg); }
-
-.replies-panel {
-    margin-top: 10px;
-    padding: 10px 0 0 12px;
-    border-left: 2px solid var(--border-subtle);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.reply-item { display: flex; gap: 8px; align-items: flex-start; }
-
-.reply-bubble {
-    background-color: var(--bg-input);
-    border-radius: var(--radius-md);
-    padding: 7px 12px;
-    flex: 1;
-    min-width: 0;
-}
-
-.reply-meta { display: flex; align-items: baseline; gap: 5px; flex-wrap: wrap; }
-
-.reply-name { font-size: 13px; font-weight: 700; color: var(--text-primary); }
-
-.reply-handle, .reply-time { font-size: 12px; color: var(--text-muted); }
-
-.reply-time::before { content: "·"; margin-right: 5px; color: var(--text-muted); }
-
-.reply-text {
-    font-size: 13.5px;
-    color: var(--text-primary);
-    line-height: 1.4;
-    margin-top: 1px;
-    word-wrap: break-word;
-}
-
-.replies-empty { font-size: 13px; color: var(--text-muted); padding: 2px 0 2px 2px; }
-
-.reply-composer { display: flex; gap: 8px; align-items: center; }
-
-.reply-input {
-    flex: 1;
-    font-family: inherit;
-    font-size: 13.5px;
-    color: var(--text-primary);
-    background-color: var(--bg-input);
-    border: 1px solid transparent;
-    border-radius: var(--radius-pill);
-    padding: 8px 14px;
-}
-
-.reply-input:focus {
-    outline: none;
-    border-color: var(--accent);
-    background-color: #fff;
-}
-
-.reply-send-btn {
-    font-family: inherit;
-    font-size: 12.5px;
-    font-weight: 700;
-    color: #fff;
-    background-color: var(--accent);
-    border: none;
-    border-radius: var(--radius-pill);
-    padding: 8px 14px;
-    cursor: pointer;
-    white-space: nowrap;
-}
-
-.reply-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.reply-send-btn:not(:disabled):hover { background-color: var(--accent-hover); }
-
-/* =====================
-    TRENDING SIDEBAR
-===================== */
-.trend-rail {
-    width: 350px;
-    max-width: 350px;
-    min-width: 0;
-    padding: 12px 16px;
-    position: sticky;
-    top: 53px;
-}
-
-.trend-card {
-    background-color: var(--bg-trend-card);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-}
-
-.trend-card-title {
-    font-size: 19px;
-    font-weight: 800;
-    color: var(--text-primary);
-    padding: 12px 16px 4px;
-}
-
-.trend-item {
-    display: block;
-    padding: 10px 16px;
-    cursor: pointer;
-    transition: background-color 0.12s ease;
-}
-
-.trend-item:hover { background-color: rgba(15,20,25,0.05); }
-
-.trend-item:first-of-type { border-radius: 0; }
-.trend-card > .trend-item:last-child { border-radius: 0 0 var(--radius-md) var(--radius-md); }
-
-.trend-meta { font-size: 12.5px; color: var(--text-muted); }
-
-.trend-topic {
-    font-size: 14.5px;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-top: 1px;
-}
-
-.trend-count { font-size: 12.5px; color: var(--text-muted); margin-top: 1px; }
-
-/*page 2 linked in*/
-
-/* =====================
-    COLOUR TOKENS
-===================== */
-:root {
+#page1, #page2 {
     --AIMblue: #4353A3;
     --darkBlue: #38416D;
     --teal: #5DC8B9;
@@ -555,8 +116,8 @@ a { color: inherit; text-decoration: none; }
     --bg-badge:        #d85a30;
     --bg-input:        #f5f3f0;
     --text-primary:    #1a1a1a;
-    --text-secondary:  #666660;
-    --text-muted:      #999994;
+    --text-secondary:  #555;
+    --text-muted:      #999;
     --text-avatar-blue:#0c447c;
     --text-avatar-teal:#085041;
     --text-private:    #993c1d;
@@ -574,9 +135,6 @@ a { color: inherit; text-decoration: none; }
     --sidebar-bg:  #1b1b2e;
     --channel-bg:  #252538;
     --chat-bg:     #ffffff;
-    --text-primary:#1a1a1a;
-    --text-secondary:#555;
-    --text-muted:  #999;
     --border:      rgba(0,0,0,0.1);
     --bg-secondary:#f5f5f5;
     --bg-primary:  #ffffff;
@@ -585,753 +143,82 @@ a { color: inherit; text-decoration: none; }
     --busy:        #E04D4D;
     --unread:      #D65B8E;
 }
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-.body_linkedIn {
-    
-    /* padding: 20px; */
+:is(#page1, #page2) .linkedIN_body {
+    font-family: "IBM-Plex-Sans", sans-serif;
+    padding: 20px;
     min-height: 100vh;
     background: linear-gradient(to bottom left, #38416Dff 0%, #0000ff00 70%), linear-gradient(to bottom right, #5DC8B9ff 0%, #0000ff00 70%), linear-gradient(to top left, #12195Cff 0%, #0000ff00 70%), linear-gradient(to top, #ffffffff 0%, #ffffffff 100%);
-        width: 60vw
 }
-
-.containerLI {
-    max-width: 600px;
-    margin: 0 auto;
-    transition: margin-right 0.3s ease;
-    overflow: hidden;
-}
-
-.post-card {
-    border: var(--border-subtle) solid 1px;
-    background-color: var(--bg-primary);
-    border-radius: 4px;
-}
-
-.header {
-    display: flex;
-    border-bottom: var(--border-subtle) solid 1px;
-    background: var(--bg-panel);
-  margin: 4px;
-}
-
-.post-details {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-}
-
-.header-details {
-    display: flex;
-     margin-top: 10px;
-}
-
-.header-icon {
-    margin: 4px;
-}
-
-.header-icon > svg {
-    width: 60px;
-    border: solid 8px white;
-}
-.header-text {
-    margin: 4px;
-}
-
-.header-text > h4 {
-    padding: 3px;
-    color: var(--text-primary);
-}
-
-.header-text > p {
-    padding: 3px;
-    color: var(--text-secondary);
-    font-size: 13px;
-}
-
-.header-interactive {
-    margin-top: 10px;
-    padding-right: 5px;
-}
-
-.card-content {
-    margin: auto;
-}
-
-.card-content-text {
-    margin: 4px;
-    padding: 20px 12px;
-    background-color: var(--bg-primary);
-    border-bottom: var(--border-subtle) solid 1px;
-}
-
-.card-content-text > p {
-    color: var(--text-primary);
-    line-height: 1.5;
-}
-
-.card-content-image_video {
-    padding: 15px;
-    margin: 6px;
-  align-content: center;
-  background-color: var(--bg-panel);
-  border-bottom: var(--border-subtle) solid 1px;
-}
-
-.card-content-image_video img {
-    width: 100%;
-    border-radius: 4px;
-    display: block;
-}
-
-.hash-tag-list {
-    display: flex;
-    text-decoration: underline;
-}
-
-.hash-tag-list > p {
-    color: blue;
-    padding: 5px;
-}
-
-.card-reactions {
-    margin: 4px;
-    background: white;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 12px 15px;
-}
-
-.card-reactions .reactions-label {
-    color: var(--text-secondary);
-    font-size: 14px;
-    margin-right: 4px;
-}
-
-.emoji {
+:is(#page1, #page2) .container { max-width: 800px; margin: 0 auto; transition: margin-right 0.3s ease; overflow: hidden; }
+:is(#page1, #page2) .post-card { border: var(--border-subtle) solid 1px; background-color: var(--bg-primary); border-radius: 4px; }
+:is(#page1, #page2) .header { display: flex; border-bottom: var(--border-subtle) solid 1px; background: var(--bg-panel); margin: 4px; }
+:is(#page1, #page2) .post-details { display: flex; justify-content: space-between; width: 100%; }
+:is(#page1, #page2) .header-details { display: flex; margin-top: 10px; }
+:is(#page1, #page2) .header-icon { margin: 4px; }
+:is(#page1, #page2) .header-icon > svg { width: 60px; border: solid 8px white; }
+:is(#page1, #page2) .header-text { margin: 4px; }
+:is(#page1, #page2) .header-text > h4 { padding: 3px; color: var(--text-primary); }
+:is(#page1, #page2) .header-text > p { padding: 3px; color: var(--text-secondary); font-size: 13px; }
+:is(#page1, #page2) .header-interactive { margin-top: 10px; padding-right: 5px; }
+:is(#page1, #page2) .card-content { margin: auto; }
+:is(#page1, #page2) .card-content-text { margin: 4px; padding: 20px 12px; background-color: var(--bg-primary); border-bottom: var(--border-subtle) solid 1px; }
+:is(#page1, #page2) .card-content-text > p { color: var(--text-primary); line-height: 1.5; }
+:is(#page1, #page2) .card-content-image_video { padding: 15px; margin: 6px; align-content: center; background-color: var(--bg-panel); border-bottom: var(--border-subtle) solid 1px; }
+:is(#page1, #page2) .card-content-image_video img { width: 100%; border-radius: 4px; display: block; }
+:is(#page1, #page2) .hash-tag-list { display: flex; text-decoration: underline; }
+:is(#page1, #page2) .hash-tag-list > p { color: blue; padding: 5px; }
+:is(#page1, #page2) .card-reactions { margin: 4px; background: white; border-radius: 4px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding: 12px 15px; }
+:is(#page1, #page2) .card-reactions .reactions-label { color: var(--text-secondary); font-size: 14px; margin-right: 4px; }
+:is(#page1, #page2) .emoji {
     border-radius: var(--radius-pill);
     border: var(--border-subtle) solid 1px;
     background-color: var(--bg-input);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 5px 12px;
-    cursor: pointer;
-    font-family: inherit;
+    display: flex; align-items: center; gap: 6px;
+    padding: 5px 12px; cursor: pointer; font-family: inherit;
     transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
 }
+:is(#page1, #page2) .emoji:active { transform: scale(0.95); }
+:is(#page1, #page2) .emoji:hover { border-color: var(--border-medium); }
+:is(#page1, #page2) .emoji .emoji-char { font-size: 16px; line-height: 1; }
+:is(#page1, #page2) .emoji .emoji-count { color: var(--text-secondary); font-size: 14px; }
+:is(#page1, #page2) .emoji.reacted { background-color: var(--bg-selected-row); border-color: var(--AIMblue); }
+:is(#page1, #page2) .emoji.reacted .emoji-count { color: var(--AIMblue); font-weight: 600; }
 
-.emoji:active {
-    transform: scale(0.95);
+/* Comments */
+:is(#page1, #page2) .comments-container { margin-top: 8px; background-color: var(--bg-panel); border-radius: 4px; border: var(--border-subtle) solid 1px; padding: 12px; }
+:is(#page1, #page2) .comments-toolbar { display: flex; align-items: center; justify-content: space-between; padding-bottom: 10px; margin-bottom: 10px; border-bottom: var(--border-subtle) solid 1px; }
+:is(#page1, #page2) .comments-toolbar h5 { color: var(--text-primary); font-size: 14px; font-weight: 600; }
+:is(#page1, #page2) .comment-avatar {
+    width: 36px; height: 36px; min-width: 36px; border-radius: 50%;
+    background-color: var(--bg-avatar-teal); color: var(--text-avatar-teal);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600;
 }
-
-.emoji:hover {
-    border-color: var(--border-medium);
-}
-
-.emoji .emoji-char {
-    font-size: 16px;
-    line-height: 1;
-}
-
-.emoji .emoji-count {
-    color: var(--text-secondary);
-    font-size: 14px;
-}
-
-.emoji.reacted {
-    background-color: var(--bg-selected-row);
-    border-color: var(--AIMblue);
-}
-
-.emoji.reacted .emoji-count {
-    color: var(--AIMblue);
-    font-weight: 600;
-}
-
-/* =====================
-    COMMENTS
-===================== */
-.comments-container {
-    margin-top: 8px;
-    background-color: var(--bg-panel);
-    border-radius: 4px;
-    border: var(--border-subtle) solid 1px;
-    padding: 12px;
-}
-
-.comments-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-    border-bottom: var(--border-subtle) solid 1px;
-}
-
-.comments-toolbar h5 {
-    color: var(--text-primary);
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.sort-select {
-    font-family: inherit;
-    font-size: 13px;
-    color: var(--text-secondary);
-    background-color: var(--bg-input);
-    border: var(--border-subtle) solid 1px;
-    border-radius: var(--radius-pill);
-    padding: 4px 10px;
-    cursor: pointer;
-}
-
-/* --- add comment composer --- */
-.comment-composer {
-    display: flex;
-    gap: 8px;
-    align-items: flex-start;
-    padding-bottom: 14px;
-    margin-bottom: 14px;
-    border-bottom: var(--border-subtle) solid 1px;
-}
-
-.comment-avatar {
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
-    border-radius: 50%;
-    background-color: var(--bg-avatar-teal);
-    color: var(--text-avatar-teal);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 600;
-}
-
-.comment-avatar.blue {
-    background-color: var(--bg-avatar-blue);
-    color: var(--text-avatar-blue);
-}
-
-.composer-input-wrap {
-    flex: 1;
-}
-
-.comment-input {
-    width: 100%;
-    font-family: inherit;
-    font-size: 14px;
-    color: var(--text-primary);
-    background-color: var(--bg-input);
-    border: var(--border-subtle) solid 1px;
-    border-radius: var(--radius-lg);
-    padding: 10px 14px;
-    resize: none;
-    min-height: 38px;
-    line-height: 1.4;
-}
-
-.comment-input:focus {
-    outline: none;
-    border-color: var(--AIMblue);
-    background-color: var(--white);
-}
-
-.composer-actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 6px;
-}
-
-.post-comment-btn {
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--white);
-    background-color: var(--AIMblue);
-    border: none;
-    border-radius: var(--radius-pill);
-    padding: 6px 16px;
-    cursor: pointer;
-}
-
-.post-comment-btn:disabled {
-    background-color: var(--border-medium);
-    cursor: not-allowed;
-}
-
-.post-comment-btn:not(:disabled):hover {
-    background-color: var(--darkBlue);
-}
-
-/* --- comment list --- */
-.comments-list {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-}
-
-.comment-box {
-    display: flex;
-    gap: 8px;
-    align-items: flex-start;
-}
-
-.comment-body {
-    flex: 1;
-}
-
-.comment-bubble {
-    background-color: var(--bg-input);
-    border-radius: var(--radius-lg);
-    padding: 8px 14px;
-    display: inline-block;
-    max-width: 100%;
-}
-
-.comment-bubble .comment-name {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
-.comment-bubble .comment-text {
-    font-size: 14px;
-    color: var(--text-primary);
-    margin-top: 2px;
-    line-height: 1.4;
-    word-wrap: break-word;
-    max-width: 480px;
-}
-
-.comment-meta {
-    display: flex;
-    gap: 14px;
-    margin-top: 4px;
-    padding-left: 14px;
-}
-
-.comment-meta span {
-    font-size: 12px;
-    color: var(--text-muted);
-    cursor: pointer;
-}
-
-.comment-meta span:hover {
-    color: var(--text-link);
-    text-decoration: underline;
-}
-
-.comment-meta span.like-btn.liked {
-    color: var(--AIMblue);
-    font-weight: 600;
-}
-
-.comment-meta span.like-btn.liked:hover {
-    color: var(--darkBlue);
-}
-
-.comments-empty {
-    color: var(--text-muted);
-    font-size: 13px;
-    text-align: center;
-    padding: 10px 0 4px;
-}
-
-/*BUTTONS*/
-.pill-btn {
-border-radius: var(--radius-pill);
-    border: var(--border-subtle) solid 1px;
-    background-color: var(--bg-input);
-    align-items: center;
-    padding: 5px 12px;
-    cursor: pointer;
-    font-family: inherit;
+:is(#page1, #page2) .comment-avatar.blue { background-color: var(--bg-avatar-blue); color: var(--text-avatar-blue); }
+:is(#page1, #page2) .comments-list { display: flex; flex-direction: column; gap: 14px; }
+:is(#page1, #page2) .comment-box { display: flex; gap: 8px; align-items: flex-start; }
+:is(#page1, #page2) .comment-body { flex: 1; }
+:is(#page1, #page2) .comment-bubble { background-color: var(--bg-input); border-radius: var(--radius-lg); padding: 8px 14px; display: inline-block; max-width: 100%; }
+:is(#page1, #page2) .comment-bubble .comment-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+:is(#page1, #page2) .comment-bubble .comment-text { font-size: 14px; color: var(--text-primary); margin-top: 2px; line-height: 1.4; word-wrap: break-word; max-width: 480px; }
+:is(#page1, #page2) .comment-meta { display: flex; gap: 14px; margin-top: 4px; padding-left: 14px; }
+:is(#page1, #page2) .comment-meta span { font-size: 12px; color: var(--text-muted); cursor: pointer; }
+:is(#page1, #page2) .comment-meta span:hover { color: var(--text-link); text-decoration: underline; }
+:is(#page1, #page2) .comment-meta span.like-btn.liked { color: var(--AIMblue); font-weight: 600; }
+:is(#page1, #page2) .comment-meta span.like-btn.liked:hover { color: var(--darkBlue); }
+:is(#page1, #page2) .pill-btn {
+    border-radius: var(--radius-pill); border: var(--border-subtle) solid 1px;
+    background-color: var(--bg-input); align-items: center; padding: 5px 12px;
+    cursor: pointer; font-family: inherit;
     transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
 }
-
-.comment-btn {
-    font-family: inherit;
-    font-size: 14px;
-    color: var(--text-secondary);
-    background: none;
-    border: none;
-    cursor: pointer;
-}
-
-.comment-btn:hover {
-    color: var(--text-link);
-}
-</style>
-
-</head>
-<body>
-    <!-- LEFT-HAND MENU
-         Each card points at a page via data-page (the page's id). -->
-    <div class="button-case">
-    <div class="expandable-card" id="card1" data-page="page1">
-        Click me
-    </div>
-    <div class="expandable-card" id="card2" data-page="page2">
-        Click me too
-    </div>
-    </div>
-
-<div id="page1" class="page hideme">
-    <div class="body_linkedIn">
-    <div class="containerLI">
-    <div class="post-card">
-        <div class="header">
-            <div>
-            <div class="header-icon">
-                <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 647.06 647.06">
-                <defs>
-                    <style>
-                    .cls-1 {
-                        fill: #2b42a3;
-                    }
-                    </style>
-                </defs>
-                <path class="cls-1" d="M165.03,414.28v8.14c0,10.49,3.28,18.16,9.84,23.05,6.56,4.88,15.85,7.32,27.87,7.32,13.48,0,25.05-2.89,34.71-8.68,9.65-5.78,14.48-15.18,14.48-28.21v-33.62h-39.35c-31.7,0-47.55,10.67-47.55,32Z"/>
-                <path class="cls-1" d="M589.64,0H57.42C25.71,0,0,25.71,0,57.42v532.22c0,31.71,25.71,57.42,57.42,57.42h532.22c31.71,0,57.42-25.71,57.42-57.42V57.42c0-31.71-25.71-57.42-57.42-57.42ZM359.6,502.53h-44.82c-14.58,0-26.7-4.55-36.35-13.66-9.66-9.1-15.76-21.32-18.31-36.62h-3.28c-4.37,18.58-14.03,32.71-28.97,42.36-14.94,9.65-33.34,14.48-55.2,14.48-28.79,0-50.83-7.63-66.13-22.88-15.3-15.25-22.95-35.41-22.95-60.48,0-30.15,11.02-52.57,33.07-67.29,22.04-14.71,52.01-22.07,89.91-22.07h45.36v-18.04c0-13.84-3.65-24.87-10.93-33.07-7.29-8.2-19.5-12.3-36.62-12.3-16.04,0-28.79,3.47-38.26,10.39-9.48,6.93-17.31,14.76-23.5,23.5l-48.1-42.87c11.66-17.22,26.32-30.68,44-40.39,17.67-9.71,41.62-14.57,71.87-14.57,40.8,0,71.41,8.93,91.82,26.78,20.4,17.86,30.61,43.91,30.61,78.16v125.71h26.78v62.85ZM563.46,278.44h-56.84v161.23h52.47v62.85h-48.1c-28.06,0-49.28-7.11-63.67-21.32-14.4-14.21-21.59-34.98-21.59-62.31v-140.46h-40.45v-62.85h20.22c10.93,0,18.39-2.64,22.41-7.92,4-5.28,6.01-12.84,6.01-22.68v-47h72.69v77.61h56.84v62.85Z"/>
-                </svg>
-            </div>
-            </div>
-            <div class="post-details">
-            <div class="header-details">
-            <div class="header-text">
-                <h4>Changing for the future</h4>
-<p>Anderson Sun posted on date 8th August 2026</p>
-            </div>
-            </div>
-            <!-- <div class="header-interactive">
-                <button class="pill-btn">***</button>
-                <button class="pill-btn">X</button>
-            </div> -->
-        </div>
-        </div>
-        <div class="card-content">
-            <div class="card-content-text">
-            <p>At Bluegum, we pride ourselves on going above and beyond for our customers, contractors, and staff. As the construction industry continues to evolve, we’re invested in new digital systems and innovative technology to help our teams work more efficiently and deliver better outcomes.</p>
-                <br>
-                <p>This transformation will help us modernise the way we work, strengthen collaboration across our projects and ensure we’re ready to meet the demands of a rapidly changing industry.</p>
-                <br>
-                <p>
-                Change brings new opportunities to learn, improve and build for the future. We’re proud of our people and excited to take this next step together!</p>
-                <br>
-                <div class="hash-tag-list">
-                <p>#Leadership</p> <p>#Innovation</p> <p>#DigitalInnovation</p> <p>#FutureOfWork</p></div>
-            </div>
-            <div class="card-content-image_video">
-                <img src="https://images.pexels.com/photos/39204846/pexels-photo-39204846.jpeg" alt="Image of bear">
-            </div>
-            <div class="card-reactions" id="reactionsBar"></div>
-        </div>
-    </div>
-
-    <!-- COMMENTS -->
-    <div class="comments-container" id="commentsContainer">
-
-        <div class="comments-toolbar">
-            <h5 id="commentsCount">0 comments</h5>
-            <select class="sort-select" id="sortSelect" onchange="renderComments()">
-                <option value="newest">Newest first</option>
-                <option value="oldest">Oldest first</option>
-            </select>
-        </div>
-
-        <div class="comment-composer">
-            <div class="comment-avatar blue">You</div>
-            <div class="composer-input-wrap">
-                <textarea
-                    class="comment-input"
-                    id="commentInput"
-                    placeholder="Add a comment..."
-                    rows="1"
-                    oninput="autoGrow(this); toggleButton();"
-                    onkeydown="handleComposerKeydown(event)"
-                ></textarea>
-                <div class="composer-actions">
-                    <button class="post-comment-btn" id="postBtnLI" onclick="addComment()" disabled>Post</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="comments-list" id="commentsList"></div>
-
-    </div>
-
-</div>
-</div>
-<script>
-
-    /* =====================
-        REACTIONS DATA
-        Each entry is an emoji with a base count and whether the
-        current user has reacted to it. Clicking toggles the
-        user's own reaction on/off for that specific emoji, so a
-        user can only ever add ONE reaction per emoji (not stack
-        multiples), though they're free to react with several
-        different emojis on the same post.
-    ===================== */
-    let reactions = [
-        { emoji: "👍", count: 4, reacted: false },
-        { emoji: "❤️", count: 5, reacted: false },
-        { emoji: "😂", count: 1, reacted: false },
-        { emoji: "😮", count: 5, reacted: false },
-        { emoji: "😢", count: 6, reacted: false },
-        { emoji: "🎉", count: 0, reacted: false }
-    ];
-
-    function renderReactions() {
-        const bar = document.getElementById("reactionsBar");
-        bar.innerHTML =
-            '<span class="reactions-label">Reactions</span>' +
-            reactions.map((r, i) => `
-                <button
-                    type="button"
-                    class="emoji${r.reacted ? " reacted" : ""}"
-                    onclick="toggleReaction(${i})"
-                    aria-pressed="${r.reacted}"
-                >
-                    <span class="emoji-char">${r.emoji}</span>
-                    <span class="emoji-count">${r.count}</span>
-                </button>
-            `).join("");
-    }
-
-    function toggleReaction(index) {
-        const r = reactions[index];
-        // Toggle: if the user already reacted with this emoji, remove it
-        // (count back down); otherwise add it (count up). Either way this
-        // is the only reaction of this emoji the user can register.
-        r.reacted = !r.reacted;
-        r.count += r.reacted ? 1 : -1;
-        renderReactions();
-    }
-
-    /* =====================
-        COMMENT DATA
-        Reorderable array: change `order` (or just splice/sort this
-        array) to control render order. renderComments() always
-        rebuilds the DOM from this array, so it's the single
-        source of truth.
-    ===================== */
-    let comments = [
-        {
-            id: 1,
-            name: "Jordan Lee",
-            initials: "JL",
-            avatarStyle: "teal",
-            text: "Great post, really enjoyed reading this!",
-            timestamp: new Date("2026-08-08T09:15:00"),
-            liked: false
-        },
-        {
-            id: 2,
-            name: "Priya Nair",
-            initials: "PN",
-            avatarStyle: "blue",
-            text: "Thanks for sharing, this is super helpful.",
-            timestamp: new Date("2026-08-08T10:42:00"),
-            liked: false
-        },
-        {
-            id: 3,
-            name: "Sam Okafor",
-            initials: "SO",
-            avatarStyle: "teal",
-            text: "Couldn't agree more with this take.",
-            timestamp: new Date("2026-08-09T08:03:00"),
-            liked: false
-        }
-    ];
-
-    let nextIdLI = comments.length + 1;
-
-    const additionalCommentQueue = [
-        {
-            name: "Mary Croft",
-            initials: "MC",
-            avatarStyle: "blue",
-            text: "How will this impact other small businesses? I can't believe you are ok with this"
-        },
-        {
-            name: "Alex Morgan",
-            initials: "AM",
-            avatarStyle: "teal",
-            text: "I would be interested to hear how this affects smaller suppliers."
-        }
-    ];
-
-    function escapeHtml(str) {
-        const div = document.createElement("div");
-        div.textContent = str;
-        return div.innerHTML;
-    }
-
-    function formatTimestamp(date) {
-        const now = new Date();
-        const diffMs = now - date;
-        const diffMins = Math.round(diffMs / 60000);
-        const diffHours = Math.round(diffMs / 3600000);
-        const diffDays = Math.round(diffMs / 86400000);
-
-        if (diffMins < 1) return "Just now";
-        if (diffMins < 60) return diffMins + "m";
-        if (diffHours < 24) return diffHours + "h";
-        if (diffDays < 7) return diffDays + "d";
-        return date.toLocaleDateString(undefined, { day: "numeric", month: "short" });
-    }
-
-    function renderComments() {
-        const list = document.getElementById("commentsList");
-        const countEl = document.getElementById("commentsCount");
-        const sortOrder = document.getElementById("sortSelect").value;
-
-        // Reorder without mutating the underlying data array's stored order
-        const ordered = [...comments].sort((a, b) => {
-            return sortOrder === "newest"
-                ? b.timestamp - a.timestamp
-                : a.timestamp - b.timestamp;
-        });
-
-        countEl.textContent = comments.length === 1
-            ? "1 comment"
-            : comments.length + " comments";
-
-        if (ordered.length === 0) {
-            list.innerHTML = '<p class="comments-empty">No comments yet. Be the first to comment.</p>';
-            return;
-        }
-
-        list.innerHTML = ordered.map(c => `
-            <div class="comment-box" data-id="${c.id}">
-                <div class="comment-avatar ${c.avatarStyle}">${escapeHtml(c.initials)}</div>
-                <div class="comment-body">
-                    <div class="comment-bubble">
-                        <div class="comment-name">${escapeHtml(c.name)}</div>
-                        <div class="comment-text">${escapeHtml(c.text)}</div>
-                    </div>
-                    <div class="comment-meta">
-                        <span>${formatTimestamp(c.timestamp)}</span>
-                        <span class="like-btn${c.liked ? " liked" : ""}" onclick="likeComment(${c.id})">${c.liked ? "Liked" : "Like"}</span>
-                    </div>
-                </div>
-            </div>
-        `).join("");
-    }
-
-    function addComment() {
-        const input = document.getElementById("commentInput");
-        const text = input.value.trim();
-        if (!text) return;
-
-        // New comments are pushed into the data array; renderComments()
-        // handles putting them in the right visual position per the
-        // current sort order.
-        comments.push({
-            id: nextIdLI++,
-            name: "You",
-            initials: "You",
-            avatarStyle: "blue",
-            text: text,
-            timestamp: new Date()
-        });
-
-        input.value = "";
-        autoGrow(input);
-        toggleButton();
-
-        // Make sure the newly added comment is visible
-        document.getElementById("sortSelect").value = "newest";
-        renderComments();
-    }
-
-    const triggerBtn = document.getElementById("postBtnLI");
-
-    triggerBtn.addEventListener("click", () => {
-        setTimeout(additionalComments, 1500);
-    });
-
-    function additionalComments() {
-        const nextComment = additionalCommentQueue.shift();
-
-        // Stop when there are no queued comments left
-        if (!nextComment) return;
-
-        comments.push({
-            id: nextIdLI++,
-            name: nextComment.name,
-            initials: nextComment.initials,
-            avatarStyle: nextComment.avatarStyle,
-            text: nextComment.text,
-            timestamp: new Date(),
-            liked: false
-        });
-
-        document.getElementById("sortSelect").value = "newest";
-        renderComments();
-    }
-
-    function likeComment(id) {
-        const comment = comments.find(c => c.id === id);
-        if (!comment) return;
-        comment.liked = !comment.liked;
-        renderComments();
-    }
-
-    function focusComposer() {
-        document.getElementById("commentInput").focus();
-    }
-
-    function autoGrow(el) {
-        el.style.height = "auto";
-        el.style.height = el.scrollHeight + "px";
-    }
-
-    function toggleButton() {
-        const input = document.getElementById("commentInput");
-        const btn = document.getElementById("postBtnLI");
-        btn.disabled = input.value.trim().length === 0;
-    }
-
-    function handleComposerKeydown(event) {
-        if (event.key === "Enter" && !event.shiftKey) {
-            event.preventDefault();
-            addComment();
-        }
-    }
-
-    function toggleComments() {
-        const el = document.getElementById("commentsContainer");
-        el.scrollIntoView({ behavior: "smooth", block: "nearest" });
-        focusComposer();
-    }
-
-    renderReactions();
-    renderComments();
-
-</script>
-</div>
-
-<div id="page2" class="page hideme">
-<style>
+:is(#page1, #page2) .comment-btn { font-family: inherit; font-size: 14px; color: var(--text-secondary); background: none; border: none; cursor: pointer; }
+:is(#page1, #page2) .comment-btn:hover { color: var(--text-link); }
 
 /* =====================
-    COLOUR TOKENS
+   PAGE 3 – REVIEWS   (scoped to #page3)
 ===================== */
-:root {
+#page3 {
     --AIMblue: #0d705d;
     --darkBlue: #095444;
     --teal: #4bc6b1;
@@ -1359,341 +246,351 @@ border-radius: var(--radius-pill);
     --star-empty:  #d8d5cc;
     --star-fill:   #E0A63E;
 }
+#page3 .bluegumBody { font-family: "IBM Plex Sans", sans-serif; background-color: var(--bg-app); color: var(--text-primary); }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* Navbar */
+#page3 .navbar {
+    position: fixed; top: 0; left: 0; width: 100%; height: 64px;
+    background-color: white; display: flex; align-items: center;
+    padding: 0 40px; z-index: 1000; border-bottom: 1px solid var(--border-subtle);
+}
+#page3 .logo { display: flex; align-items: center; gap: 6px; }
+#page3 .logo-mark { display: flex; align-items: center; }
+#page3 .logo-mark svg { display: block; }
+#page3 .logo-tagline { font-size: 11px; color: var(--text-muted); font-style: italic; margin-left: 16px; padding-left: 16px; border-left: 1px solid var(--border-subtle); }
+#page3 .navbar svg { width: 150px; display: block; }
 
-.body_CV {
-    font-family: "IBM Plex Sans", sans-serif;
-    background-color: var(--bg-app);
-    color: var(--text-primary);
-}
+/* Layout */
+#page3 .container { display: flex; max-width: 1100px; margin: 84px auto 40px; align-items: flex-start; justify-content: center; gap: 24px; padding: 0 20px; }
+#page3 .middle-panel { flex: 1; max-width: 720px; min-width: 0; }
+#page3 .right-panel { width: 300px; flex-shrink: 0; }
+#page3 .panel-heading { font-size: 14px; font-weight: 700; color: var(--text-primary); padding: 0 4px 12px; }
 
-/* ===================== NAVBAR ===================== */
-.navbar {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 64px;
-    background-color: white;
-    display: flex;
-    align-items: center;
-    padding: 0 40px;
-    z-index: 1000;
-    border-bottom: 1px solid var(--border-subtle);
-}
+/* Company header */
+#page3 .company-header { background-color: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 22px 24px; margin-bottom: 16px; display: flex; align-items: center; gap: 16px; }
+#page3 .company-logo { width: 56px; height: 56px; min-width: 56px; border-radius: var(--radius-md); background-color: var(--bg-avatar-blue); color: var(--text-avatar-blue); display: flex; align-items: center; justify-content: center; font-size: 19px; font-weight: 700; }
+#page3 .company-header h2 { font-size: 21px; }
+#page3 .company-header p { font-size: 13px; color: var(--text-secondary); margin-top: 4px; line-height: 1.5; }
 
-.logo { display: flex; align-items: center; gap: 6px; }
-.logo-mark { display: flex; align-items: center; }
-.logo-mark svg { display: block; }
-.logo-word {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--navy);
-    letter-spacing: -0.02em;
-}
-.logo-tagline {
-    font-size: 11px;
-    color: var(--text-muted);
-    font-style: italic;
-    margin-left: 16px;
-    padding-left: 16px;
-    border-left: 1px solid var(--border-subtle);
-}
-.navbar svg {
-    width: 150px;
-    display: block;
-}
-/* ===================== LAYOUT ===================== */
-.containerCV {
-    display: flex;
-    max-width: 1100px;
-    margin: 84px auto 40px;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 24px;
-    padding: 0 20px;
-}
+/* Tabs */
+#page3 .tab-bar { display: flex; gap: 6px; margin-bottom: 16px; overflow-x: auto; }
+#page3 .tab-btn { font-family: inherit; font-size: 13px; font-weight: 600; color: var(--text-secondary); background-color: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: var(--radius-pill); padding: 8px 18px; cursor: pointer; white-space: nowrap; transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease; }
+#page3 .tab-btn:hover { border-color: var(--teal); }
+#page3 .tab-btn.active { background-color: var(--AIMblue); border-color: var(--AIMblue); color: var(--white); }
+#page3 .tab-panel { background-color: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 18px 20px; min-height: 200px; }
+#page3 .empty-state { text-align: center; color: var(--text-muted); font-size: 13px; padding: 40px 10px; }
 
-.middle-panel { flex: 1; max-width: 720px; min-width: 0; }
-.right-panel { width: 300px; flex-shrink: 0; }
+/* Reviews feed */
+#page3 .reviews-list { display: flex; flex-direction: column; gap: 14px; }
+#page3 .feed-review { display: flex; gap: 10px; padding-bottom: 14px; border-bottom: 1px solid var(--border-subtle); }
+#page3 .feed-review:last-child { border-bottom: none; padding-bottom: 0; }
+#page3 .avatar { width: 38px; height: 38px; min-width: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; }
+#page3 .avatar.teal { background-color: var(--bg-avatar-teal); color: var(--text-avatar-teal); }
+#page3 .avatar.blue { background-color: var(--bg-avatar-blue); color: var(--text-avatar-blue); }
+#page3 .feed-body { flex: 1; }
+#page3 .feed-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+#page3 .feed-name { font-size: 13px; font-weight: 600; }
+#page3 .feed-date { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--AIMblue); background-color: var(--bg-avatar-blue); border-radius: var(--radius-pill); padding: 4px 12px; white-space: nowrap; }
+#page3 .feed-stars { font-size: 12px; letter-spacing: 1px; margin-top: 2px; }
+#page3 .feed-stars .filled, #page3 .category-stars .filled { color: var(--star-fill); }
+#page3 .feed-stars .empty,  #page3 .category-stars .empty  { color: var(--star-empty); }
+#page3 .feed-title { font-size: 14px; font-weight: 700; margin-top: 6px; line-height: 1.4; }
+#page3 .feed-tenure { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+#page3 .feed-line { font-size: 13px; margin-top: 8px; line-height: 1.5; }
+#page3 .feed-line .tag { font-weight: 600; color: var(--text-secondary); }
+#page3 .feed-pros .tag { color: var(--tealDark); }
+#page3 .feed-cons .tag { color: var(--rust); }
+#page3 .feed-meta { display: flex; gap: 14px; margin-top: 8px; }
+#page3 .feed-meta span { font-size: 12px; color: var(--text-muted); cursor: pointer; }
+#page3 .feed-meta span:hover { color: var(--AIMblue); }
+#page3 .feed-meta span.liked { color: var(--teal); font-weight: 600; }
 
-.panel-heading {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--text-primary);
-    padding: 0 4px 12px;
-}
-.panel-subheading {
-    font-size: 12px;
-    color: var(--text-muted);
-    padding: 0 4px 14px;
-    margin-top: -8px;
-}
+/* Jobs / salaries / benefits / culture / photos */
+#page3 .simple-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-subtle); }
+#page3 .simple-row:last-child { border-bottom: none; }
+#page3 .simple-row-title { font-size: 13px; font-weight: 600; }
+#page3 .simple-row-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+#page3 .simple-row-value { font-size: 13px; color: var(--text-secondary); text-align: right; }
+#page3 .pill-list { display: flex; flex-wrap: wrap; gap: 8px; }
+#page3 .pill-list span { font-size: 12px; background-color: var(--bg-input); border: 1px solid var(--border-subtle); border-radius: var(--radius-pill); padding: 6px 14px; }
+#page3 .culture-para { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 12px; }
+#page3 .culture-para:last-child { margin-bottom: 0; }
+#page3 .photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+#page3 .photo-tile { aspect-ratio: 4/3; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--white); font-weight: 600; text-align: center; padding: 8px; }
 
-/* ===================== COMPANY HEADER ===================== */
-.company-header {
-    background-color: var(--bg-panel);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
-    padding: 22px 24px;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-.company-logo {
-    width: 56px; height: 56px; min-width: 56px;
-    border-radius: var(--radius-md);
-    background-color: var(--bg-avatar-blue);
-    color: var(--text-avatar-blue);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 19px; font-weight: 700;
-}
-.company-header h2 { font-size: 21px; }
-.company-header p { font-size: 13px; color: var(--text-secondary); margin-top: 4px; line-height: 1.5; }
-
-/* ===================== TAB BAR ===================== */
-.tab-bar {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 16px;
-    overflow-x: auto;
-}
-.tab-btn {
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    background-color: var(--bg-panel);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-pill);
-    padding: 8px 18px;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-}
-.tab-btn:hover { border-color: var(--teal); }
-.tab-btn.active {
-    background-color: var(--AIMblue);
-    border-color: var(--AIMblue);
-    color: var(--white);
-}
-
-/* ===================== TAB CONTENT PANEL ===================== */
-.tab-panel {
-    background-color: var(--bg-panel);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
-    padding: 18px 20px;
-    min-height: 200px;
-}
-
-.empty-state { text-align: center; color: var(--text-muted); font-size: 13px; padding: 40px 10px; }
-
-/* --- reviews feed --- */
-.reviews-list { display: flex; flex-direction: column; gap: 14px; }
-.feed-review { display: flex; gap: 10px; padding-bottom: 14px; border-bottom: 1px solid var(--border-subtle); }
-.feed-review:last-child { border-bottom: none; padding-bottom: 0; }
-.avatar {
-    width: 38px; height: 38px; min-width: 38px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px; font-weight: 600;
-}
-.avatar.teal { background-color: var(--bg-avatar-teal); color: var(--text-avatar-teal); }
-.avatar.blue { background-color: var(--bg-avatar-blue); color: var(--text-avatar-blue); }
-.feed-body { flex: 1; }
-.feed-top { display: flex; justify-content: space-between; align-items: center; }
-.feed-name { font-size: 13px; font-weight: 600; }
-.feed-time { font-size: 11px; color: var(--text-muted); }
-.feed-stars { font-size: 12px; letter-spacing: 1px; margin-top: 2px; }
-.feed-stars .filled, .category-stars .filled { color: var(--star-fill); }
-.feed-stars .empty,  .category-stars .empty  { color: var(--star-empty); }
-.feed-title { font-size: 14px; font-weight: 700; margin-top: 6px; line-height: 1.4; }
-.feed-tenure { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-.feed-line { font-size: 13px; margin-top: 8px; line-height: 1.5; }
-.feed-line .tag { font-weight: 600; color: var(--text-secondary); }
-.feed-pros .tag { color: var(--tealDark); }
-.feed-cons .tag { color: var(--rust); }
-.feed-meta { display: flex; gap: 14px; margin-top: 8px; }
-.feed-meta span { font-size: 12px; color: var(--text-muted); cursor: pointer; }
-.feed-meta span:hover { color: var(--AIMblue); }
-.feed-meta span.liked { color: var(--teal); font-weight: 600; }
-
-/* --- jobs / salaries lists --- */
-.simple-row {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 12px 0; border-bottom: 1px solid var(--border-subtle);
-}
-.simple-row:last-child { border-bottom: none; }
-.simple-row-title { font-size: 13px; font-weight: 600; }
-.simple-row-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-.simple-row-value { font-size: 13px; color: var(--text-secondary); text-align: right; }
-
-/* --- benefits / culture --- */
-.pill-list { display: flex; flex-wrap: wrap; gap: 8px; }
-.pill-list span {
-    font-size: 12px; background-color: var(--bg-input);
-    border: 1px solid var(--border-subtle); border-radius: var(--radius-pill);
-    padding: 6px 14px;
-}
-.culture-para { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 12px; }
-.culture-para:last-child { margin-bottom: 0; }
-
-/* --- photos --- */
-.photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.photo-tile {
-    aspect-ratio: 4/3; border-radius: var(--radius-sm);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px; color: var(--white); font-weight: 600; text-align: center; padding: 8px;
-}
-
-/* ===================== RIGHT PANEL ===================== */
-.rating-summary {
-    background-color: var(--bg-panel);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 16px;
-}
-.rating-circle {
-    width: 84px; height: 84px; min-width: 84px; border-radius: 50%;
-    background-color: var(--cream);
-    border: 3px solid var(--AIMblue);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    transition: transform 0.15s ease;
-}
-.rating-circle .num { font-size: 20px; font-weight: 700; color: var(--navy); line-height: 1; }
-.rating-circle .of5 { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
-.rating-summary-text { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
-
-.categories-card {
-    background-color: var(--bg-panel);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
-    padding: 16px 18px;
-    margin-bottom: 16px;
-}
-.category-row { padding: 9px 0; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; }
-.category-row:last-child { border-bottom: none; padding-bottom: 0; }
-.category-row:first-child { padding-top: 0; }
-.category-label { font-size: 13px; }
-.category-stars { font-size: 12px; letter-spacing: 1px; }
-
-/* --- leave a review composer --- */
-.composer-card {
-    background-color: var(--bg-panel);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
-    padding: 16px 18px;
-}
-.composer-title { font-size: 13px; font-weight: 700; margin-bottom: 10px; }
-.star-picker { display: flex; gap: 4px; margin-bottom: 12px; }
-.star-picker span { font-size: 22px; color: var(--star-empty); cursor: pointer; line-height: 1; }
-.star-picker span.selected { color: var(--star-fill); }
-.field-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; display: block; }
-textarea.composer-input, input.composer-input {
-    width: 100%; font-family: inherit; font-size: 13px; color: var(--text-primary);
-    background-color: var(--bg-input); border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-sm); padding: 8px 10px; resize: none; margin-bottom: 12px;
-}
-textarea.composer-input { min-height: 54px; }
-textarea.composer-input:focus, input.composer-input:focus { outline: none; border-color: var(--AIMblue); background-color: var(--white); }
-.post-comment-btn {
-    font-family: inherit; font-size: 13px; font-weight: 600; color: var(--white);
-    background-color: var(--AIMblue); border: none; border-radius: var(--radius-pill);
-    padding: 8px 0; width: 100%; cursor: pointer;
-}
-.post-comment-btn:disabled { background-color: var(--border-medium); cursor: not-allowed; }
-.post-comment-btn:not(:disabled):hover { background-color: var(--darkBlue); }
-.composer-hint { font-size: 11px; color: var(--text-muted); margin-top: 8px; text-align: center; }
+/* Right panel */
+#page3 .rating-summary { background-color: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 20px; display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+#page3 .rating-circle { width: 84px; height: 84px; min-width: 84px; border-radius: 50%; background-color: var(--cream); border: 3px solid var(--AIMblue); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: transform 0.15s ease; }
+#page3 .rating-circle .num { font-size: 20px; font-weight: 700; color: var(--navy); line-height: 1; }
+#page3 .rating-circle .of5 { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+#page3 .rating-summary-text { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+#page3 .categories-card { background-color: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px 18px; margin-bottom: 16px; }
+#page3 .category-row { padding: 9px 0; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; }
+#page3 .category-row:last-child { border-bottom: none; padding-bottom: 0; }
+#page3 .category-row:first-child { padding-top: 0; }
+#page3 .category-label { font-size: 13px; }
+#page3 .category-stars { font-size: 12px; letter-spacing: 1px; }
 
 @media (max-width: 980px) {
-    .containerCV { flex-direction: column; }
-    .middle-panel, .right-panel { width: 100%; max-width: 100%; }
+    #page3 .container { flex-direction: column; }
+    #page3 .middle-panel, #page3 .right-panel { width: 100%; max-width: 100%; }
 }
 </style>
 </head>
-<div class="body_CV">
+<body>
+
+<!-- LEFT-HAND MENU: each card points at a page via data-page (the page's id). -->
+<div class="button-case">
+    <div class="expandable-card" data-page="page1">Company post</div>
+    <div class="expandable-card locked" data-page="page2">Company post</div>
+    <div class="expandable-card locked" data-page="page3">Reviews</div>
+</div>
+
+<div class="stage">
+
+<!-- =====================  PAGE 1  ===================== -->
+<div id="page1" class="page hideme">
+<div class="linkedIN_body">
+<div class="container">
+    <div class="post-card">
+        <div class="header">
+            <div>
+            <div class="header-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 647.06 647.06">
+                <path fill="#2b42a3" d="M165.03,414.28v8.14c0,10.49,3.28,18.16,9.84,23.05,6.56,4.88,15.85,7.32,27.87,7.32,13.48,0,25.05-2.89,34.71-8.68,9.65-5.78,14.48-15.18,14.48-28.21v-33.62h-39.35c-31.7,0-47.55,10.67-47.55,32Z"/>
+                <path fill="#2b42a3" d="M589.64,0H57.42C25.71,0,0,25.71,0,57.42v532.22c0,31.71,25.71,57.42,57.42,57.42h532.22c31.71,0,57.42-25.71,57.42-57.42V57.42c0-31.71-25.71-57.42-57.42-57.42ZM359.6,502.53h-44.82c-14.58,0-26.7-4.55-36.35-13.66-9.66-9.1-15.76-21.32-18.31-36.62h-3.28c-4.37,18.58-14.03,32.71-28.97,42.36-14.94,9.65-33.34,14.48-55.2,14.48-28.79,0-50.83-7.63-66.13-22.88-15.3-15.25-22.95-35.41-22.95-60.48,0-30.15,11.02-52.57,33.07-67.29,22.04-14.71,52.01-22.07,89.91-22.07h45.36v-18.04c0-13.84-3.65-24.87-10.93-33.07-7.29-8.2-19.5-12.3-36.62-12.3-16.04,0-28.79,3.47-38.26,10.39-9.48,6.93-17.31,14.76-23.5,23.5l-48.1-42.87c11.66-17.22,26.32-30.68,44-40.39,17.67-9.71,41.62-14.57,71.87-14.57,40.8,0,71.41,8.93,91.82,26.78,20.4,17.86,30.61,43.91,30.61,78.16v125.71h26.78v62.85ZM563.46,278.44h-56.84v161.23h52.47v62.85h-48.1c-28.06,0-49.28-7.11-63.67-21.32-14.4-14.21-21.59-34.98-21.59-62.31v-140.46h-40.45v-62.85h20.22c10.93,0,18.39-2.64,22.41-7.92,4-5.28,6.01-12.84,6.01-22.68v-47h72.69v77.61h56.84v62.85Z"/>
+                </svg>
+            </div>
+            </div>
+            <div class="post-details">
+            <div class="header-details">
+            <div class="header-text">
+                <h4>The world is moving faster than ever.</h4>
+                <p>Anderson Sun posted on 18th August 2026</p>
+            </div>
+            </div>
+        </div>
+        </div>
+        <div class="card-content">
+            <div class="card-content-text">
+            <p>Clients expect shorter turnarounds. Projects are becoming more complex. Teams need to communicate quickly, often across multiple sits with multiple contractors.</p>
+            <br>
+            <p>Yet many of the systems and processes we rely on were designed for a very different industry.
+Outdated software, fragmented communication channels and manual processes can make it harder to get information where it needs to go – and when it needs to get there.</p>
+            <br>
+            <p>For us, this reinforces an important lesson: standing still is not an option.
+Improvement means regularly asking whether our systems and communication processes are still helping our people do their jobs effectively. Sometimes the best improvement tool is a new tool. Sometimes it’s a simpler process. Sometimes it’s listening to the people doing the work and changing something that no longer makes sense.</p>
+            <br>
+            <p>Our industry continues to evolve, and so should the way we lead, communicate and work.</p>
+            <br>
+            <div class="hash-tag-list">
+                <p>#Leadership</p> <p>#Construction</p> <p>#FutureOfWork</p>
+            </div>
+            </div>
+            <div class="card-content-image_video">
+                <img src="https://s3.ap-southeast-2.amazonaws.com/learn.aim.com.au/Guided+Pathways/Change+Leadership/Module+2/Bluegum/Construction-linkedin.jpg" alt="Image of a construction worker reading from an iPad">
+            </div>
+            <div class="card-reactions" id="reactionsBar1"></div>
+        </div>
+    </div>
+
+    <div class="comments-container">
+        <div class="comments-toolbar"><h5>3 comments</h5></div>
+        <div class="comments-list">
+
+            <div class="comment-box">
+                <div class="comment-avatar teal">JL</div>
+                <div class="comment-body">
+                    <div class="comment-bubble">
+                        <div class="comment-name">Jordan Lee</div>
+                        <div class="comment-text">Can't wait to see where this exciting new direction takes you.</div>
+                    </div>
+                    <div class="comment-meta">
+                        <span>8 Aug</span>
+                        <span class="like-btn" onclick="likeComment(this)">Like</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comment-box">
+                <div class="comment-avatar blue">PN</div>
+                <div class="comment-body">
+                    <div class="comment-bubble">
+                        <div class="comment-name">Priya Nair</div>
+                        <div class="comment-text">Can't wait to see how this evolves! A really important evolution.</div>
+                    </div>
+                    <div class="comment-meta">
+                        <span>8 Aug</span>
+                        <span class="like-btn" onclick="likeComment(this)">Like</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comment-box">
+                <div class="comment-avatar teal">SO</div>
+                <div class="comment-body">
+                    <div class="comment-bubble">
+                        <div class="comment-name">Sam Okafor</div>
+                        <div class="comment-text">Best of luck on your transformation.</div>
+                    </div>
+                    <div class="comment-meta">
+                        <span>9 Aug</span>
+                        <span class="like-btn" onclick="likeComment(this)">Like</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+<!-- =====================  PAGE 2  ===================== -->
+<div id="page2" class="page hideme">
+<div class="linkedIN_body">
+<div class="container">
+    <div class="post-card">
+        <div class="header">
+            <div>
+            <div class="header-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 647.06 647.06">
+                <path fill="#2b42a3" d="M165.03,414.28v8.14c0,10.49,3.28,18.16,9.84,23.05,6.56,4.88,15.85,7.32,27.87,7.32,13.48,0,25.05-2.89,34.71-8.68,9.65-5.78,14.48-15.18,14.48-28.21v-33.62h-39.35c-31.7,0-47.55,10.67-47.55,32Z"/>
+                <path fill="#2b42a3" d="M589.64,0H57.42C25.71,0,0,25.71,0,57.42v532.22c0,31.71,25.71,57.42,57.42,57.42h532.22c31.71,0,57.42-25.71,57.42-57.42V57.42c0-31.71-25.71-57.42-57.42-57.42ZM359.6,502.53h-44.82c-14.58,0-26.7-4.55-36.35-13.66-9.66-9.1-15.76-21.32-18.31-36.62h-3.28c-4.37,18.58-14.03,32.71-28.97,42.36-14.94,9.65-33.34,14.48-55.2,14.48-28.79,0-50.83-7.63-66.13-22.88-15.3-15.25-22.95-35.41-22.95-60.48,0-30.15,11.02-52.57,33.07-67.29,22.04-14.71,52.01-22.07,89.91-22.07h45.36v-18.04c0-13.84-3.65-24.87-10.93-33.07-7.29-8.2-19.5-12.3-36.62-12.3-16.04,0-28.79,3.47-38.26,10.39-9.48,6.93-17.31,14.76-23.5,23.5l-48.1-42.87c11.66-17.22,26.32-30.68,44-40.39,17.67-9.71,41.62-14.57,71.87-14.57,40.8,0,71.41,8.93,91.82,26.78,20.4,17.86,30.61,43.91,30.61,78.16v125.71h26.78v62.85ZM563.46,278.44h-56.84v161.23h52.47v62.85h-48.1c-28.06,0-49.28-7.11-63.67-21.32-14.4-14.21-21.59-34.98-21.59-62.31v-140.46h-40.45v-62.85h20.22c10.93,0,18.39-2.64,22.41-7.92,4-5.28,6.01-12.84,6.01-22.68v-47h72.69v77.61h56.84v62.85Z"/>
+                </svg>
+            </div>
+            </div>
+            <div class="post-details">
+            <div class="header-details">
+            <div class="header-text">
+                <h4>Taking on the future</h4>
+                <p>Anderson Sun posted on 22nd August 2026</p>
+            </div>
+            </div>
+        </div>
+        </div>
+        <div class="card-content">
+            <div class="card-content-text">
+            <p>At Bluegum, we pride ourselves on going above and beyond for our customers, contractors, and staff. As the construction industry continues to evolve, we’re invested in new digital systems and innovative technology to help our teams work more efficiently and deliver better outcomes.</p>
+            <br>
+            <p>This transformation will help us modernise the way we work, strengthen collaboration across our projects and ensure we’re ready to meet the demands of a rapidly changing industry.</p>
+            <br>
+            <p>Change brings new opportunities to learn, improve and build for the future. We’re proud of our people and excited to take this next step together!</p>
+            <br><br>
+            <div class="hash-tag-list">
+                <p>#Leadership</p> <p>#Innovation</p> <p>#DigitalInnovation</p> <p>#FutureOfWork</p>
+            </div>
+            </div>
+            <div class="card-content-image_video">
+                <img src="https://s3.ap-southeast-2.amazonaws.com/learn.aim.com.au/Guided+Pathways/Change+Leadership/Module+2/Bluegum/Construction-discussion-linkedIn.jpg" alt="Image of a construction worker discussing plans with a Client holding a laptop">
+            </div>
+            <div class="card-reactions" id="reactionsBar2"></div>
+        </div>
+    </div>
+
+    <div class="comments-container">
+        <div class="comments-toolbar"><h5>3 comments</h5></div>
+        <div class="comments-list">
+
+            <div class="comment-box">
+                <div class="comment-avatar blue">PD</div>
+                <div class="comment-body">
+                    <div class="comment-bubble">
+                        <div class="comment-name">Preston Daniels</div>
+                        <div class="comment-text">Putting community first is always the best.</div>
+                    </div>
+                    <div class="comment-meta">
+                        <span>8 Aug</span>
+                        <span class="like-btn" onclick="likeComment(this)">Like</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comment-box">
+                <div class="comment-avatar teal">LC</div>
+                <div class="comment-body">
+                    <div class="comment-bubble">
+                        <div class="comment-name">Linda Chen</div>
+                        <div class="comment-text">Best of luck with this transformation!</div>
+                    </div>
+                    <div class="comment-meta">
+                        <span>8 Aug</span>
+                        <span class="like-btn" onclick="likeComment(this)">Like</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comment-box">
+                <div class="comment-avatar blue">JS</div>
+                <div class="comment-body">
+                    <div class="comment-bubble">
+                        <div class="comment-name">Jackie Sanchez</div>
+                        <div class="comment-text">I hope this isn't too disruptive to ongoing projects and existing clients.</div>
+                    </div>
+                    <div class="comment-meta">
+                        <span>9 Aug</span>
+                        <span class="like-btn" onclick="likeComment(this)">Like</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+<!-- =====================  PAGE 3  ===================== -->
+<div id="page3" class="page hideme">
+<div class="bluegumBody">
 
 <nav class="navbar">
     <div class="logo">
         <div class="logo-mark">
-<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1850.98 303.08">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1850.98 303.08">
   <defs>
     <style>
-      .cls-1, .cls-2 {
-        fill: none;
-      }
-
-      .cls-3 {
-        opacity: .46;
-      }
-
-      .cls-3, .cls-4 {
-        fill: #a7e5dc;
-      }
-
-      .cls-5 {
-        clip-path: url(#clippath-1);
-      }
-
-      .cls-6 {
-        fill: #0d705d;
-      }
-
-      .cls-7 {
-        fill: #4bc6b1;
-      }
-
-      .cls-7, .cls-2 {
-        stroke: #4ec4b0;
-        stroke-miterlimit: 10;
-        stroke-width: 7px;
-      }
-
-      .cls-8 {
-        clip-path: url(#clippath);
-      }
+      .bg-clear { fill: none; }
+      .bg-fade { opacity: .46; fill: #a7e5dc; }
+      .bg-stripe { fill: #a7e5dc; }
+      .bg-dark { fill: #0d705d; }
+      .bg-teal { fill: #4bc6b1; stroke: #4ec4b0; stroke-miterlimit: 10; stroke-width: 7px; }
+      .bg-ring { fill: none; stroke: #4ec4b0; stroke-miterlimit: 10; stroke-width: 7px; }
     </style>
-    <clipPath id="clippath">
-      <circle class="cls-1" cx="108.26" cy="164.75" r="106.76"/>
-    </clipPath>
-    <clipPath id="clippath-1">
-      <circle class="cls-1" cx="382.61" cy="158.75" r="106.76"/>
-    </clipPath>
+    <clipPath id="clippath"><circle class="bg-clear" cx="108.26" cy="164.75" r="106.76"/></clipPath>
+    <clipPath id="clippath-1"><circle class="bg-clear" cx="382.61" cy="158.75" r="106.76"/></clipPath>
   </defs>
-  <g id="Layer_2-2" data-name="Layer 2">
+  <g>
     <g>
-      <path class="cls-6" d="M548.18,0v290.52h-38.7V0h38.7Z"/>
-      <path class="cls-6" d="M749.77,215.87h-120.06c1.03,13.76,5.5,24.71,13.42,32.85,7.91,8.03,18.06,12.04,30.45,12.04,9.63,0,17.6-2.29,23.91-6.88,6.19-4.58,13.24-13.07,21.16-25.46l32.68,18.23c-5.05,8.6-10.38,15.97-16,22.1-5.62,6.14-11.64,11.18-18.06,15.14-6.42,3.96-13.36,6.85-20.81,8.69-7.46,1.83-15.54,2.75-24.25,2.75-25,0-45.07-8.03-60.2-24.08-15.14-16.17-22.71-37.61-22.71-64.33s7.34-47.93,22.02-64.33c14.79-16.17,34.4-24.25,58.83-24.25s44.15,7.86,58.48,23.57c14.22,15.6,21.33,37.21,21.33,64.85l-.17,9.12ZM710.04,184.22c-5.39-20.64-18.41-30.96-39.05-30.96-4.7,0-9.12.72-13.24,2.15-4.13,1.44-7.89,3.5-11.27,6.19-3.38,2.7-6.28,5.93-8.69,9.72s-4.24,8.08-5.5,12.9h77.75Z"/>
-      <path class="cls-6" d="M915.59,122.99h38.87v167.54h-38.87v-17.54c-15.94,14.91-33.08,22.36-51.43,22.36-23.17,0-42.31-8.37-57.45-25.11-15.02-17.09-22.53-38.42-22.53-63.99s7.51-46.04,22.53-62.78c15.02-16.74,33.83-25.11,56.42-25.11,19.49,0,36.98,8.03,52.46,24.08v-19.44ZM823.74,206.24c0,16.06,4.3,29.13,12.9,39.22,8.83,10.21,19.95,15.31,33.37,15.31,14.33,0,25.91-4.93,34.75-14.79,8.83-10.21,13.24-23.16,13.24-38.87s-4.42-28.67-13.24-38.87c-8.83-9.98-20.3-14.96-34.4-14.96-13.3,0-24.42,5.05-33.37,15.14-8.83,10.21-13.24,22.82-13.24,37.84Z"/>
-      <path class="cls-6" d="M1003.32,122.99h38.7v14.96c7.11-7.45,13.42-12.56,18.92-15.31,5.62-2.87,12.27-4.3,19.95-4.3,10.2,0,20.87,3.33,31.99,9.98l-17.72,35.43c-7.34-5.27-14.51-7.91-21.5-7.91-21.1,0-31.65,15.94-31.65,47.82v86.86h-38.7V122.99Z"/>
+      <path class="bg-dark" d="M548.18,0v290.52h-38.7V0h38.7Z"/>
+      <path class="bg-dark" d="M749.77,215.87h-120.06c1.03,13.76,5.5,24.71,13.42,32.85,7.91,8.03,18.06,12.04,30.45,12.04,9.63,0,17.6-2.29,23.91-6.88,6.19-4.58,13.24-13.07,21.16-25.46l32.68,18.23c-5.05,8.6-10.38,15.97-16,22.1-5.62,6.14-11.64,11.18-18.06,15.14-6.42,3.96-13.36,6.85-20.81,8.69-7.46,1.83-15.54,2.75-24.25,2.75-25,0-45.07-8.03-60.2-24.08-15.14-16.17-22.71-37.61-22.71-64.33s7.34-47.93,22.02-64.33c14.79-16.17,34.4-24.25,58.83-24.25s44.15,7.86,58.48,23.57c14.22,15.6,21.33,37.21,21.33,64.85l-.17,9.12ZM710.04,184.22c-5.39-20.64-18.41-30.96-39.05-30.96-4.7,0-9.12.72-13.24,2.15-4.13,1.44-7.89,3.5-11.27,6.19-3.38,2.7-6.28,5.93-8.69,9.72s-4.24,8.08-5.5,12.9h77.75Z"/>
+      <path class="bg-dark" d="M915.59,122.99h38.87v167.54h-38.87v-17.54c-15.94,14.91-33.08,22.36-51.43,22.36-23.17,0-42.31-8.37-57.45-25.11-15.02-17.09-22.53-38.42-22.53-63.99s7.51-46.04,22.53-62.78c15.02-16.74,33.83-25.11,56.42-25.11,19.49,0,36.98,8.03,52.46,24.08v-19.44ZM823.74,206.24c0,16.06,4.3,29.13,12.9,39.22,8.83,10.21,19.95,15.31,33.37,15.31,14.33,0,25.91-4.93,34.75-14.79,8.83-10.21,13.24-23.16,13.24-38.87s-4.42-28.67-13.24-38.87c-8.83-9.98-20.3-14.96-34.4-14.96-13.3,0-24.42,5.05-33.37,15.14-8.83,10.21-13.24,22.82-13.24,37.84Z"/>
+      <path class="bg-dark" d="M1003.32,122.99h38.7v14.96c7.11-7.45,13.42-12.56,18.92-15.31,5.62-2.87,12.27-4.3,19.95-4.3,10.2,0,20.87,3.33,31.99,9.98l-17.72,35.43c-7.34-5.27-14.51-7.91-21.5-7.91-21.1,0-31.65,15.94-31.65,47.82v86.86h-38.7V122.99Z"/>
     </g>
     <g>
-      <path class="cls-6" d="M1171.02,122.99l43.35,94.09,43.17-94.09h43.52l-87.04,179.06-86.35-179.06h43.35Z"/>
-      <path class="cls-6" d="M1321.36,53.32c0-6.76,2.46-12.61,7.4-17.54,4.93-4.93,10.84-7.4,17.72-7.4s12.96,2.47,17.89,7.4c4.93,4.82,7.4,10.72,7.4,17.72s-2.47,12.96-7.4,17.89c-4.82,4.93-10.72,7.4-17.72,7.4s-12.96-2.46-17.89-7.4c-4.93-4.93-7.4-10.95-7.4-18.06ZM1365.91,122.99v167.54h-38.7V122.99h38.7Z"/>
-      <path class="cls-6" d="M1567.51,215.87h-120.06c1.03,13.76,5.5,24.71,13.42,32.85,7.91,8.03,18.06,12.04,30.45,12.04,9.63,0,17.6-2.29,23.91-6.88,6.19-4.58,13.24-13.07,21.16-25.46l32.68,18.23c-5.05,8.6-10.38,15.97-16,22.1-5.62,6.14-11.64,11.18-18.06,15.14-6.42,3.96-13.36,6.85-20.81,8.69-7.46,1.83-15.54,2.75-24.25,2.75-25,0-45.07-8.03-60.2-24.08-15.14-16.17-22.71-37.61-22.71-64.33s7.34-47.93,22.02-64.33c14.79-16.17,34.4-24.25,58.83-24.25s44.15,7.86,58.48,23.57c14.22,15.6,21.33,37.21,21.33,64.85l-.17,9.12ZM1527.77,184.22c-5.39-20.64-18.41-30.96-39.05-30.96-4.7,0-9.12.72-13.24,2.15-4.13,1.44-7.89,3.5-11.27,6.19-3.38,2.7-6.28,5.93-8.69,9.72s-4.24,8.08-5.5,12.9h77.75Z"/>
-      <path class="cls-6" d="M1625.47,122.99l43.86,95.64,47.3-110.95,47.65,110.95,43.35-95.64h43.35l-87.72,180.09-46.61-107.85-47.13,107.85-87.55-180.09h43.52Z"/>
+      <path class="bg-dark" d="M1171.02,122.99l43.35,94.09,43.17-94.09h43.52l-87.04,179.06-86.35-179.06h43.35Z"/>
+      <path class="bg-dark" d="M1321.36,53.32c0-6.76,2.46-12.61,7.4-17.54,4.93-4.93,10.84-7.4,17.72-7.4s12.96,2.47,17.89,7.4c4.93,4.82,7.4,10.72,7.4,17.72s-2.47,12.96-7.4,17.89c-4.82,4.93-10.72,7.4-17.72,7.4s-12.96-2.46-17.89-7.4c-4.93-4.93-7.4-10.95-7.4-18.06ZM1365.91,122.99v167.54h-38.7V122.99h38.7Z"/>
+      <path class="bg-dark" d="M1567.51,215.87h-120.06c1.03,13.76,5.5,24.71,13.42,32.85,7.91,8.03,18.06,12.04,30.45,12.04,9.63,0,17.6-2.29,23.91-6.88,6.19-4.58,13.24-13.07,21.16-25.46l32.68,18.23c-5.05,8.6-10.38,15.97-16,22.1-5.62,6.14-11.64,11.18-18.06,15.14-6.42,3.96-13.36,6.85-20.81,8.69-7.46,1.83-15.54,2.75-24.25,2.75-25,0-45.07-8.03-60.2-24.08-15.14-16.17-22.71-37.61-22.71-64.33s7.34-47.93,22.02-64.33c14.79-16.17,34.4-24.25,58.83-24.25s44.15,7.86,58.48,23.57c14.22,15.6,21.33,37.21,21.33,64.85l-.17,9.12ZM1527.77,184.22c-5.39-20.64-18.41-30.96-39.05-30.96-4.7,0-9.12.72-13.24,2.15-4.13,1.44-7.89,3.5-11.27,6.19-3.38,2.7-6.28,5.93-8.69,9.72s-4.24,8.08-5.5,12.9h77.75Z"/>
+      <path class="bg-dark" d="M1625.47,122.99l43.86,95.64,47.3-110.95,47.65,110.95,43.35-95.64h43.35l-87.72,180.09-46.61-107.85-47.13,107.85-87.55-180.09h43.52Z"/>
     </g>
     <g>
-      <circle class="cls-7" cx="110.26" cy="154.67" r="106.76"/>
-      <circle class="cls-7" cx="382.61" cy="158.75" r="106.76"/>
-      <g class="cls-8">
-        <rect class="cls-4" x="56.21" y="-49.32" width="15.47" height="364.76" transform="translate(85.55 -12.98) rotate(34.08)"/>
-        <rect class="cls-3" x="76.15" y="-49.23" width="22.96" height="364.76" transform="translate(89.67 -26.24) rotate(34.08)"/>
-        <rect class="cls-4" x="87.38" y="-51.52" width="27.83" height="364.76" transform="translate(90.74 -34.28) rotate(34.08)"/>
+      <circle class="bg-teal" cx="110.26" cy="154.67" r="106.76"/>
+      <circle class="bg-teal" cx="382.61" cy="158.75" r="106.76"/>
+      <g clip-path="url(#clippath)">
+        <rect class="bg-stripe" x="56.21" y="-49.32" width="15.47" height="364.76" transform="translate(85.55 -12.98) rotate(34.08)"/>
+        <rect class="bg-fade" x="76.15" y="-49.23" width="22.96" height="364.76" transform="translate(89.67 -26.24) rotate(34.08)"/>
+        <rect class="bg-stripe" x="87.38" y="-51.52" width="27.83" height="364.76" transform="translate(90.74 -34.28) rotate(34.08)"/>
       </g>
-      <circle class="cls-2" cx="110.26" cy="158.75" r="106.76"/>
-      <g class="cls-5">
-        <rect class="cls-4" x="330.55" y="-55.32" width="15.47" height="364.76" transform="translate(129.31 -167.75) rotate(34.08)"/>
-        <rect class="cls-3" x="350.5" y="-55.23" width="22.96" height="364.76" transform="translate(133.43 -181.01) rotate(34.08)"/>
-        <rect class="cls-4" x="361.72" y="-57.52" width="27.83" height="364.76" transform="translate(134.5 -189.06) rotate(34.08)"/>
+      <circle class="bg-ring" cx="110.26" cy="158.75" r="106.76"/>
+      <g clip-path="url(#clippath-1)">
+        <rect class="bg-stripe" x="330.55" y="-55.32" width="15.47" height="364.76" transform="translate(129.31 -167.75) rotate(34.08)"/>
+        <rect class="bg-fade" x="350.5" y="-55.23" width="22.96" height="364.76" transform="translate(133.43 -181.01) rotate(34.08)"/>
+        <rect class="bg-stripe" x="361.72" y="-57.52" width="27.83" height="364.76" transform="translate(134.5 -189.06) rotate(34.08)"/>
       </g>
-      <circle class="cls-2" cx="382.61" cy="158.75" r="106.76"/>
-      <path class="cls-6" d="M466.3,39.22v47.47c-23.16-19.38-47.13-29.07-71.9-29.07-27.29,0-50.29,9.8-68.98,29.41-18.81,19.5-28.21,43.35-28.21,71.56s9.4,51.37,28.21,70.52c18.8,19.15,41.85,28.73,69.15,28.73,14.1,0,26.09-2.29,35.95-6.88,5.5-2.29,11.21-5.39,17.11-9.29,5.91-3.9,12.13-8.6,18.66-14.1v48.33c-22.94,12.96-47.02,19.44-72.24,19.44-37.96,0-70.35-13.25-97.19-39.73-26.72-26.72-40.08-58.94-40.08-96.67,0-33.83,11.18-63.99,33.54-90.48,27.52-32.45,63.13-48.68,106.82-48.68,23.85,0,46.9,6.48,69.15,19.44Z"/>
-      <path class="cls-6" d="M23.05,279.14v-48.3c23.56,19.71,47.94,29.57,73.14,29.57,27.76,0,51.16-9.97,70.17-29.92,19.13-19.83,28.7-44.1,28.7-72.79s-9.56-52.26-28.7-71.74c-19.13-19.48-42.58-29.22-70.34-29.22-14.35,0-26.54,2.33-36.57,7-5.6,2.33-11.4,5.48-17.41,9.45-6.01,3.96-12.34,8.75-18.98,14.35v-49.17c23.33-13.18,47.83-19.77,73.49-19.77,38.61,0,71.57,13.47,98.87,40.42,27.18,27.18,40.77,59.96,40.77,98.34,0,34.41-11.37,65.09-34.12,92.04-28,33.01-64.22,49.52-108.67,49.52-24.26,0-47.71-6.59-70.34-19.77Z"/>
-      <rect class="cls-6" x="226.16" y="141.06" width="50.43" height="27.22"/>
+      <circle class="bg-ring" cx="382.61" cy="158.75" r="106.76"/>
+      <path class="bg-dark" d="M466.3,39.22v47.47c-23.16-19.38-47.13-29.07-71.9-29.07-27.29,0-50.29,9.8-68.98,29.41-18.81,19.5-28.21,43.35-28.21,71.56s9.4,51.37,28.21,70.52c18.8,19.15,41.85,28.73,69.15,28.73,14.1,0,26.09-2.29,35.95-6.88,5.5-2.29,11.21-5.39,17.11-9.29,5.91-3.9,12.13-8.6,18.66-14.1v48.33c-22.94,12.96-47.02,19.44-72.24,19.44-37.96,0-70.35-13.25-97.19-39.73-26.72-26.72-40.08-58.94-40.08-96.67,0-33.83,11.18-63.99,33.54-90.48,27.52-32.45,63.13-48.68,106.82-48.68,23.85,0,46.9,6.48,69.15,19.44Z"/>
+      <path class="bg-dark" d="M23.05,279.14v-48.3c23.56,19.71,47.94,29.57,73.14,29.57,27.76,0,51.16-9.97,70.17-29.92,19.13-19.83,28.7-44.1,28.7-72.79s-9.56-52.26-28.7-71.74c-19.13-19.48-42.58-29.22-70.34-29.22-14.35,0-26.54,2.33-36.57,7-5.6,2.33-11.4,5.48-17.41,9.45-6.01,3.96-12.34,8.75-18.98,14.35v-49.17c23.33-13.18,47.83-19.77,73.49-19.77,38.61,0,71.57,13.47,98.87,40.42,27.18,27.18,40.77,59.96,40.77,98.34,0,34.41-11.37,65.09-34.12,92.04-28,33.01-64.22,49.52-108.67,49.52-24.26,0-47.71-6.59-70.34-19.77Z"/>
+      <rect class="bg-dark" x="226.16" y="141.06" width="50.43" height="27.22"/>
     </g>
   </g>
 </svg>
@@ -1702,29 +599,22 @@ textarea.composer-input:focus, input.composer-input:focus { outline: none; borde
     </div>
 </nav>
 
-<div class="containerCV">
+<div class="container">
 
-    <!-- ===================== MIDDLE PANEL: COMPANY + TABS ===================== -->
     <section class="middle-panel">
-
         <div class="company-header">
-            <div class="company-logo" id="companyLogo">BC</div>
+            <div class="company-logo">BC</div>
             <div>
-                <h2 id="companyName">Bluegum Construction</h2>
-                <p id="companyDesc">Commercial construction &amp; fitout · 500–1,000 employees</p>
+                <h2>Bluegum Construction</h2>
+                <p>Commercial construction &amp; fitout · 500–1,000 employees</p>
             </div>
         </div>
-
         <div class="tab-bar" id="tabBar"></div>
-
         <div class="tab-panel" id="tabPanel"></div>
-
     </section>
 
-    <!-- ===================== RIGHT PANEL: RATINGS + LEAVE A REVIEW ===================== -->
     <section class="right-panel">
         <div class="panel-heading">Company ratings</div>
-
         <div class="rating-summary">
             <div class="rating-circle">
                 <div class="num" id="overallScore">–</div>
@@ -1732,34 +622,68 @@ textarea.composer-input:focus, input.composer-input:focus { outline: none; borde
             </div>
             <div class="rating-summary-text">Based on <span id="reviewCount">0</span> employee reviews across 5 key areas.</div>
         </div>
-
         <div class="categories-card" id="categoriesCard"></div>
-
-          <!-- <div class="composer-card">
-          <div class="composer-title">Leave a review</div>
-            <div class="star-picker" id="starPicker"></div>
-            <label class="field-label" for="titleInput">Headline</label>
-            <input class="composer-input" id="titleInput" placeholder="Sum it up in a sentence" oninput="toggleSubmit()" />
-            <label class="field-label" for="prosInput">Pros</label>
-            <textarea class="composer-input" id="prosInput" placeholder="What worked well?" oninput="toggleSubmit()"></textarea>
-            <label class="field-label" for="consInput">Cons</label>
-            <textarea class="composer-input" id="consInput" placeholder="What could be better?" oninput="toggleSubmit()"></textarea>
-            <button class="post-comment-btn" id="submitBtn" onclick="submitReview()" disabled>Post review</button>
-            <div class="composer-hint">Your review appears at the top of the Reviews tab.</div> 
-        </div>-->
     </section>
 
 </div>
+</div>
+</div>
+
+</div><!-- /.stage -->
 
 <script>
-
 /* =====================================================
-   DATA — everything below is the single source of truth.
-   Edit these arrays/objects to change what's on the page;
-   every render function reads from here, nothing is hard-coded
-   into the markup.
+   PAGES 1 & 2 – reactions + comment likes
+   Each post has its own reaction state, keyed by bar id.
 ===================================================== */
+function makeReactions() {
+    return [
+        { emoji: "👍", count: 4, reacted: false },
+        { emoji: "❤️", count: 5, reacted: false },
+        { emoji: "😂", count: 1, reacted: false },
+        { emoji: "😮", count: 5, reacted: false },
+        { emoji: "😢", count: 6, reacted: false },
+        { emoji: "🎉", count: 0, reacted: false }
+    ];
+}
+var reactionState = {
+    reactionsBar1: makeReactions(),
+    reactionsBar2: makeReactions()
+};
 
+function renderReactions(barId) {
+    var bar = document.getElementById(barId);
+    bar.innerHTML =
+        '<span class="reactions-label">Reactions</span>' +
+        reactionState[barId].map(function (r, i) {
+            return '<button type="button" class="emoji' + (r.reacted ? " reacted" : "") + '"' +
+                ' onclick="toggleReaction(\'' + barId + '\',' + i + ')" aria-pressed="' + r.reacted + '">' +
+                '<span class="emoji-char">' + r.emoji + '</span>' +
+                '<span class="emoji-count">' + r.count + '</span></button>';
+        }).join("");
+}
+
+function toggleReaction(barId, index) {
+    var r = reactionState[barId][index];
+    r.reacted = !r.reacted;
+    r.count += r.reacted ? 1 : -1;
+    renderReactions(barId);
+}
+
+function likeComment(el) {
+    var liked = el.classList.toggle("liked");
+    el.textContent = liked ? "Liked" : "Like";
+}
+
+renderReactions("reactionsBar1");
+renderReactions("reactionsBar2");
+</script>
+
+<script>
+/* =====================================================
+   PAGE 3 – REVIEWS
+   DATA is the single source of truth; render functions read from here.
+===================================================== */
 const ratingCategories = [
     { label: "Management",         score: 2.4 },
     { label: "Culture",            score: 3.3 },
@@ -1797,15 +721,13 @@ const photos = [
     { label: "Fitout project", color: "#AF4510" }
 ];
 
-// Employee review feed — data-driven, newest posted reviews are unshifted
-// onto the front of this array so they render at the top. The overall
-// rating (right panel) is derived live from this array every time it changes.
+// Sorted newest-first at render time; overall rating is derived live from this array.
 let reviews = [
     { id: 1, name: "Former Consultant", initials: "FC", avatarStyle: "teal", rating: 2,
       tenure: "Five years as a consultant",
       title: "Change is happening faster than the people can adapt",
       pros: "Sometimes we had pizza parties and ice cream. I like my colleagues.",
-      cons: "Bluegum says the new technology will make building faster and safer, but the reality on the ground has been very different. New processes are introduced so quickly that many of us are still trying to understand how they affect our roles. The people who actually use these systems every day don't seem to have much input into the decisions. We've raised concerns about the project quality and why these processes were created in the first place and for good reason, but it feels like the decisions have already been made. There's also a divide between the teams pushing for change and those of us who want to be more careful. The technology itself isn't necessarily the problem, but the lack of consultation and the assumption that changing things automatically changes the way people work is already causing problems. I hope leadership takes the feedback seriously before things escalate.",
+      cons: "Bluegum says the new technology will make building faster and safer, but the reality on the ground has been very different. New processes are introduced so quickly that many of us are still trying to understand how they affect our roles. The people who actually use these systems every day don’t seem to have much input into the decisions. We’ve raised concerns about the project quality and why these processes were created in the first place and for good reason, but it feels like the decisions have already been made. There’s also a divide between the teams pushing for change and those of us who want to be more careful. The technology itself isn’t necessarily the problem, but the lack of consultation and the assumption that changing things automatically changes the way people work is already causing problems. I hope leadership takes the feedback seriously before things escalate.",
       timestamp: new Date("2026-09-11T08:03:00"), liked: false },
 
     { id: 2, name: "Former Electrician", initials: "FE", avatarStyle: "blue", rating: 1,
@@ -1840,10 +762,9 @@ let reviews = [
       tenure: "Thirteen years as a project manager",
       title: "A company that really cares about people",
       pros: "Leadership understands that this industry is ultimately about people, not just projects and deadlines. Our staff were supported when challenges arise, and there is a strong emphasis that everyone's contributions matter equally. Bluegum also takes a lot of pride in their relationships with clients. We're encouraged to develop a rapport and communicate openly with clients, staff and the leadership team. It creates a good culture where you feel trusted to do your job.",
-      cons: "Like any construction company, there can be long days when projects get busy.",
+      cons: "We had a really hard time communicating across different sites. There was no strictly regulated process, so we spent a lot of time shouting at each other on the phone while driving in different directions. We always got the job done, but it was a bit of a time sink when you couldn't keep track of who had talked to who, and what they'd said.",
       timestamp: new Date("2023-01-05T10:30:00"), liked: false }
 ];
-let nextId = reviews.length + 1;
 
 const tabs = [
     { key: "reviews",  label: "Reviews"  },
@@ -1853,11 +774,6 @@ const tabs = [
     { key: "culture",  label: "Culture"  }
 ];
 let activeTab = "reviews";
-let selectedStars = 0;
-
-/* =====================================================
-   HELPERS
-===================================================== */
 
 function escapeHtml(str) {
     const div = document.createElement("div");
@@ -1873,25 +789,10 @@ function starString(rating, cls) {
     return `<span class="${cls || ""}">${out}</span>`;
 }
 
-function formatTimestamp(date) {
-    const diffMs = new Date() - date;
-    const diffMins = Math.round(diffMs / 60000);
-    const diffHours = Math.round(diffMs / 3600000);
-    const diffDays = Math.round(diffMs / 86400000);
-    if (diffMins < 1) return "Just now";
-    if (diffMins < 60) return diffMins + "m";
-    if (diffHours < 24) return diffHours + "h";
-    if (diffDays < 7) return diffDays + "d";
-
-    return date.toISOString().slice(0, 10); // YYYY-MM-DD
+function formatMonthYear(date) {
+    return date.toLocaleDateString("en-AU", { month: "long", year: "numeric" });
 }
 
-/* =====================================================
-   RENDER — RATINGS (right panel)
-   overallAverage() is recomputed from the live `reviews` array
-   every time it's called, so the score always reflects the
-   current set of reviews, including any just submitted.
-===================================================== */
 function overallAverage() {
     const catAvg = ratingCategories.reduce((s, c) => s + c.score, 0) / ratingCategories.length;
     if (reviews.length === 0) return catAvg;
@@ -1913,61 +814,6 @@ function renderCategories() {
     `).join("");
 }
 
-function renderStarPicker() {
-    const picker = document.getElementById("starPicker");
-    picker.innerHTML = [1,2,3,4,5].map(i => `
-        <span class="${i <= selectedStars ? "selected" : ""}" onclick="setStars(${i})">★</span>
-    `).join("");
-}
-
-function setStars(n) {
-    selectedStars = n;
-    renderStarPicker();
-    toggleSubmit();
-}
-
-function toggleSubmit() {
-    const pros = document.getElementById("prosInput").value.trim();
-    const cons = document.getElementById("consInput").value.trim();
-    document.getElementById("submitBtn").disabled = !(selectedStars > 0 && (pros || cons));
-}
-
-function submitReview() {
-    const title = document.getElementById("titleInput").value.trim();
-    const pros = document.getElementById("prosInput").value.trim();
-    const cons = document.getElementById("consInput").value.trim();
-    if (!(selectedStars > 0 && (pros || cons))) return;
-
-    // New reviews go to the front of the array so they appear
-    // at the top of the feed — nothing about the render logic changes.
-    reviews.unshift({
-        id: nextId++,
-        name: "You",
-        initials: "You",
-        avatarStyle: "blue",
-        rating: selectedStars,
-        tenure: "",
-        title, pros, cons,
-        timestamp: new Date(),
-        liked: false
-    });
-
-    document.getElementById("titleInput").value = "";
-    document.getElementById("prosInput").value = "";
-    document.getElementById("consInput").value = "";
-    selectedStars = 0;
-    renderStarPicker();
-    toggleSubmit();
-
-    // Re-derive and re-render the overall rating immediately so it
-    // reflects the review that was just added.
-    renderRatingSummary();
-
-    activeTab = "reviews";
-    renderTabBar();
-    renderTabPanel();
-}
-
 function likeReview(id) {
     const r = reviews.find(r => r.id === id);
     if (!r) return;
@@ -1975,9 +821,6 @@ function likeReview(id) {
     renderTabPanel();
 }
 
-/* =====================================================
-   RENDER — TAB BAR + TAB CONTENT (middle panel)
-===================================================== */
 function renderTabBar() {
     document.getElementById("tabBar").innerHTML = tabs.map(t => `
         <button class="tab-btn ${t.key === activeTab ? "active" : ""}" onclick="switchTab('${t.key}')">${escapeHtml(t.label)}</button>
@@ -1991,20 +834,20 @@ function switchTab(key) {
 }
 
 function renderTabPanel() {
-    const panel = document.getElementById("tabPanel");
-    panel.innerHTML = tabContent[activeTab]();
+    document.getElementById("tabPanel").innerHTML = tabContent[activeTab]();
 }
 
 const tabContent = {
     reviews: () => {
-        if (reviews.length === 0) return `<div class="empty-state">No reviews yet. Be the first to leave one.</div>`;
-        return `<div class="reviews-list">${reviews.map(r => `
+        if (reviews.length === 0) return `<div class="empty-state">No reviews yet.</div>`;
+        const sorted = [...reviews].sort((a, b) => b.timestamp - a.timestamp);
+        return `<div class="reviews-list">${sorted.map(r => `
             <div class="feed-review">
                 <div class="avatar ${r.avatarStyle}">${escapeHtml(r.initials)}</div>
                 <div class="feed-body">
                     <div class="feed-top">
                         <div class="feed-name">${escapeHtml(r.name)}</div>
-                        <div class="feed-time">${formatTimestamp(r.timestamp)}</div>
+                        <div class="feed-date">${escapeHtml(formatMonthYear(r.timestamp))}</div>
                     </div>
                     <div class="feed-stars">${starString(r.rating)}</div>
                     ${r.title ? `<div class="feed-title">${escapeHtml(r.title)}</div>` : ""}
@@ -2055,86 +898,160 @@ const tabContent = {
     }
 };
 
-/* =====================================================
-   INIT
-===================================================== */
 renderRatingSummary();
 renderCategories();
-// renderStarPicker();
 renderTabBar();
 renderTabPanel();
-
 </script>
-</div>
-</html>
-</div>
 
-</body>
 <script>
-    /* =====================
-        PAGE SWITCHING
-        Pages are every element with class "page"; menu buttons are every
-        ".expandable-card". Each card's data-page holds the id of the page
-        it opens, so adding a page never needs a JS change.
-    ===================== */
-    var pages = Array.from(document.querySelectorAll(".page"));
-    var buttons = Array.from(document.querySelectorAll(".expandable-card"));
+/* =====================
+   PAGE SWITCHING + TIME-BASED UNLOCK
+===================== */
+var pages = Array.from(document.querySelectorAll(".page"));
+var buttons = Array.from(document.querySelectorAll(".expandable-card"));
 
-    var TRANSITION_MS = 450;
-    var hideTimers = new Map();
+var TRANSITION_MS = 450;
+var hideTimers = new Map();
 
-    function revealPage(page) {
-        // Cancel any pending "finish hiding" from an earlier conceal
-        clearTimeout(hideTimers.get(page));
-        page.classList.remove("hideme");
-        page.classList.add("showme");
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                page.classList.add("visible");
-            });
-        });
-    }
+/* Time on a page unlocks the NEXT page.
+   Edit seconds per rule to tune how long each page must be viewed. */
+var unlockRules = {
+    page1: { unlocks: "page2", seconds: 30 },
+    page2: { unlocks: "page3", seconds: 30 }
+};
+var lockedPages = { page2: true, page3: true };
+var timeOnPage = { page1: 0, page2: 0, page3: 0 };   // milliseconds
+var activePageId = null;
+var lastTick = Date.now();
 
-    function concealPage(page) {
-        clearTimeout(hideTimers.get(page));
-        page.classList.remove("visible");
-        hideTimers.set(page, setTimeout(() => {
-            page.classList.remove("showme");
-            page.classList.add("hideme");
-        }, TRANSITION_MS));
-    }
+function getButton(pageId) {
+    return buttons.find(function (b) { return b.dataset.page === pageId; });
+}
 
-    function setActiveButton(pageId) {
-        buttons.forEach((button) => {
-            button.classList.toggle("active", button.dataset.page === pageId);
-        });
-    }
-
-    function selectPage(target) {
-        var isShown = target.classList.contains("visible");
-
-        // Hide every page except the one just clicked.
-        pages.forEach((page) => {
-            if (page !== target && page.classList.contains("showme")) {
-                concealPage(page);
-            }
-        });
-
-        // Clicking the already-visible page closes it; otherwise open it.
-        if (isShown) {
-            concealPage(target);
-            setActiveButton(null);
-        } else {
-            revealPage(target);
-            setActiveButton(target.id);
-        }
-    }
-
-    buttons.forEach((button) => {
-        button.addEventListener("click", () => {
-            var target = document.getElementById(button.dataset.page);
-            if (target) selectPage(target);
-        });
+function setActiveButton(pageId) {
+    buttons.forEach(function (b) {
+        b.classList.toggle("active", b.dataset.page === pageId);
     });
+}
+
+/* Add a lock icon + progress bar + hint to every locked card */
+Object.keys(unlockRules).forEach(function (sourceId) {
+    var rule = unlockRules[sourceId];
+    var btn = getButton(rule.unlocks);
+    if (!btn) return;
+    btn.title = "Spend " + rule.seconds + " seconds on the previous page to unlock";
+    if (!btn.querySelector(".lock-icon")) {
+        var lock = document.createElement("span");
+        lock.className = "lock-icon";
+        lock.textContent = "🔒";
+        btn.appendChild(lock);
+    }
+    var bar = document.createElement("span");
+    bar.className = "unlock-progress";
+    bar.innerHTML = "<span></span>";
+    btn.appendChild(bar);
+});
+
+function updateProgress(pageId, fraction) {
+    var btn = getButton(pageId);
+    var bar = btn && btn.querySelector(".unlock-progress");
+    if (!bar) return;
+    bar.classList.add("counting");
+    bar.firstElementChild.style.width = Math.min(100, fraction * 100) + "%";
+}
+
+function unlockPage(pageId) {
+    if (!lockedPages[pageId]) return;
+    lockedPages[pageId] = false;
+    var btn = getButton(pageId);
+    if (!btn) return;
+    btn.classList.remove("locked");
+    btn.classList.add("just-unlocked");
+    btn.removeAttribute("title");
+    var lock = btn.querySelector(".lock-icon");
+    if (lock) lock.remove();
+    var bar = btn.querySelector(".unlock-progress");
+    if (bar) bar.remove();
+    var badge = document.createElement("span");
+    badge.className = "new-badge";
+    badge.textContent = "Unlocked!";
+    btn.appendChild(badge);
+}
+
+/* Timer: counts only while a page is open AND the browser tab is visible */
+setInterval(function () {
+    var now = Date.now();
+    var dt = now - lastTick;
+    lastTick = now;
+    if (!activePageId || document.hidden) return;
+
+    timeOnPage[activePageId] += dt;
+
+    var rule = unlockRules[activePageId];
+    if (rule && lockedPages[rule.unlocks]) {
+        var needed = rule.seconds * 1000;
+        updateProgress(rule.unlocks, timeOnPage[activePageId] / needed);
+        if (timeOnPage[activePageId] >= needed) unlockPage(rule.unlocks);
+    }
+}, 250);
+
+function revealPage(page) {
+    clearTimeout(hideTimers.get(page));
+    page.classList.remove("hideme");
+    page.classList.add("showme");
+    requestAnimationFrame(function () {
+        requestAnimationFrame(function () { page.classList.add("visible"); });
+    });
+}
+
+function concealPage(page) {
+    clearTimeout(hideTimers.get(page));
+    page.classList.remove("visible");
+    hideTimers.set(page, setTimeout(function () {
+        page.classList.remove("showme");
+        page.classList.add("hideme");
+    }, TRANSITION_MS));
+}
+
+buttons.forEach(function (button) {
+    button.addEventListener("click", function () {
+        var id = button.dataset.page;
+        if (lockedPages[id]) {
+            button.classList.remove("shake");
+            void button.offsetWidth;          // restart the animation
+            button.classList.add("shake");
+            return;
+        }
+        var badge = button.querySelector(".new-badge");
+        if (badge) badge.remove();
+        button.classList.remove("just-unlocked");
+        var target = document.getElementById(id);
+        if (target) selectPage(target);
+    });
+});
+
+function selectPage(target) {
+    var isShown = target.classList.contains("visible");
+
+    pages.forEach(function (page) {
+        if (page !== target && page.classList.contains("showme")) concealPage(page);
+    });
+
+    if (isShown) {
+        concealPage(target);
+        setActiveButton(null);
+        activePageId = null;
+    } else {
+        revealPage(target);
+        setActiveButton(target.id);
+        activePageId = target.id;
+        window.scrollTo(0, 0);
+    }
+}
+
+var initialPage = document.getElementById("page1");
+if (initialPage) selectPage(initialPage);
 </script>
+</body>
 </html>
