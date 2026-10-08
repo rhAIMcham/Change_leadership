@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Workplace Curiosity</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+
+<style>
+  /* =====================================================
+     1. THEME  -  change colours, fonts and sizes here
+     ===================================================== */
+  :root {
+    /* Brand palette */
+    --AIMblue:   #4353A3;
+    --darkBlue:  #38416D;
+    --teal:      #5DC8B9;
+    --cream:     #F1EEDE;
+    --rust:      #AF4510;
+    --navy:      #12195C;
+    --lightBlue: #AEBAE4;
+
+    /* What the palette is used for (light mode) */
+    --page-bg:       #ffffff;   /* page background */
+    --container-bg:  #ffffff;   /* big white panel */
+    --card-bg:       #f7fafc;   /* each card */
+    --input-bg:      #ffffff;   /* text box + chip background */
+    --heading:       var(--darkBlue);  /* page title + progress text */
+    --card-title:    var(--navy);      /* card headings */
+    --text:          var(--darkBlue);  /* text inside boxes */
+    --accent:        var(--AIMblue);   /* focus outlines, hover borders */
+    --border:        var(--lightBlue); /* box + chip borders */
+    --success:       var(--teal);      /* progress bar, ticks, used chips */
+    --button-bg:     var(--navy);      /* Save button */
+    --button-text:   #ffffff;
+    --danger:        var(--rust);      /* Clear button hover */
+    --saved-msg:     var(--AIMblue);   /* "Saved!" text */
+
+    /* Typography */
+    --font-family:   "IBM Plex Sans", Arial, sans-serif;
+    --title-size:    28px;
+    --card-title-size: 18px;
+    --body-size:     14px;
+    --small-size:    12px;
+
+    /* Layout */
+    --max-width:     1200px;
+    --radius:        8px;       /* cards, boxes */
+    --radius-large:  12px;      /* big panel */
+    --gap:           24px;      /* space between cards */
+    --card-padding:  20px;
+    --textarea-height: 220px;   /* minimum height of note boxes */
+
+    /* Keeps content clear of phone notches (leave as is) */
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Dark mode colours (applies when the device is set to dark) */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --page-bg:      #11131f;
+      --container-bg: #181b2c;
+      --card-bg:      #20243a;
+      --input-bg:     #11131f;
+      --heading:      #dfe4ff;
+      --card-title:   #dfe4ff;
+      --text:         #e7e9f5;
+      --saved-msg:    var(--teal);
+    }
+  }
+
+  /* =====================================================
+     2. PAGE + LAYOUT
+     ===================================================== */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-family);
+    padding: 20px;
+    min-height: 100vh;
+    background: var(--page-bg);
+  }
+
+  .container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    background: var(--container-bg);
+    border-radius: var(--radius-large);
+    padding: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap);
+  }
+
+  h1 {
+    color: var(--heading);
+    font-size: var(--title-size);
+    width: 100%;
+  }
+
+  /* =====================================================
+     3. PROGRESS BAR
+     ===================================================== */
+  .progress        { width: 100%; }
+  .progress-label  { font-size: var(--body-size); color: var(--heading); margin-bottom: 6px; }
+  .progress-track  { height: 8px; background: var(--border); border-radius: 99px; overflow: hidden; }
+  .progress-fill   { height: 100%; width: 0; background: var(--success); border-radius: 99px; transition: width 0.4s ease; }
+
+  /* =====================================================
+     4. CARDS
+     ===================================================== */
+  .card {
+    width: calc(50% - var(--gap) / 2);   /* two columns */
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: var(--card-padding);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: box-shadow 0.2s ease;
+  }
+  .card:focus-within { box-shadow: 0 0 0 2px var(--accent); }
+
+  .card-title {
+    font-weight: 600;
+    font-size: var(--card-title-size);
+    color: var(--card-title);
+  }
+  .card.done .card-title::after { content: " \2713"; color: var(--success); }  /* tick when filled in */
+
+  /* =====================================================
+     5. PROMPT CHIPS
+     ===================================================== */
+  .chips-label { font-size: var(--small-size); color: var(--text); opacity: 0.7; }
+  .chips       { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .chip {
+    font-family: inherit;
+    font-size: var(--small-size);
+    text-align: left;
+    padding: 5px 10px;
+    border-radius: 99px;
+    cursor: pointer;
+    color: var(--card-title);
+    background: var(--input-bg);
+    border: 1.5px solid var(--border);
+    transition: all 0.15s ease;
+  }
+  .chip:hover { border-color: var(--accent); }
+  .chip.used  { background: var(--success); border-color: var(--success); color: var(--navy); }
+
+  /* =====================================================
+     6. TEXT BOX + WORD COUNT
+     ===================================================== */
+  textarea {
+    width: 100%;
+    min-height: var(--textarea-height);
+    padding: 12px;
+    font-family: var(--font-family);
+    font-size: var(--body-size);
+    line-height: 1.6;
+    color: var(--text);
+    background: var(--input-bg);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    resize: vertical;
+    transition: border-color 0.2s ease;
+  }
+  textarea:focus { outline: none; border-color: var(--accent); }
+
+  .meta { font-size: var(--small-size); color: var(--text); opacity: 0.7; }
+
+  /* =====================================================
+     7. BUTTONS + "SAVED!" MESSAGE
+     ===================================================== */
+  .saved   { display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; }
+  .actions { display: flex; gap: 8px; align-items: center; }
+
+  .savedMsg {
+    font-size: 0.9rem;
+    color: var(--saved-msg);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    margin: 0;
+    min-width: 60px;
+  }
+
+  .saveBtn, .clearBtn {
+    font-family: var(--font-family);
+    font-size: 1rem;
+    border-radius: 6px;
+    padding: 0.5rem 1.25rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .saveBtn  { background: var(--button-bg); color: var(--button-text); border: 2px solid var(--button-bg); }
+  .saveBtn:hover  { background: var(--border); color: var(--navy); }
+
+  .clearBtn { background: transparent; color: var(--card-title); border: 2px solid var(--border); padding: 0.5rem 1rem; }
+  .clearBtn:hover { border-color: var(--danger); color: var(--danger); }
+
+  /* =====================================================
+     8. MOBILE  (single column under 768px)
+     ===================================================== */
+  @media (max-width: 768px) {
+    .card      { width: 100%; }
+    .container { padding: 20px; }
+  }
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h1 id="pageTitle"></h1>
+  <div class="progress">
+    <div class="progress-label" id="progressLabel"></div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+  <div id="cards" style="display:contents"></div>
+</div>
+
+<script>
+  /* =====================================================
+     CONTENT  -  edit the text here (no HTML needed)
+     Each section = one card. "items" are the tappable
+     prompts, and also the default text filled in when
+     Save is clicked on an empty box.
+     ===================================================== */
+  const PAGE_TITLE = 'Workplace Curiosity';
+  const BOX_PLACEHOLDER = 'Add your notes on this theme';
+  const CHIPS_LABEL = 'Tap a prompt to add it:';
+
+  const sections = [
+    { key: 'curiosityNotes1', title: 'Curiosity in the workplace', items: [
+      'Encourage questions without judgement',
+      'Model curiosity and seek input from team members',
+      'Provide learning opportunities for team members to explore new skills'] },
+
+    { key: 'curiosityNotes2', title: 'Empower experimentation and exploration', items: [
+      'Create opportunities to experiment',
+      'Encourage smart risks where potential hazards are understood and managed',
+      'Review and adapt by using feedback to determine what should be changed'] },
+
+    { key: 'curiosityNotes3', title: 'Build collaboration and diversity', items: [
+      'Invite different viewpoints',
+      'Challenge group assumptions and invite constructive debate',
+      'Share responsibility and provide meaningful opportunities to contribute'] },
+
+    { key: 'curiosityNotes4', title: 'Recognise and reward curiosity', items: [
+      'Acknowledge insightful questions',
+      'Recognise thoughtful initiative',
+      'Avoid punishing reasonable experimentation by distinguishing between thoughtful learning opportunities and avoidable mistakes caused by poor planning'] }
+    // To add a card, copy a block above and give it a new, unique "key".
+    // The "key" is the name used in localStorage - changing it starts that card fresh.
+  ];
+
+  /* =====================================================
+     BEHAVIOUR  -  you shouldn't need to edit below here
+     ===================================================== */
+  document.getElementById('pageTitle').textContent = PAGE_TITLE;
+  document.title = PAGE_TITLE;
+
+  // localStorage with an in-memory fallback if the browser blocks it
+  const memoryStore = {};
+  const store = {
+    get(key) {
+      try {
+        const v = localStorage.getItem(key);
+        return v === null && key in memoryStore ? memoryStore[key] : v;
+      } catch (e) { return key in memoryStore ? memoryStore[key] : null; }
+    },
+    set(key, value) {
+      memoryStore[key] = value;
+      try { localStorage.setItem(key, value); } catch (e) {}
+    }
+  };
+
+  const cardsEl = document.getElementById('cards');
+
+  function updateProgress() {
+    const done = sections.filter(sec => (store.get(sec.key) || '').trim()).length;
+    document.getElementById('progressLabel').textContent =
+      done + ' of ' + sections.length + ' sections completed';
+    document.getElementById('progressFill').style.width = (done / sections.length * 100) + '%';
+  }
+
+  sections.forEach((sec, i) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML =
+      '<div class="card-title"></div>' +
+      '<div class="chips-label"></div>' +
+      '<div class="chips"></div>' +
+      '<textarea id="notes' + (i + 1) + '"></textarea>' +
+      '<div class="meta"><span class="count">0 words</span></div>' +
+      '<div class="saved"><p class="savedMsg">Saved!</p>' +
+      '<div class="actions"><button class="clearBtn" type="button">Clear</button>' +
+      '<button class="saveBtn" type="button">Save</button></div></div>';
+    card.querySelector('.card-title').textContent = sec.title;
+    card.querySelector('.chips-label').textContent = CHIPS_LABEL;
+    cardsEl.appendChild(card);
+
+    const ta = card.querySelector('textarea');
+    ta.placeholder = BOX_PLACEHOLDER;
+    const msg = card.querySelector('.savedMsg');
+    const count = card.querySelector('.count');
+    const chipsEl = card.querySelector('.chips');
+
+    const chips = sec.items.map(text => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'chip';
+      b.textContent = text;
+      b.addEventListener('click', () => {
+        if (ta.value.includes(text)) {
+          ta.value = ta.value.split('\n').filter(l => !l.includes(text)).join('\n');
+        } else {
+          ta.value = (ta.value.trim() ? ta.value.replace(/\s+$/, '') + '\n' : '') + '- ' + text;
+        }
+        refresh(); persist();
+      });
+      chipsEl.appendChild(b);
+      return { b, text };
+    });
+
+    function refresh() {
+      const words = ta.value.trim() ? ta.value.trim().split(/\s+/).length : 0;
+      count.textContent = words + (words === 1 ? ' word' : ' words');
+      chips.forEach(c => c.b.classList.toggle('used', ta.value.includes(c.text)));
+      card.classList.toggle('done', !!ta.value.trim());
+    }
+    function persist() { store.set(sec.key, ta.value.trim()); updateProgress(); }
+
+    const saved = store.get(sec.key);
+    if (saved) ta.value = saved;
+    refresh();
+
+    let timer;
+    function flash() {
+      msg.style.opacity = '1';
+      clearTimeout(timer);
+      timer = setTimeout(() => msg.style.opacity = '0', 1500);
+    }
+    function save() {
+      // Empty box + Save = fill in the default answer
+      if (!ta.value.trim()) ta.value = sec.items.map(t => '- ' + t).join('\n');
+      refresh(); persist(); flash();
+    }
+
+    card.querySelector('.saveBtn').addEventListener('click', save);
+    card.querySelector('.clearBtn').addEventListener('click', () => {
+      ta.value = ''; refresh(); persist(); ta.focus();
+    });
+    ta.addEventListener('input', () => { refresh(); persist(); });
+    ta.addEventListener('keydown', e => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); save(); }
+    });
+  });
+
+  updateProgress();
+</script>
+</body>
+</html>

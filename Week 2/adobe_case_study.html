@@ -233,7 +233,7 @@
        ===================================================== */
 
     /* Tablet and below: stack text above the image/video */
-    @media (max-width: 800px) {
+    @media (max-width: 1100px) {
       .side-by-side {
         grid-template-columns: 1fr;
         gap: 1.25rem;
@@ -241,9 +241,10 @@
       .side-b {
         min-height: 0;
         aspect-ratio: 16 / 9;
+        max-width: 100%;
       }
     }
-
+    
     /* Phone: tighter spacing, smaller arrows */
     @media (max-width: 600px) {
       .displayFolder { margin: 20px 12px; }
