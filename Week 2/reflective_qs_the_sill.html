@@ -85,8 +85,8 @@ padding: 5px;
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
 
 <div class="notesBox">
-    <h3>Identifying challenges</h3>
-  <p class="questionText">What were the challenges identified by the Bluegum leadership team?</p>
+    <h3>Technical challenges vs. adaptive challenges</h3>
+  <p class="questionText">What factors should leaders consider when deciding whether a challenge requires a technical solution, an adaptive response, or a combination of both?</p>
 
   <textarea id="notesInput1" rows="8"
     ></textarea>
@@ -98,14 +98,14 @@ padding: 5px;
   </div>
 
   <div id="modelAnswer1" class="modelAnswer">
-The leadership team identified ongoing communication issues between construction sites, including delays in sharing information, inconsistent processes and reliance on outdated communication methods and technology. While improving communication systems can address other inefficiencies, leaders also needed to understand how the changes would affect employees, their existing workflows and their ability to communicate in practice.
+Leaders must consider and analyse internal and external factors to enact meaningful organisational change, which can include fluctuating customer expectations and needs, market concerns and business positioning. Eliza Blank identified the technical limitations of a storefront and lack of knowledge as a barrier to purchasing plants and chose to adapt to a fully online experience for her customers while offering support for plant care to encourage consumers to purchase from her business.
   </div>
 </div>
 
 
 <div class="notesBox">
-    <h3>Adaptive challenges and technical problems</h3>
-  <p class="questionText">Were these challenges technical problems, adaptive challenges or a mixture of both?</p>
+    <h3>Customer needs and underlying issues</h3>
+  <p class="questionText">How can leaders identify specific needs without alienating other potential customers?</p>
 
   <textarea id="notesInput2" rows="8"
     ></textarea>
@@ -116,13 +116,13 @@ The leadership team identified ongoing communication issues between construction
   </div>
 
   <div id="modelAnswer2" class="modelAnswer">
- The Bluegum leadership team identified a technical problem – their communication processes were not sufficient in meeting the needs of contractors and clients and introduced new systems to better support project completion. However, this challenge was also an adaptive problem, as it required experienced site teams and contractors to adjust their ways of working and other responsibilities, which may eventually contribute to staff resistance.
+Effective leaders look beyond current trends or popular decision-making and take the time to identify what is driving customers to purchase from and support different businesses. While The Sill’s initial success may be credited to the current popularity of houseplants and other indoor garden features, they were also able to retain and expand their customer base by appealing to anyone, regardless of their personal experience caring for plants.
   </div>
 </div>
 
 <div class="notesBox">
-    <h3>Success of the change</h3>
-  <p class="questionText">Was the Bluegum leadership team successful in implementing positive change?</p>
+    <h3>Change in a rapidly transforming world</h3>
+  <p class="questionText">How can leaders create the conditions for an organisation to adapt when existing approaches are already successful?</p>
 
   <textarea id="notesInput3" rows="8"
     ></textarea>
@@ -133,7 +133,7 @@ The leadership team identified ongoing communication issues between construction
   </div>
 
   <div id="modelAnswer3" class="modelAnswer">
-There is an important distinction between implementing and solution and achieving sustainable change. The new systems may have addressed some communication issues, but if contractors have difficulty utilising these processes or find them poorly suited to their work, the underlying problems could continue in different forms.  
+When a business or organisation is successful, there may be less incentive to rapidly change or adapt to meet new expectations. It is important to identify what factors are responsible for this current success, if those factors are likely to change and how those factors may be affected in the future. By choosing to expand online, The Sill was able to meet new customer demands as they developed and encourage plant care at all stages of experience.
   </div>
 </div>
 
@@ -145,14 +145,14 @@ function initNotesBox(inputId, btnId, msgId, storageKey, answerId) {
   const answerBox = document.getElementById(answerId);
 
   const STORAGE_KEY = storageKey;
-  const ANSWER_SHOWN_KEY_BLUEGUM = storageKey + '_answerShown';
+  const ANSWER_SHOWN_KEY_THESILL = storageKey + '_answerShown';
 
   // Load existing note (if any)
   const savedNote = localStorage.getItem(STORAGE_KEY);
   if (savedNote) textArea.value = savedNote;
 
   // If the answer was already revealed in a previous visit, keep it visible
-  if (localStorage.getItem(ANSWER_SHOWN_KEY_BLUEGUM) === 'true') {
+  if (localStorage.getItem(ANSWER_SHOWN_KEY_THESILL) === 'true') {
     answerBox.classList.add('visible');
   }
 
@@ -168,7 +168,7 @@ function initNotesBox(inputId, btnId, msgId, storageKey, answerId) {
     // Reveal the suggested answer once the question has been answered and saved
     if (value.length > 0) {
       answerBox.classList.add('visible');
-      localStorage.setItem(ANSWER_SHOWN_KEY_BLUEGUM, 'true');
+      localStorage.setItem(ANSWER_SHOWN_KEY_THESILL, 'true');
     }
   });
 
@@ -178,7 +178,7 @@ function initNotesBox(inputId, btnId, msgId, storageKey, answerId) {
   });
 }
 
-initNotesBox('notesInput1', 'saveBtn1', 'statusMsg1', 'bluegumQ1', 'modelAnswer1');
-initNotesBox('notesInput2', 'saveBtn2', 'statusMsg2', 'bluegumQ2', 'modelAnswer2');
-initNotesBox('notesInput3', 'saveBtn3', 'statusMsg3', 'bluegumQ3', 'modelAnswer3');
+initNotesBox('notesInput1', 'saveBtn1', 'statusMsg1', 'theSillQ1', 'modelAnswer1');
+initNotesBox('notesInput2', 'saveBtn2', 'statusMsg2', 'theSillQ2', 'modelAnswer2');
+initNotesBox('notesInput3', 'saveBtn3', 'statusMsg3', 'theSillQ3', 'modelAnswer3');
 </script>
