@@ -3,72 +3,110 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
 <title>Change Readiness Assessment</title>
 <style>
+/* =========================================================
+   CONTENTS
+   1. Design tokens (colours, sizes) – edit these first
+   2. Base & page layout
+   3. Header & intro
+   4. Tab navigation
+   5. Slides & section titles
+   6. Questions & rating scale
+   7. Buttons
+   8. Results page
+   9. Utilities
+   ========================================================= */
+
+
+/* ---------- 1. Design tokens ---------- */
 :root {
-  --AIMblue: #4353A3;
-  --darkBlue: #38416D;
-  --teal: #5DC8B9;
-  --cream: #F1EEDE;
-  --rust: #AF4510;
-  --navy: #12195C;
-  --white: #fff;
+  /* Brand colours */
+  --AIMblue:   #4353A3;
+  --darkBlue:  #38416D;
+  --navy:      #12195C;
   --lightBlue: #AEBAE4;
+  --teal:      #5DC8B9;
+  --rust:      #AF4510;
+  --cream:     #F1EEDE;
+  --white:     #fff;
+
+  /* Neutrals */
+  --text-muted: #666;
+  --text-faint: #888;
+  --divider:    #ccc;
+
+  /* Sizing */
+  --content-width: 900px;   /* assessment width */
+  --results-width: 600px;   /* results page width */
+  --radius:        8px;
+  --scale-size:    36px;    /* diameter of the 0–3 rating circles */
+
+  /* Keeps content clear of phone status/home bars */
+  box-sizing: border-box;
+  padding-top:    env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
+
+/* ---------- 2. Base & page layout ---------- */
 * {
   box-sizing: border-box;
 }
 
 body {
-  font-family: "IBM Plex Sans", sans-serif;
-  margin: 0;
-  padding: 20px 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: 0;
+  padding: 20px 10px;
+  font-family: "IBM Plex Sans", sans-serif;
   background: var(--white);
   color: var(--navy);
 }
 
 .wrap {
   width: 100%;
-  max-width: 900px;
+  max-width: var(--content-width);
 }
 
+
+/* ---------- 3. Header & intro ---------- */
 h1 {
   text-align: center;
-  color: var(--navy);
   font-size: 1.5rem;
+  color: var(--navy);
 }
 
 .intro {
   text-align: center;
-  color: var(--darkBlue);
   margin-bottom: 10px;
+  color: var(--darkBlue);
 }
 
+
+/* ---------- 4. Tab navigation ---------- */
 .navigation {
-  margin: 5px 0 20px;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 10px;
-  flex-wrap: wrap;
+  margin: 5px 0 20px;
 }
 
 .nav-button {
-  background: var(--cream);
-  color: var(--darkBlue);
-  border: 2px solid var(--darkBlue);
+  min-width: 110px;
   padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
   font-family: inherit;
   font-size: .9rem;
   font-weight: 500;
-  min-width: 110px;
+  background: var(--cream);
+  color: var(--darkBlue);
+  border: 2px solid var(--darkBlue);
+  border-radius: var(--radius);
+  cursor: pointer;
+      max-width: 120px;
 }
 
 .nav-button.active {
@@ -77,6 +115,8 @@ h1 {
   border-color: var(--AIMblue);
 }
 
+
+/* ---------- 5. Slides & section titles ---------- */
 .CardSlide {
   display: none;
 }
@@ -85,36 +125,45 @@ h1 {
   display: block;
 }
 
-fieldset {
-  border: none;
-  padding: 0;
-  margin: 0 0 25px;
-}
-
-legend {
+.slide-title {
+  margin: 0 0 8px;
   font-size: 1.2rem;
   font-weight: 600;
   color: var(--rust);
-  margin-bottom: 8px;
-  padding: 0;
+}
+
+.placeholder {            /* shown on forms with no questions yet */
+  padding: 40px 0;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+
+/* ---------- 6. Questions & rating scale ---------- */
+.scale-key {              /* "0 = not at all → 3 = strongly agree" */
+  margin-bottom: 6px;
+  text-align: right;
+  font-size: .75rem;
+  color: var(--text-muted);
 }
 
 .question {
-  border-bottom: 2px dotted #ccc;
-  padding: 12px 0;
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
+  padding: 12px 0;
+  border-bottom: 2px dotted var(--divider);
 }
 
 .question p {
-  margin: 0;
   flex: 1 1 260px;
+  margin: 0;
   text-align: left;
 }
 
+/* Rating circles */
 .scale {
   display: flex;
   gap: 6px;
@@ -124,23 +173,23 @@ legend {
   cursor: pointer;
 }
 
-.scale input {
+.scale input {            /* real radio is hidden; the <span> is the visible circle */
   position: absolute;
-  opacity: 0;
   width: 0;
   height: 0;
+  opacity: 0;
 }
 
 .scale span {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: var(--scale-size);
+  height: var(--scale-size);
+  font-weight: 600;
+  color: var(--darkBlue);
   border: 2px solid var(--darkBlue);
   border-radius: 50%;
-  color: var(--darkBlue);
-  font-weight: 600;
 }
 
 .scale input:checked + span {
@@ -154,26 +203,20 @@ legend {
   outline-offset: 2px;
 }
 
-.scale-key {
-  text-align: right;
-  font-size: .75rem;
-  color: #666;
-  margin-top: -8px;
-  margin-bottom: 6px;
-}
 
+/* ---------- 7. Buttons ---------- */
 .submit-button {
-  font-family: inherit;
+  display: block;
+  width: 220px;
   margin: 20px auto;
+  padding: 10px;
+  font-family: inherit;
+  font-size: 1rem;
   background: var(--navy);
   color: var(--white);
-  width: 220px;
   border: 2px solid var(--cream);
-  border-radius: 8px;
+  border-radius: var(--radius);
   cursor: pointer;
-  padding: 10px;
-  font-size: 1rem;
-  display: block;
 }
 
 .submit-button:hover {
@@ -182,227 +225,283 @@ legend {
   border-color: var(--navy);
 }
 
-.canvasCard {
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-}
 
-.hidden {
-  display: none;
-}
-
+/* ---------- 8. Results page ---------- */
 #results {
-  max-width: 600px;
+  max-width: var(--results-width);
   margin: 15px auto;
   font-size: .95rem;
   line-height: 1.5;
 }
 
-#results ul {
-  padding-left: 20px;
+#results h2 {
+  text-align: center;
+  color: var(--navy);
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 2px dotted var(--divider);
+}
+
+.result-row small {       /* "9 of 9 answered" */
+  display: block;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.result-row .score {
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--AIMblue);
+}
+
+.result-row.pending,
+.result-row.pending .score {   /* forms with no questions yet */
+  color: var(--text-faint);
+}
+
+
+/* ---------- 9. Utilities ---------- */
+.hidden {
+  display: none;
 }
 </style>
 </head>
 <body>
 <div class="wrap" id="displayed">
-<h1>Emotional Intelligence Self-Assessment</h1>
-<p class="intro">Comparing yourself to other leaders you know or have worked with,
-please indicate how well you believe you demonstrate the following, from 1 (significantly less than) to 5 (significantly more than).</p>
-<nav aria-label="Assessment navigation">
-  <div class="navigation" role="tablist">
-    <button class="nav-button active" onclick="goToSlide(1)" role="tab" aria-selected="true" aria-controls="slide-1" id="tab-1">Self-awareness</button>
-    <button class="nav-button" onclick="goToSlide(2)" role="tab" aria-selected="false" aria-controls="slide-2" id="tab-2">Awareness of others</button>
-    <button class="nav-button" onclick="goToSlide(3)" role="tab" aria-selected="false" aria-controls="slide-3" id="tab-3">Authenticity</button>
-    <button class="nav-button" onclick="goToSlide(4)" role="tab" aria-selected="false" aria-controls="slide-4" id="tab-4">Emotional reasoning</button>
-    <button class="nav-button" onclick="goToSlide(5)" role="tab" aria-selected="false" aria-controls="slide-5" id="tab-5">Self-management</button>
-    <button class="nav-button" onclick="goToSlide(6)" role="tab" aria-selected="false" aria-controls="slide-6" id="tab-6">Inspiring performance</button>
-    <button class="nav-button" onclick="goToSlide(7)" role="tab" aria-selected="false" aria-controls="slide-7" id="tab-7">Submit & Results</button>
-  </div>
-</nav>
+  <h1>Emotional Intelligence Self-Assessment</h1>
+  <br>
+  <p class="intro">Comparing yourself to other leaders you know,
+  please indicate how well you believe you demonstrate the following qualities.</p>
+  <br>
+  <nav aria-label="Assessment navigation">
+    <div class="navigation" role="tablist" id="tabs"></div>
+  </nav>
+    <br>
 </div>
 
-<div class="wrap" id="CardHolder">
-  <div class="CardSlide active" id="slide-1" role="tabpanel" aria-labelledby="tab-1">
-    <form id="selfAwarenessForm"></form>
-  </div>
-  <div class="CardSlide" id="slide-2" role="tabpanel" aria-labelledby="tab-2">
-    <form id="awarenessOfOthersForm"></form>
-  </div>
-    <div class="CardSlide" id="slide-3" role="tabpanel" aria-labelledby="tab-3">
-    <form id="authenticityForm"></form>
-  </div>
-    <div class="CardSlide" id="slide-4" role="tabpanel" aria-labelledby="tab-4">
-    <form id="emotionalReasoningForm"></form>
-  </div>
-    <div class="CardSlide" id="slide-5" role="tabpanel" aria-labelledby="tab-5">
-    <form id="selfManagementForm"></form>
-  </div>
-    <div class="CardSlide" id="slide-6" role="tabpanel" aria-labelledby="tab-6">
-    <form id="inspiringPerformanceForm"></form>
-  </div>
-  <div class="CardSlide" id="slide-7" role="tabpanel" aria-labelledby="tab-7">
-    <div style="text-align:center;padding:40px;">
-      <h2>Complete Your Assessment</h2>
-      <p>Click below to see your results as a chart.</p>
-      <button class="submit-button" onclick="showResults()">Submit & View Results</button>
-    </div>
-  </div>
-</div>
+<div class="wrap" id="CardHolder"></div>
 
 <div class="wrap hidden" id="graphDisp">
-  <section class="canvasCard"><canvas id="resultsChart" role="img" aria-label="Change readiness results chart"></canvas></section>
   <div id="results" aria-live="polite"></div>
   <button class="submit-button" onclick="backToAssessment()">Back to Assessment</button>
 </div>
 
 <script>
-const AREAS = ["Team identity","Communication","Resilience"];
-const DATA = {
-  team: 
-[
-      "Your team can take risks and experiment without fear of harsh consequences",
-      "Regardless of existing organisational change, your team has enjoyed relative stability",
-      "Team sentiment regarding organisational capacity for change is positive",
-  
-      "Your team is confident and comfortable with expressing concerns early",
-      "Information and other contextual data are frequently shared within your team",
-      "Your team has a well-established and understood purpose and direction",
-
-      "Your team is stable and secure, preparing them for new challenges",
-      "Your team is flexible in their working pathways",
-      "Your team is committed to performing well, not to a specific tool or process"
-    ],
-  self: [
-      "Proficient knowledge of how your teams’ responsibilities align with the broader organisation",
-      "Self-awareness of your strengths and weakness during change",
-      "Accepted and prepared to adjust priorities as needed in the immediate wake of change",
-      "Good communication skills with your peers and team members",
-      "Established communication with your own leader and mentors to ask for guidance if needed",
-      "Confidence when asking for support from your peers",
-      "Resilience from discomfort during change",
-      "A willingness to learn new skills and meet new challenges",
-      "Committed to managing your reactions, not the world at large"
+// One entry per form. Add the remaining four question sets by filling in `questions`.
+const FORMS = [
+  {
+    label: "Self-awareness",
+    questions: [
+      "Understanding the impact your behaviour has on others",
+      "Being aware of your strengths and limitations",
+      "Asking others for feedback on your leadership",
+      "Responding effectively to feedback provided to you",
+      "Being consistent in what you say and do",
+      "Behaving in a way that is consistent with how you expect others to behave",
+      "Demonstrating awareness of your mood and emotions"
     ]
-
-};
-
-function buildForm(formId, section){
-  const form = document.getElementById(formId);
-  const key = document.createElement('div');
-  key.className = 'scale-key';
-  key.textContent = '0 = not at all  →  3 = strongly agree';
-  form.appendChild(key);
-  AREAS.forEach(area=>{
-    DATA[section][area].forEach((qText, i)=>{
-      const qDiv = document.createElement('div');
-      qDiv.className = 'question';
-      const p = document.createElement('p');
-      p.textContent = qText;
-      qDiv.appendChild(p);
-      const scale = document.createElement('div');
-      scale.className = 'scale';
-      const name = `${section}_${area.replace(/\s/g,'')}_${i}`;
-      for(let v=0; v<=3; v++){
-        const label = document.createElement('label');
-        const input = document.createElement('input');
-        input.type = 'radio';
-        input.name = name;
-        input.value = v;
-        input.setAttribute('aria-label', `${qText}: rate ${v}`);
-        const span = document.createElement('span');
-        span.textContent = v;
-        label.appendChild(input);
-        label.appendChild(span);
-        scale.appendChild(label);
-      }
-      qDiv.appendChild(scale);
-      form.appendChild(qDiv);
-    });
-  });
+  },
+  {
+    label: "Awareness of others",
+    questions: [
+      "Making others feel appreciated",
+      "Adjusting your style so that it fits well with others",
+      "Noticing when someone needs support and responding effectively",
+      "Accurately view situations from the perspective of others",
+      "Acknowledging the views and opinions of others",
+      "Accurately anticipating responses or reactions from others",
+      "Balancing achieving results with others’ needs"
+    ]
+  },
+  { label: "Authenticity", 
+    questions: [
+      "Being open about your thoughts, feelings and opinions",
+      "Expressing thoughts and feelings in a way that it sensitive to those of others",
+      "Facilitating robust, open debate",
+      "Being open and honest about mistakes",
+      "Honouring commitments and keeping promises",
+      "Encouraging others to put forward their thoughts, feelings and opinions",
+      "Responding effectively when challenged"
+  ] 
+},
+  { label: "Emotional reasoning",
+      questions: [
+      "Consulting others in decision-making",
+      "Explaining the rationale behind decisions you make",
+      "Involving others in decisions that affect their work",
+      "Considering issues from multiple perspectives",
+      "Taking the bigger picture into account when decision-making",
+      "Reflecting on feelings when decision-making",
+      "Making ethical decisions"
+  ] 
+},
+  { label: "Self-management", 
+      questions: [
+      "Effectively managing your emotions in difficult situations",
+      "Demonstrating a positive, energising demeanour",
+      "Managing your time effectively",
+      "Learning from your mistakes",
+      "Keeping up-to-date with industry trends and market conditions",
+      "Striving to improve your performance",
+      "Quickly adapting to new circumstances"
+  ] 
+},
+  { label: "Inspiring performance", 
+      questions: [
+      "Providing useful support and guidance",
+      "Providing constructive feedback on behaviour and performance",
+      "Helping others understand their purpose and contribution to the organisation",
+      "Noticing inappropriate behaviour in others and responding effectively",
+      "Maintaining a positive work environment",
+      "Helping facilitate others’ development and advance their careers",
+      "Recognising others’ hard work and achievements"
+  ] 
 }
-buildForm('selfAwarenessForm','team');
-buildForm('awarenessOfOthersForm','self');
+];
+
+const MAX_SCORE = 5;
+const tabsEl = document.getElementById('tabs');
+const holder = document.getElementById('CardHolder');
+const totalSlides = FORMS.length + 1; // forms + submit slide
+
+function buildSlides() {
+  FORMS.forEach((f, fi) => {
+    const n = fi + 1;
+    tabsEl.insertAdjacentHTML('beforeend',
+      `<button class="nav-button" role="tab" aria-selected="false" aria-controls="slide-${n}" id="tab-${n}" onclick="goToSlide(${n})">${f.label}</button>`);
+
+    const slide = document.createElement('div');
+    slide.className = 'CardSlide';
+    slide.id = `slide-${n}`;
+    slide.setAttribute('role', 'tabpanel');
+    slide.setAttribute('aria-labelledby', `tab-${n}`);
+
+    const title = document.createElement('h2');
+    title.className = 'slide-title';
+    title.textContent = f.label;
+    slide.appendChild(title);
+
+    if (!f.questions.length) {
+      const ph = document.createElement('p');
+      ph.className = 'placeholder';
+      ph.textContent = 'Questions for this section are coming soon.';
+      slide.appendChild(ph);
+    } else {
+      const key = document.createElement('div');
+      key.className = 'scale-key';
+      key.textContent = `0 = not at all  →  ${MAX_SCORE} = always`;
+      slide.appendChild(key);
+
+      const form = document.createElement('form');
+      form.id = `form-${fi}`;
+      f.questions.forEach((qText, qi) => {
+        const qDiv = document.createElement('div');
+        qDiv.className = 'question';
+        const p = document.createElement('p');
+        p.textContent = qText;
+        qDiv.appendChild(p);
+
+        const scale = document.createElement('div');
+        scale.className = 'scale';
+        for (let v = 0; v <= MAX_SCORE; v++) {
+          const label = document.createElement('label');
+          const input = document.createElement('input');
+          input.type = 'radio';
+          input.name = `f${fi}_q${qi}`;
+          input.value = v;
+          input.setAttribute('aria-label', `${qText}: rate ${v}`);
+          const span = document.createElement('span');
+          span.textContent = v;
+          label.append(input, span);
+          scale.appendChild(label);
+        }
+        qDiv.appendChild(scale);
+        form.appendChild(qDiv);
+      });
+      slide.appendChild(form);
+    }
+    holder.appendChild(slide);
+  });
+
+  // Submit slide
+  const n = totalSlides;
+  tabsEl.insertAdjacentHTML('beforeend',
+    `<button class="nav-button" role="tab" aria-selected="false" aria-controls="slide-${n}" id="tab-${n}" onclick="goToSlide(${n})">Submit &amp; Results</button>`);
+  holder.insertAdjacentHTML('beforeend', `
+    <div class="CardSlide" id="slide-${n}" role="tabpanel" aria-labelledby="tab-${n}">
+      <div style="text-align:center;padding:40px;">
+        <h2>Complete Your Assessment</h2>
+        <p>Click below to see your average score for each section.</p>
+        <button class="submit-button" onclick="showResults()">Submit &amp; View Results</button>
+      </div>
+    </div>`);
+}
 
 let currentSlide = 1;
-const totalSlides = 7;
-function goToSlide(n){
-  document.querySelectorAll('.CardSlide').forEach(s=>s.classList.remove('active'));
+function goToSlide(n) {
+  document.querySelectorAll('.CardSlide').forEach(s => s.classList.remove('active'));
   document.getElementById(`slide-${n}`).classList.add('active');
   currentSlide = n;
   updateButtons();
 }
-function updateButtons(){
-  document.querySelectorAll('.nav-button').forEach((btn,i)=>{
-    btn.classList.toggle('active', i === currentSlide-1);
-    btn.setAttribute('aria-selected', i === currentSlide-1 ? 'true':'false');
+function updateButtons() {
+  document.querySelectorAll('.nav-button').forEach((btn, i) => {
+    btn.classList.toggle('active', i === currentSlide - 1);
+    btn.setAttribute('aria-selected', i === currentSlide - 1 ? 'true' : 'false');
   });
 }
-document.addEventListener('keydown', e=>{
-  if(document.getElementById('displayed').classList.contains('hidden')) return;
-  if(e.key==='ArrowLeft' && currentSlide>1) goToSlide(currentSlide-1);
-  if(e.key==='ArrowRight' && currentSlide<totalSlides) goToSlide(currentSlide+1);
+document.addEventListener('keydown', e => {
+  if (document.getElementById('displayed').classList.contains('hidden')) return;
+  if (e.target.matches && e.target.matches('input')) return; // let arrows move between radio options
+  if (e.key === 'ArrowLeft' && currentSlide > 1) goToSlide(currentSlide - 1);
+  if (e.key === 'ArrowRight' && currentSlide < totalSlides) goToSlide(currentSlide + 1);
 });
-updateButtons();
 
-function sumArea(section, area){
-  let total = 0;
-  for(let i=0;i<3;i++){
-    const name = `${section}_${area.replace(/\s/g,'')}_${i}`;
-    const checked = document.querySelector(`input[name="${name}"]:checked`);
-    total += checked ? Number(checked.value) : 0;
-  }
-  return total;
+function formAverage(fi) {
+  const qs = FORMS[fi].questions;
+  let sum = 0, answered = 0;
+  qs.forEach((_, qi) => {
+    const checked = document.querySelector(`input[name="f${fi}_q${qi}"]:checked`);
+    if (checked) { sum += Number(checked.value); answered++; }
+  });
+  return { total: qs.length, answered, avg: answered ? sum / answered : null };
 }
 
-let chart;
-function showResults(){
-  const teamTotals = AREAS.map(a=>sumArea('team', a));
-  const selfTotals = AREAS.map(a=>sumArea('self', a));
-
+function showResults() {
   document.getElementById('CardHolder').classList.add('hidden');
   document.getElementById('displayed').classList.add('hidden');
   document.getElementById('graphDisp').classList.remove('hidden');
 
-  const ctx = document.getElementById('resultsChart');
-  if(chart) chart.destroy();
-  chart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: AREAS,
-      datasets: [
-        { label: 'Team', data: teamTotals, backgroundColor: '#5DC8B9' },
-        { label: 'Self', data: selfTotals, backgroundColor: '#AF4510' }
-      ]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { position: 'top', labels: { color:'black', font:{ size:14 } } },
-        title: { display: true, text: 'Change Readiness Results (out of 9 each)', color:'black', font:{ size:18 } }
-      },
-      scales: {
-        x: { stacked: true },
-        y: { stacked: true, beginAtZero: true, max: 18, title: { display:true, text:'Combined score' } }
-      }
+  let html = '<h2>Your Results</h2>';
+  FORMS.forEach((f, fi) => {
+    const r = formAverage(fi);
+    if (!r.total) {
+      html += `<div class="result-row pending"><span>${f.label}</span><span class="score">Coming soon</span></div>`;
+    } else if (r.avg === null) {
+      html += `<div class="result-row"><span>${f.label}<small>No questions answered</small></span><span class="score">–</span></div>`;
+    } else {
+      html += `<div class="result-row"><span>${f.label}<small>${r.answered} of ${r.total} answered</small></span><span class="score">${r.avg.toFixed(1)} / ${MAX_SCORE}</span></div>`;
     }
   });
-
-  const results = document.getElementById('results');
-  let html = '<p>Your scores out of 9 per area (Team + Self):</p><ul>';
-  AREAS.forEach((a,i)=>{
-    html += `<li><strong>${a}</strong>: Team ${teamTotals[i]}/9, Self ${selfTotals[i]}/9, Combined ${teamTotals[i]+selfTotals[i]}/18</li>`;
-  });
-  html += '</ul><p>Areas with lower combined scores are the ones most worth focusing your change-readiness efforts on.</p>';
-  results.innerHTML = html;
+  document.getElementById('results').innerHTML = html;
+  window.scrollTo(0, 0);
 }
 
-function backToAssessment(){
+function backToAssessment() {
   document.getElementById('graphDisp').classList.add('hidden');
   document.getElementById('CardHolder').classList.remove('hidden');
   document.getElementById('displayed').classList.remove('hidden');
   goToSlide(1);
 }
+
+buildSlides();
+goToSlide(1);
 </script>
 </body>
 </html>

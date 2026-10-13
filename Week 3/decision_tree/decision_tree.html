@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workload Scenario</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --purple-50: #EEEDFE;
+    --purple-200: #AFA9EC;
+    --purple-600: #534AB7;
+    --purple-800: #3C3489;
+    --purple-900: #26215C;
+    --teal-50: #E1F5EE;
+    --teal-600: #0F6E56;
+    --teal-800: #085041;
+    --coral-50: #FAECE7;
+    --coral-600: #993C1D;
+    --gray-50: #F1EFE8;
+    --gray-100: #D3D1C7;
+    --gray-200: #B4B2A9;
+    --gray-400: #888780;
+    --gray-600: #5F5E5A;
+    --gray-800: #444441;
+    --white: #ffffff;
+  }
+
+  svg {
+    fill: white;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "IBM Plex Sans", sans-serif; background: white; min-height: 100vh; color: var(--gray-800); }
+
+  .page-header {
+    background: var(--white);
+    border-bottom: 0.5px solid var(--gray-100);
+    padding: 24px 32px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .header-text h1 { font-size: 22px; font-weight: 500; color: var(--purple-900); margin-bottom: 4px; }
+  .header-text p { font-size: 14px; color: var(--gray-600); max-width: 560px; line-height: 1.6; }
+  .reset-link {
+    display: inline-block; margin-top: 10px; font-size: 12px; color: var(--gray-400);
+    background: none; border: none; cursor: pointer; font-family: inherit; text-decoration: underline;
+  }
+  .reset-link:hover { color: var(--coral-600); }
+
+  .step-summary {
+    background: var(--purple-50);
+    border: 0.5px solid var(--purple-200);
+    border-radius: 12px;
+    padding: 14px 20px;
+    min-width: 200px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .step-summary .big-num { font-size: 36px; font-weight: 500; color: var(--purple-600); line-height: 1; }
+  .step-summary .label { font-size: 12px; color: var(--purple-800); margin-top: 4px; letter-spacing: 0.04em; }
+  .pip-track { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+  .pip { width: 12px; height: 12px; border-radius: 50%; background: var(--gray-100); transition: background 0.2s; }
+  .pip.on { background: var(--purple-600); }
+
+  .main { max-width: 760px; margin: 0 auto; padding: 32px 24px; }
+  .section-eyebrow {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.08em; color: var(--gray-400);
+    text-transform: uppercase; margin-bottom: 12px; display:flex; align-items:center; justify-content:space-between;
+  }
+
+  .scene-card {
+    background: var(--white);
+    border: 0.5px solid var(--gray-100);
+    border-radius: 12px;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* ---- Icon badge (replaces photo placeholder) ---- */
+  .icon-wrap {
+    width: 100%;
+    min-height: 140px;
+    border-radius: 8px;
+    background: var(--gray-50);
+    border: 0.5px solid var(--gray-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .icon-badge {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--purple-50);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .icon-badge.tone-warning { background: var(--coral-50); }
+  .icon-badge.tone-positive { background: var(--teal-50); }
+  .icon-badge svg {
+    width: 34px;
+    height: 34px;
+    fill: none;
+    stroke: var(--purple-600);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .icon-badge.tone-warning svg {
+    stroke: var(--coral-600);
+  }
+
+  .icon-badge.tone-positive svg {
+    stroke: var(--teal-600);
+  }
+
+  .image-placeholder-label {
+    color: var(--gray-400);
+    font-size: 12px;
+    font-family: "IBM Plex Sans", sans-serif;
+    text-align: center;
+    padding: 8px;
+  }
+
+  .scene-text {
+    font-size: 15px;
+    color: var(--gray-800);
+    line-height: 1.7;
+  }
+
+  .sub-label {
+    font-size: 11px; font-weight: 500; color: var(--gray-400); letter-spacing: 0.05em;
+    text-transform: uppercase; margin-bottom: 8px;
+  }
+
+  .opt-col { display: flex; flex-direction: column; gap: 8px; }
+  .opt-btn {
+    font-size: 14px;
+    font-family: "IBM Plex Sans", sans-serif;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 0.5px solid var(--gray-200);
+    background: transparent;
+    color: var(--gray-800);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+  }
+  .opt-btn:hover { background: var(--purple-50); border-color: var(--purple-600); color: var(--purple-800); }
+
+  .opt-btn.restart-btn {
+    color: var(--coral-600);
+    border-color: var(--coral-50);
+    background: var(--coral-50);
+    text-align: center;
+    font-weight: 500;
+  }
+  .opt-btn.restart-btn:hover { border-color: var(--coral-600); }
+
+  @media (max-width: 640px) {
+    .page-header { flex-direction: column; }
+    .step-summary { min-width: auto; width: 100%; }
+    .main { padding: 20px 16px; }
+  }
+  .image-placeholder-label {
+    color: var(--gray-400);
+    font-size: 12px;
+    font-family: "IBM Plex Sans", sans-serif;
+    text-align: center;
+    padding: 8px;
+  }
+
+  
+</style>
+</head>
+<body>
+<!-- 
+<div class="page-header">
+  <div class="header-text">
+    <h1>Workload Scenario</h1>
+    <p>Work through the scenario by choosing how you'd respond at each step. There's no single right answer — see where your choices lead.</p>
+    <button class="reset-link" onclick="startGame()">Reset and start over</button>
+  </div>
+  <div class="step-summary">
+    <div class="big-num" id="bigCount">1</div>
+    <div class="label">step</div>
+    <div class="pip-track" id="pipTrack"></div>
+  </div>
+</div> -->
+
+<div class="main">
+  <div class="section-eyebrow">Scenario</div>
+  <div class="scene-card">
+    <div id="image-area" class="icon-wrap"></div>
+    <div id="text" class="scene-text">Text</div>
+    <div>
+      <div class="sub-label">Select an option from below.</div>
+      <div id="option-buttons" class="opt-col"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const textElement = document.getElementById('text')
+const optionButtonsElement = document.getElementById('option-buttons')
+const imageElement = document.getElementById('image-area')
+const bigCountElement = document.getElementById('bigCount')
+const pipTrackElement = document.getElementById('pipTrack')
+const exportChoices = [];
+var exported = false;
+
+  // Each lesson uses a unique key (example: eNotes1, eNotes2, eNotes3)
+  const STORAGE_KEY = 'studentChoices';
+
+let state = {}
+let stepCount = 1
+
+/* ---- Icon library ----
+   Each entry: simple inline SVG (no external assets/network calls needed)
+   and a "tone" used to tint the badge (default purple, "warning" coral, "positive" teal). */
+const ICONS = {
+    decision: {
+        tone: 'default',
+        svg: `
+            <path d="M24 6v20"></path>
+            <path d="M14 16l10 10 10-10"></path>
+            <circle cx="24" cy="34" r="4"></circle>
+        `
+    },
+    stress: {
+        tone: 'warning',
+        svg: `
+            <circle cx="24" cy="24" r="16"></circle>
+            <path d="M18 20h.01"></path>
+            <path d="M30 20h.01"></path>
+            <path d="M18 30c2 2 10 2 12 0"></path>
+        `
+    },
+    clock: {
+        tone: 'default',
+        svg: `
+            <circle cx="24" cy="24" r="16"></circle>
+            <path d="M24 14v10l7 5"></path>
+        `
+    },
+    chat: {
+        tone: 'default',
+        svg: `
+            <path d="M14 10h20a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H22l-6 6v-6H14a4 4 0 0 1-4-4V14a4 4 0 0 1 4-4z"></path>
+        `
+    },
+    team: {
+        tone: 'default',
+        svg: `
+            <path d="M16 30a6 6 0 1 1 0-12 6 6 0 0 1 0 12z"></path>
+            <path d="M32 30a6 6 0 1 1 0-12 6 6 0 0 1 0 12z"></path>
+            <path d="M12 38c2-4 6-6 12-6s10 2 12 6"></path>
+        `
+    },
+    handshake: {
+        tone: 'positive',
+        svg: `
+            <path d="M13 26l6-5 6 5 4-4 6 5v6l-5 5-5-4-5 4-8-7z"></path>
+        `
+    },
+    warning: {
+        tone: 'warning',
+        svg: `
+            <path d="M24 8l18 32H6z"></path>
+            <path d="M24 20v8"></path>
+            <circle cx="24" cy="33" r="1.5"></circle>
+        `
+    },
+    phone: {
+        tone: 'default',
+        svg: `
+            <path d="M17 8h6a2 2 0 0 1 2 2v28a2 2 0 0 1-2 2h-6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2z"></path>
+            <path d="M15 34h8"></path>
+        `
+    },
+    restart: {
+        tone: 'positive',
+        svg: `
+            <path d="M12 24a12 12 0 1 0 3-8"></path>
+            <path d="M12 10v8h8"></path>
+        `
+    }
+}
+
+
+function renderIcon(iconKey) {
+    while (imageElement.firstChild) {
+        imageElement.removeChild(imageElement.firstChild)
+    }
+
+    const icon = ICONS[iconKey]
+    if (!icon) {
+        imageElement.innerHTML = '<div class="image-placeholder-label">[ icon placeholder ]</div>'
+        return
+    }
+
+    const badge = document.createElement('div')
+    badge.className = 'icon-badge tone-' + (icon.tone === 'default' ? '' : icon.tone)
+
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+    svg.setAttribute('viewBox', '0 0 48 48')
+    svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+    svg.innerHTML = icon.svg
+
+    badge.appendChild(svg)
+    imageElement.appendChild(badge)
+}
+
+function startGame() {
+    state = {}
+    stepCount = 1
+    showTextNode(1)
+}
+
+function showTextNode(textNodeIndex) {
+    const textNode = textNodes.find(textNode => textNode.id === textNodeIndex)
+    textElement.innerHTML = textNode.text
+
+    renderIcon(textNode.icon)
+
+    while (imageElement.firstChild) {
+        imageElement.removeChild(imageElement.firstChild)
+    }
+    if (textNode.image) {
+        const img = document.createElement('img')
+        img.src = textNode.image
+        img.alt = `Screen ${textNode.id} image`
+        imageElement.appendChild(img)
+    } else {
+        const label = document.createElement('div')
+        label.classList.add('image-placeholder-label')
+        label.innerText = `[ image placeholder: node ${textNode.id} ]`
+        imageElement.appendChild(label)
+    }
+
+    while (optionButtonsElement.firstChild) {
+        optionButtonsElement.removeChild(optionButtonsElement.firstChild)
+    }
+
+    const isEnding = textNode.options.length === 1 && textNode.options[0].nextText <= 0
+    
+
+    textNode.options.forEach(option => {
+        if (showOption(option)) {
+            const button = document.createElement('button')
+            button.innerHTML = option.text
+            button.classList.add('opt-btn')
+            if (isEnding) button.classList.add('restart-btn')
+            // if (isEnding) exported = true;
+            button.addEventListener('click', () => selectOption(option))
+            optionButtonsElement.appendChild(button)
+        }
+    })
+    if (exported === false) {
+        //  var cleaned = textElement.innerHTML.replace(/<\/?p[^>]*>/gi, "");
+        exportChoices.push(textElement.innerHTML);
+    } else {
+        return null;
+    }
+
+    // renderProgress()
+    console.log(exportChoices);
+    console.log(exported);
+}
+
+// function renderProgress() {
+//     // bigCountElement.textContent = stepCount
+//     pipTrackElement.innerHTML = ''
+//     const total = textNodes.length
+//     for (let i = 0; i < Math.min(stepCount, total); i++) {
+//         const d = document.createElement('div')
+//         d.className = 'pip on'
+//         pipTrackElement.appendChild(d)
+//     }
+// }
+
+
+function showOption(option) {
+    return option.requiredState == null || option.requiredState(state)
+}
+
+function selectOption(option) {
+    const nextTextNodeId = typeof option.nextText === "function"
+        ? option.nextText()
+        : option.nextText;
+
+    if (nextTextNodeId <= 0) {
+        exportChoices.push(textElement.innerHTML);
+        exported = true;
+        exportChoices.pop(); 
+
+        const rawHtml = exportChoices.join('\n');
+        const cleaned = exportReady(rawHtml);
+
+        localStorage.setItem(STORAGE_KEY, cleaned);
+        return startGame();
+    }
+
+    state = Object.assign(state, option.setState);
+    stepCount += 1;
+    showTextNode(nextTextNodeId);
+}
+
+function exportReady(htmlString) {
+    return htmlString
+        .replace(/<\/p>/gi, '\n\n')
+        .replace(/<p[^>]*>/gi, '')
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<strong[^>]*>/gi, '**')
+        .replace(/<\/strong>/gi, '**')
+        .replaceAll("You decide to:", "");
+}
+
+
+const textNodes = [
+    {
+        id: 1,
+          image: "bear1.jpeg", // e.g. 'images/node1.jpg'
+        text: '<p><strong>Canvas Creative has been struggling to meet client deadlines and complete projects on schedule.</strong> Although the workload is consistent, there have been significant delays to delegating tasks and actioning feedback from clients, which is affecting both staff and Canvas Creative’s professional reputation. Designers Anh and Carey are becoming frustrated with the lack of direction and feel like they need to ask Marie’s permission before making decisions themselves, while Marie has difficulty deciding what tasks to prioritise. Anh is experienced and confident in her creative judgement but upset by the constant approval requirements, while Carey is highly organised and focused on deadlines but is concerned about the growing backlog and inconsistent priorities. <br><br><strong>Rahul </strong>is a new client who recently approached Marie with a project that could significantly impact the studio’s visibility and provide lucrative future opportunities, but Marie isn’t confident about how to best meet the needs of her clients, staff, business and herself. Under pressure, Marie needs to take action.</p>',
+        options: [
+            {
+                text: '<p>Marie chooses an adaptive framework to help guide her decision-making.</p>',
+                nextText:2
+            },
+            {
+                text: '<p>Marie delegates all outstanding tasks to clear the current backlog.</p>',
+                nextText: 9
+            },
+            {
+                text: '<p>Marie prioritises the new client to improve the studio’s reputation.</p>',
+                nextText: 16
+            }
+        ]
+    },
+    {
+        id: 2,
+        icon: 'stress',
+        text: '<p><strong>Marie chooses an adaptive framework to help guide her decision-making.</strong><br><br> Marie decides that her indecision is caused by a lack of structure. She selects an adaptive leadership framework and commits to completing each stage before making major decisions that could impact the business. She maps stakeholders, analyses risks, identifies competing priorities and plans how to manage resistance. She believes that following the framework consistently will help her make better decisions and avoid costly mistakes.<br><br>Marie then decides to: </p>',
+        options:  [
+            {
+                text: '<p>Complete her analysis before making a decision</p>',
+                nextText: 3
+            },
+            {
+                text: '<p>Diagnose why the team has become dependent on her.</p>',
+                nextText: 4
+            }
+        ]
+    },
+    {
+        id: 3,
+        icon: 'stress',
+        text: '<p><strong>Complete her analysis before making a decision.</strong><br><br>Marie spends another week working through her framework. She interviews the designers, reviews project data and compares services offered by her competitors.<br><br>Anh explains that the biggest problem is not a lack of information but the team’s inability to make routine decisions. Carey warns that several existing deadlines are already at risk. Marie records each perspective but decides she cannot act until she has assessed every concern.<br><br>Rahul contacts her again about the new project and asks if Canvas Creative can still meet the deadline, and Marie struggles to organise the new schedule. Anh begins making small decisions without approval, while Carey questions whether the studio can meet its commitments. <br><br>Marie is frustrated that the team seems unwilling to follow a considered process, so she:</p>',
+        options:[
+            {
+                text: '<p>Acts on the available information.</p>',
+                nextText:5
+            },
+            {
+                text: '<p>Continues using the framework until the risks are fully understood.</p>',
+                nextText: 6
+            }
+        ]
+    },
+    {
+        id: 4,
+        icon: 'clock',
+        text: '<p><strong>Diagnose why the team has become dependent on her.</strong><br><br> Marie uses the framework to investigate the underlying cause of the team’s hesitation to make decisions. Conversations reveal that she has frequently changed direction after work begins and sometimes reversed decisions without explaining why. Although she intended to protect the quality of the work her studio produces, staff have learned that taking initiative may lead to criticism and rework.<br><br>Marie discusses this issue with the team and invites them to describe what prevents them from making decisions independently. Anh explains that she is comfortable managing routine client conversations but does not know when she is authorised to change creative direction or negotiate a revised deadline. Carey explains he can coordinate schedules more effectively if he has authority to raise competing priorities before Marie changes them. <br><br>Marie recognises that the team’s concerns are not identical, and there is no perfect application of an adaptive framework that will resolve every issue perfectly. <br><br>She decides to:</p>',
+        options: [
+            {
+                text: '<p>Introduce decision boundaries</p>',
+                nextText:7
+            },
+            {
+                text: '<p>Give the team decision making authority but continue approving most decisions</p>',
+                nextText: 8
+            },
+        ]
+    },
+    {
+        id: 5,
+        icon: 'warning',
+        text: '<p><strong>Acts on the available information.</strong><br><br>Under pressure, Marie decides she must make a choice. She recognises that further analysis may not resolve every uncertainty. She summarises what she has learned and identifies the most urgent issues that need to be resolved. Marie establishes stricter priorities for outstanding projects, gives Anh the authority to resolve routine client feedback within agreed boundaries and asks Carey to coordinate deadlines and flag incomplete tasks. <br><br>The changes produce useful but imperfect results. Anh resolves the client issue quickly, although she is uncertainty whether she can make similar decisions when they affect another project. Carey identifies that the revised schedule still leaves little room for unexpected work. <br><br>Marie’s reception to act without complete certainty helps the team progress, but she must also decide how to respond to these early results, and resist the temptation to interpret each setback as a failure.</p>',
+        options: [
+            {
+                text: 'Restart',
+                nextText: -1
+            }
+        ]
+    },
+    {
+        id: 6,
+        icon: 'chat',
+        text: '<p><strong>Continues using the framework until the risks are fully understood.</strong> <br><br>Marie decides that the delays demonstrate the need for more thorough planning. She postpones additional tasks, asks Anh to document every outstanding decision and requires Carey to produce a more detailed risk report. <br><br>She believes that greater oversight will prevent mistakes and protect her reputation. Meanwhile, Rahul asks whether Canvas Creative can update the project brief to reflect a competitor’s new product launch, but Marie cannot confirm when the team will be ready to respond. <br><br>Although the framework is providing guidance, Marie’s reluctance to use it flexibly has transformed it into another decision gate that her team must navigate as the number of incomplete tasks continues to arise. <br><br>In response, Carey’s workload increases faster than he can update the reports, and Anh questions Marie’s faith in her abilities as a professional designer. After a period of silence from Marie, Rahul begins exploring other agencies for the project.',
+        options: [
+            {
+                text: 'Restart',
+                nextText: -1
+            }
+        ]
+    },
+    {
+        id: 7,
+        icon: 'warning',
+        text: '<p><strong>Introduce decision boundaries. </strong><br><br>Marie decides that changing the team’s behaviour requires more than encouraging staff to be proactive. Since Marie is quite anxious at giving up any control over existing projects, she works with the team to identify which decisions can be made independently, which require consultation and which must remain with her because of their financial, reputational or client impact. <br><br>The first few weeks reveal both progress and tension. Anh makes faster decisions but disagrees with Marie about whether a client request should trigger a wider change to the project. Carey finds having clearer authority helps him plan tasks, though he cannot resolve the underlying shortage of capacity. <br><br>Marie must also manage her own reactions when staff make decisions she would not have made herself. If she immediately reverses their choices, she risks reinforcing the old dependency, and if she avoids giving feedback she risks leaving the team without the support needed to improve.</p>',
+        options: [
+             {
+                text: 'Restart',
+                nextText: -1
+            }
+        ]
+    },
+    {
+        id: 8,
+        icon: 'chat',
+        text: '<p><strong>Give the team decision making authority but continue approving most decisions.</strong><br><br>Marie decides that the team needs to become more independent and announces that staff should take greater responsibility for their work. She tells Anh to make more client decisions and expects Carey to resolve scheduling problems without escalating every issue. Marie believes that making her expectations clear will encourage staff to become more confident and reduce the delays caused by consistent approvals. However, she does not define boundaries, changes existing approval practices or explain how she will respond when staff make mistakes.<br><br>Initially, the team attempts to respond to Marie’s expectations. Anh makes a creative adjustment to Rahul’s campaign that Marie later reverses after receiving feedback. Carey reorganises the schedule only to have Marie change priorities after a conversation with another client. <br><br>Marie sees these incidents as evidence that staff need closer oversight, while the team sees them as proof that taking initiative can lead to criticism or wasted effort.<br><br>To move forward, Marie must recognise that accountability without appropriate authority, guidance and consistency are unlikely to create genuine autonomy.</p>',
+        options: [
+             {
+                text: 'Restart',
+                nextText: -1
+            }
+        ]
+    },
+    {
+        id: 9,
+        icon: 'team',
+        text: '<p><strong>Marie delegates all outstanding tasks to clear the current backlog.</strong><br><br>Marie decides that the backlog is the studio’s more urgent problem. She distributes outstanding projects to Anh and Carey, expecting them to use their professional judgement to complete the work. Given the pressure they are under, Marie does not have the time to provide additional training, clarify decision-making authority or review whether the new workload is manageable. By removing tasks from her own workload, this will give her time to focus on the business and get their workload back on track. <br><br>Marie then decides to:</p>',
+        options: [
+            {
+                text: '<p>Let all experienced designers work it out for themselves</p>',
+                nextText: 10 
+            },
+            {
+                text: '<p>Acknowledge the delegation failure and build capability</p>',
+                nextText: 11
+            },
+        ]
+    },
+    {
+        id: 10,
+        icon: 'handshake',
+        text: '<p><strong>Let all experienced designers work it out for themselves.</strong><br><br>Marie is now available to prioritise Rahul’s new project, and she keeps close contact with him as they prepare the pitch. Rahul is enthusiastic about her initiative and mentions wanting to continue working with Canvas Creative once this project is complete. <br><br>However, Marie is still interrupted by Carey and Anh, who are slowly working through the backlog of remaining tasks. Although Marie had said she trusted their judgement and experience when making decisions, they are both still reluctant to act without her authority, and this is negatively impacting Marie’s ability to focus on Rahul’s project. <br><br>Marie becomes anxious when her designers are unable to resolve issues she expected them to resolve independently and begins to question if she can trust them to complete work to her standards. <br><br>Marie decides to:</p>',
+        options: [
+            {
+                text: '<p>Introduce check-ins so she can remain updated on how Carey and Anh are working.</p>',
+                nextText: 12
+            },
+            {
+                text: '<p>Take back the difficult tasks until Carey and Anh have proven they can work to her standards.</p>',
+                nextText: 13
+            },
+        ]
+    },
+    {
+        id: 11,
+        icon: 'team',
+        text: '<p><strong>Acknowledge the delegation failure and build capability.</strong><br><br>Marie accepts that she transferred responsibility without providing enough preparation, information or authority. She decides to meet with the team to identify the gaps: Anh needs clearer client decision control and Carey needs authority to flag workload conflicts. <br><br>This is overwhelming to Marie, who now feels pressured to quickly make a decision and resolve all of their outstanding issues. She also feels scrutinised by her designers and struggles to find confidence to make decisions herself. <br><br>Her conversation with Anh and Carey has also revealed that the team has different needs and no single solution will address every issue.<br><br>Marie is worried about the cost of mistakes, missed deadlines, and client dissatisfaction.<br><br> Marie decides to:</p>',
+        options: [
+            {
+                text: '<p>Introduce more authority and decision-making opportunities.</p>',
+                nextText: 14
+            },
+            {
+                text: '<p>Require extension training before delegating again</p>',
+                nextText: 15
+            },
+        ]
+    },
+    {
+        id: 12,
+        icon: 'warning',
+        text: '<p><strong>Introduce check-ins so she can remain updated on how Carey and Anh are working.</strong> Marie introduces frequent check-ins where she can monitor what Carey and Anh are doing throughout the week and resolve any outstanding questions they might have. This affects her progress on Rahul’s project, and he begins asking for updates. This has created another bottleneck where Carey and Anh cannot complete work independently, and Marie also cannot focus on her own tasks without worrying about other parts of the business. Although her aim is to give her designers more autonomy, they are both now upset with her and feel she does not adequately support them at work, and that they must prove themselves to earn her trust.  In the meantime, the backlog continues to increase, and their new project is now delayed, as Marie must decide the best way to support her staff in the future. ',
+        options: [
+            {
+                text: 'Restart',
+                nextText: -1
+            }
+        ]
+    },
+    {
+        id: 13,
+        icon: 'warning',
+        text: '<p><strong>Take back the difficult tasks until Carey and Anh have proven they can work to her standards.</strong> <br><br>When revisions increase on Anh’s tasks and Carey’s workflow produces inconsistent results, Marie decides that delegation has introduced too much risk. She takes back responsibility for their outstanding projects and instructs the designers to focus on execution rather than making decisions.<br><br>Anh and Carey are also told to obtain approval before changing priorities.<br><br>Although Carey and Anh can now prioritise finishing projects, the lack of autonomy when making decisions negatively affects their productivity and denies them autonomy at work.<br><br>While Marie has resolved some of her immediate concerns about quality control, her workload quickly becomes unmanageable again. Anh feels her experience is not trusted, and Carey is reluctant to suggest improvements to their workflow.<br><br>Rahul receives frequent updates, but other clients experience further delays as Marie must consider how to protect quality while trusting her designers.</p>',
+        options: [
+            {
+                text: 'Restart',
+                nextText: -1
+            }
+        ]
+    },
+    {
+        id: 14,
+        icon: 'warning',
+        text: '<p><strong>Introduce more authority and decision-making opportunities.</strong><br><br>Marie is concerned how her team has lost confidence in her leadership and decides to demonstrate that she trusts their professional judgement. She announces the designers will have significantly more authority over their projects, including routine client communication and creative decisions.<br><br>Anh is given Rahul’s project while Carey can reorganise production schedules and negotiate task priorities with the team. Marie explains that she will no longer approve every decision and expects staff to take responsibility for their work, believing that this sudden change will reduce frustration and encourage them to be more independent.<br><br>While her staff welcome the change, this sudden shift also creates uncertainty because the team has spent months relying on Marie for direction.<br><br>Additionally, Marie is struggling with how she responds at work and is frequently short-tempered and short with her designers. Rahul appreciates the faster responses but questions whether this new workflow will remain consistent quality, and Marie now has difficulty asserting herself at the studio.<br><br>Marie must consider how to maintain staff autonomy while establishing clear boundaries and appropriate support without taking back the authority she has just given. </p>',
+        options: [
+            {
+                text: 'Restart',
+                nextText: -1
+            }
+        ]
+    },
+    {
+        id: 15,
+        icon: 'clock',
+        text: '<p><strong>Require extension training before delegating again. </strong><br><br>Marie decides that the previous problems occurred because staff were not adequately prepared. She develops a comprehensive training plan covering client communication, project management, digital design tools, risk assessment and decision-making. She intends to ensure that every designer understands the studio’s expectations before transferring responsibility again.<br><br>Although this training improves some technical knowledge, the backlog continues to grow while the designers wait to apply what they have learned.<br><br>Anh comments that this is just another temporary solution preventing Marie from making actual decisions, while Carey continues to struggle with changing priorities.<br><br>While Marie feels more confident that her team is prepared to handle more complex tasks, her continued involvement in routine decisions reinforces their dependence on her. Marie must consider whether her desire to prevent mistakes is delaying the practical experience staff need and whether training can be effective without giving people opportunities to apply their learning.</p>',
+        options: [
+            {
+                text: 'Restart',
+                nextText: -1
+            }
+        ]
+    },
+    {
+        id: 16,
+        icon: 'phone',
+        text: '<p><strong>Marie prioritises the new client to improve the studio’s reputation.</strong><br><br>Marie decides that winning Rahul’s new project is the best way to rebuild Canvas Creative’s professional reputation. She personally takes charge of the pitch and proposed campaign, believing that demonstrating her creative expertise will restore confidence in the studio. She postpones decisions about the existing workload and assumes that the team can keep current projects moving while she focuses on this new opportunity.<br><br>Marie then decides to:</p>',
+        options: [
+            {
+                text: '<p>Personally lead the project from start to finish</p>',
+                nextText: 17
+            },
+            {
+                text: '<p>Prioritise the client but communicate honestly about existing problems.</p>',
+                nextText: 18
+            },
+        ]
+    },
+    {
+        id: 17,
+        icon: 'team',
+        text: '<p><strong>Personally lead the project from start to finish.</strong><br><br>Marie’s focus on Rahul’s project has created competing demands. Anh is frustrated that Marie has taken ownership of a high-profile project rather than addressing the approval bottlenecks affecting the entire studio, while Carey warns that the team’s current workload makes it unrealistic to maintain all existing deadlines without changes to priorities or resources.<br><br>As Marie also has not delegated outstanding tasks, there are additional concerns about which designer is responsible for which client, and how to best complete these projects. <br><br>Marie decides to:</p>',
+        options: [
+            {
+                text: '<p>Use the project to model leadership</p>',
+                nextText: 19
+            },
+            {
+                text: '<p>Retain of the project to protect the client relationship</p>',
+                nextText: 20
+            },
+        ]
+    },
+    {
+        id: 18,
+        icon: 'handshake',
+        text: '<p><strong>Prioritise the client but communicate honestly about existing problems.</strong><br><br>Marie recognises that protecting her reputation means protecting the reputation of her staff as well. Rather than assuming the team can absorb the additional work, she asks Carey to map current deadlines, outstanding tasks and staff capacity, then consults Anh about which creative decisions can be made without her approval. Despite this effort, Marie struggles to decide how to delegate tasks, remaining focused on Rahul’s project.<br><br>This review reveals that several projects have been delayed by Marie’s approval requirements and shifting priorities.<br><br>Marie decides to:</p.',
+        options: [
+            {
+                text: '<p>Renegotiate deadlines and communicate this delay with existing clients</p>',
+                nextText: 21
+            },
+            {
+                text: '<p>Protect the new client relationship</p>',
+                nextText: 22
+            },
+        ]
+    },
+    {
+        id: 19,
+        icon: 'warning',
+        text: '<p><strong>Use the project to model leadership.</strong><br><br>Marie decides that Rahul’s project is a good opportunity to showcase behaviour that will benefit the studio in the future. She invites Anh to lead the creative direction of the project and Carey maps project milestones against existing commitments to identify where the team may need to renegotiate deadlines or adjust workloads. Marie remains responsible for the overall client relationship and agrees to provide feedback at key decision points rather than approving every task.<br><br>This arrangement initially creates some tension. As both Anh and Carey had been struggling with Marie’s leadership, they are initially sceptical to participate under her direction. Anh challenges Marie’s preferred creative direction while Carey proposes an experimental digital feature that could elevate the studio’s reputation but may require additional production time.<br><br>Marie continues to struggle with competing pressures from existing clients, and must decide whether the studio’s existing workflow needs to change so that future projects do not create the same pressures.</p>',
+        options: [
+            {
+                text: 'Restart',
+                nextText: -1
+            }
+        ]
+    },
+    {
+        id: 20,
+        icon: 'warning',
+        text: '<p><strong>Retain of the project to protect the client relationship.</strong><br><br>Marie decides that the risks associated with Rahul’s project are too significant to share responsibility at this stage. She personally approves the creative direction, manages client feedback and reviews every major decision. Marie then tells Anh to focus on existing projects, while Carey is expected to keep production moving to meet deadlines.<br><br>At first, Marie’s close involvement helps the project maintain a consistent direction. Rahul is impressed by the attention he receives, and Marie feels reassured that the studio’s reputation is being protected.<br><br>Her designers also start to withdraw, as Anh questions why her experience isn’t trusted on the project and Carey struggles to remain motivated.<br><br>However, Marie believes that the pressure is temporary, and securing Rahul’s project will eventually benefit everyone. Marie must consider whether protecting one important client in the short term is undermining the studio’s long-term adaptability, staff development and ability to manage multiple projects.</p>',
+        options: [
+            {
+                text: 'Restart',
+                nextText: -1
+            }
+        ]
+    },
+    {
+        id: 21,
+        icon: 'warning', 
+        text: '<p><strong>Renegotiate deadlines and communicate this delay with existing clients.</strong><br><br> Marie decides to address the competing demands openly. She contacts some of their current clients before their deadlines are missed, explains the revised scheduled and offers other delivery options, such as staged delivery or prioritising the most urgent components.<br><br>This approach requires Marie to accept that not every client will be completely satisfied. Several clients are disappointed that their projects will be extended, and some choose to leave Canvas Creative. Rahul expresses concern that a staged delivery could limit his ability to respond to market trends.<br><br>Within the team, Anh welcomes clearer decision-making authority but cautions that they may continue to lose clients, while Carey identifies that even with better coordination, the studio has limited capacity to absorb unexpected work.<br><br>Marie must decide whether to adjust the studio’s services, negotiate further changes to client scope, bring in additional support or continue accepting work at the risk of repeating the same cycle.</p>',
+        options: [
+            {
+                text: 'Restart',
+                nextText: -1
+            }
+        ]
+    },
+    {
+        id: 22,
+        icon: 'warning',
+        text: '<p><strong>Protect the new client relationship.</strong><br><br>Marie worries that being transparent about Canvas Creative’s workload might further damage the studio’s reputation or cause Rahul to reconsider investing in the project. She decides to secure Rahul before discussing the full impact on existing commitments.<br><br>She promises existing clients that the team can meet proposed milestones, personally reviews the new project’s requirements and asks staff to keep all current work moving in the background.<br><br>She assumes that once Rahul’s campaign is underway, she will have more time to resolve the backlog and improve the team’s workflow.<br><br>As the work progresses, the competing priorities become harder to manage. Carey cannot create a realistic production schedule because Marie continues to change which tasks are the most urgent. Anh is asked to assist with Rahul’s campaign but still needs approval for several routine decisions. Rahul also requests a clear timeline, and begins to ask more detailed questions about the team’s capacity and how revisions will be managed.<br><br>While Marie may initially preserve the appearance of confidence, the lack of clear communication allows uncertainty and frustration to grow. She must reflect on whether her desire to protect the studio’s reputation has instead increased the risk.</p>',
+        options: [
+            {
+                text: 'Restart',
+                nextText: -1
+            }
+        ]
+    }
+]
+
+startGame()
+</script>
+</body>
+</html>
