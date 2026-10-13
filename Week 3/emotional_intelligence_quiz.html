@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+<title>Change Readiness Assessment</title>
+<style>
+:root {
+  --AIMblue: #4353A3;
+  --darkBlue: #38416D;
+  --teal: #5DC8B9;
+  --cream: #F1EEDE;
+  --rust: #AF4510;
+  --navy: #12195C;
+  --white: #fff;
+  --lightBlue: #AEBAE4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "IBM Plex Sans", sans-serif;
+  margin: 0;
+  padding: 20px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--white);
+  color: var(--navy);
+}
+
+.wrap {
+  width: 100%;
+  max-width: 900px;
+}
+
+h1 {
+  text-align: center;
+  color: var(--navy);
+  font-size: 1.5rem;
+}
+
+.intro {
+  text-align: center;
+  color: var(--darkBlue);
+  margin-bottom: 10px;
+}
+
+.navigation {
+  margin: 5px 0 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.nav-button {
+  background: var(--cream);
+  color: var(--darkBlue);
+  border: 2px solid var(--darkBlue);
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: .9rem;
+  font-weight: 500;
+  min-width: 110px;
+}
+
+.nav-button.active {
+  background: var(--AIMblue);
+  color: var(--white);
+  border-color: var(--AIMblue);
+}
+
+.CardSlide {
+  display: none;
+}
+
+.CardSlide.active {
+  display: block;
+}
+
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0 0 25px;
+}
+
+legend {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--rust);
+  margin-bottom: 8px;
+  padding: 0;
+}
+
+.question {
+  border-bottom: 2px dotted #ccc;
+  padding: 12px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.question p {
+  margin: 0;
+  flex: 1 1 260px;
+  text-align: left;
+}
+
+.scale {
+  display: flex;
+  gap: 6px;
+}
+
+.scale label {
+  cursor: pointer;
+}
+
+.scale input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.scale span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--darkBlue);
+  border-radius: 50%;
+  color: var(--darkBlue);
+  font-weight: 600;
+}
+
+.scale input:checked + span {
+  background: var(--AIMblue);
+  color: var(--white);
+  border-color: var(--AIMblue);
+}
+
+.scale input:focus-visible + span {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+
+.scale-key {
+  text-align: right;
+  font-size: .75rem;
+  color: #666;
+  margin-top: -8px;
+  margin-bottom: 6px;
+}
+
+.submit-button {
+  font-family: inherit;
+  margin: 20px auto;
+  background: var(--navy);
+  color: var(--white);
+  width: 220px;
+  border: 2px solid var(--cream);
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 10px;
+  font-size: 1rem;
+  display: block;
+}
+
+.submit-button:hover {
+  background: var(--lightBlue);
+  color: var(--navy);
+  border-color: var(--navy);
+}
+
+.canvasCard {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.hidden {
+  display: none;
+}
+
+#results {
+  max-width: 600px;
+  margin: 15px auto;
+  font-size: .95rem;
+  line-height: 1.5;
+}
+
+#results ul {
+  padding-left: 20px;
+}
+</style>
+</head>
+<body>
+<div class="wrap" id="displayed">
+<h1>Emotional Intelligence Self-Assessment</h1>
+<p class="intro">Comparing yourself to other leaders you know or have worked with,
+please indicate how well you believe you demonstrate the following, from 1 (significantly less than) to 5 (significantly more than).</p>
+<nav aria-label="Assessment navigation">
+  <div class="navigation" role="tablist">
+    <button class="nav-button active" onclick="goToSlide(1)" role="tab" aria-selected="true" aria-controls="slide-1" id="tab-1">Self-awareness</button>
+    <button class="nav-button" onclick="goToSlide(2)" role="tab" aria-selected="false" aria-controls="slide-2" id="tab-2">Awareness of others</button>
+    <button class="nav-button" onclick="goToSlide(3)" role="tab" aria-selected="false" aria-controls="slide-3" id="tab-3">Authenticity</button>
+    <button class="nav-button" onclick="goToSlide(4)" role="tab" aria-selected="false" aria-controls="slide-4" id="tab-4">Emotional reasoning</button>
+    <button class="nav-button" onclick="goToSlide(5)" role="tab" aria-selected="false" aria-controls="slide-5" id="tab-5">Self-management</button>
+    <button class="nav-button" onclick="goToSlide(6)" role="tab" aria-selected="false" aria-controls="slide-6" id="tab-6">Inspiring performance</button>
+    <button class="nav-button" onclick="goToSlide(7)" role="tab" aria-selected="false" aria-controls="slide-7" id="tab-7">Submit & Results</button>
+  </div>
+</nav>
+</div>
+
+<div class="wrap" id="CardHolder">
+  <div class="CardSlide active" id="slide-1" role="tabpanel" aria-labelledby="tab-1">
+    <form id="selfAwarenessForm"></form>
+  </div>
+  <div class="CardSlide" id="slide-2" role="tabpanel" aria-labelledby="tab-2">
+    <form id="awarenessOfOthersForm"></form>
+  </div>
+    <div class="CardSlide" id="slide-3" role="tabpanel" aria-labelledby="tab-3">
+    <form id="authenticityForm"></form>
+  </div>
+    <div class="CardSlide" id="slide-4" role="tabpanel" aria-labelledby="tab-4">
+    <form id="emotionalReasoningForm"></form>
+  </div>
+    <div class="CardSlide" id="slide-5" role="tabpanel" aria-labelledby="tab-5">
+    <form id="selfManagementForm"></form>
+  </div>
+    <div class="CardSlide" id="slide-6" role="tabpanel" aria-labelledby="tab-6">
+    <form id="inspiringPerformanceForm"></form>
+  </div>
+  <div class="CardSlide" id="slide-7" role="tabpanel" aria-labelledby="tab-7">
+    <div style="text-align:center;padding:40px;">
+      <h2>Complete Your Assessment</h2>
+      <p>Click below to see your results as a chart.</p>
+      <button class="submit-button" onclick="showResults()">Submit & View Results</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap hidden" id="graphDisp">
+  <section class="canvasCard"><canvas id="resultsChart" role="img" aria-label="Change readiness results chart"></canvas></section>
+  <div id="results" aria-live="polite"></div>
+  <button class="submit-button" onclick="backToAssessment()">Back to Assessment</button>
+</div>
+
+<script>
+const AREAS = ["Team identity","Communication","Resilience"];
+const DATA = {
+  team: 
+[
+      "Your team can take risks and experiment without fear of harsh consequences",
+      "Regardless of existing organisational change, your team has enjoyed relative stability",
+      "Team sentiment regarding organisational capacity for change is positive",
+  
+      "Your team is confident and comfortable with expressing concerns early",
+      "Information and other contextual data are frequently shared within your team",
+      "Your team has a well-established and understood purpose and direction",
+
+      "Your team is stable and secure, preparing them for new challenges",
+      "Your team is flexible in their working pathways",
+      "Your team is committed to performing well, not to a specific tool or process"
+    ],
+  self: [
+      "Proficient knowledge of how your teams’ responsibilities align with the broader organisation",
+      "Self-awareness of your strengths and weakness during change",
+      "Accepted and prepared to adjust priorities as needed in the immediate wake of change",
+      "Good communication skills with your peers and team members",
+      "Established communication with your own leader and mentors to ask for guidance if needed",
+      "Confidence when asking for support from your peers",
+      "Resilience from discomfort during change",
+      "A willingness to learn new skills and meet new challenges",
+      "Committed to managing your reactions, not the world at large"
+    ]
+
+};
+
+function buildForm(formId, section){
+  const form = document.getElementById(formId);
+  const key = document.createElement('div');
+  key.className = 'scale-key';
+  key.textContent = '0 = not at all  →  3 = strongly agree';
+  form.appendChild(key);
+  AREAS.forEach(area=>{
+    DATA[section][area].forEach((qText, i)=>{
+      const qDiv = document.createElement('div');
+      qDiv.className = 'question';
+      const p = document.createElement('p');
+      p.textContent = qText;
+      qDiv.appendChild(p);
+      const scale = document.createElement('div');
+      scale.className = 'scale';
+      const name = `${section}_${area.replace(/\s/g,'')}_${i}`;
+      for(let v=0; v<=3; v++){
+        const label = document.createElement('label');
+        const input = document.createElement('input');
+        input.type = 'radio';
+        input.name = name;
+        input.value = v;
+        input.setAttribute('aria-label', `${qText}: rate ${v}`);
+        const span = document.createElement('span');
+        span.textContent = v;
+        label.appendChild(input);
+        label.appendChild(span);
+        scale.appendChild(label);
+      }
+      qDiv.appendChild(scale);
+      form.appendChild(qDiv);
+    });
+  });
+}
+buildForm('selfAwarenessForm','team');
+buildForm('awarenessOfOthersForm','self');
+
+let currentSlide = 1;
+const totalSlides = 7;
+function goToSlide(n){
+  document.querySelectorAll('.CardSlide').forEach(s=>s.classList.remove('active'));
+  document.getElementById(`slide-${n}`).classList.add('active');
+  currentSlide = n;
+  updateButtons();
+}
+function updateButtons(){
+  document.querySelectorAll('.nav-button').forEach((btn,i)=>{
+    btn.classList.toggle('active', i === currentSlide-1);
+    btn.setAttribute('aria-selected', i === currentSlide-1 ? 'true':'false');
+  });
+}
+document.addEventListener('keydown', e=>{
+  if(document.getElementById('displayed').classList.contains('hidden')) return;
+  if(e.key==='ArrowLeft' && currentSlide>1) goToSlide(currentSlide-1);
+  if(e.key==='ArrowRight' && currentSlide<totalSlides) goToSlide(currentSlide+1);
+});
+updateButtons();
+
+function sumArea(section, area){
+  let total = 0;
+  for(let i=0;i<3;i++){
+    const name = `${section}_${area.replace(/\s/g,'')}_${i}`;
+    const checked = document.querySelector(`input[name="${name}"]:checked`);
+    total += checked ? Number(checked.value) : 0;
+  }
+  return total;
+}
+
+let chart;
+function showResults(){
+  const teamTotals = AREAS.map(a=>sumArea('team', a));
+  const selfTotals = AREAS.map(a=>sumArea('self', a));
+
+  document.getElementById('CardHolder').classList.add('hidden');
+  document.getElementById('displayed').classList.add('hidden');
+  document.getElementById('graphDisp').classList.remove('hidden');
+
+  const ctx = document.getElementById('resultsChart');
+  if(chart) chart.destroy();
+  chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: AREAS,
+      datasets: [
+        { label: 'Team', data: teamTotals, backgroundColor: '#5DC8B9' },
+        { label: 'Self', data: selfTotals, backgroundColor: '#AF4510' }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top', labels: { color:'black', font:{ size:14 } } },
+        title: { display: true, text: 'Change Readiness Results (out of 9 each)', color:'black', font:{ size:18 } }
+      },
+      scales: {
+        x: { stacked: true },
+        y: { stacked: true, beginAtZero: true, max: 18, title: { display:true, text:'Combined score' } }
+      }
+    }
+  });
+
+  const results = document.getElementById('results');
+  let html = '<p>Your scores out of 9 per area (Team + Self):</p><ul>';
+  AREAS.forEach((a,i)=>{
+    html += `<li><strong>${a}</strong>: Team ${teamTotals[i]}/9, Self ${selfTotals[i]}/9, Combined ${teamTotals[i]+selfTotals[i]}/18</li>`;
+  });
+  html += '</ul><p>Areas with lower combined scores are the ones most worth focusing your change-readiness efforts on.</p>';
+  results.innerHTML = html;
+}
+
+function backToAssessment(){
+  document.getElementById('graphDisp').classList.add('hidden');
+  document.getElementById('CardHolder').classList.remove('hidden');
+  document.getElementById('displayed').classList.remove('hidden');
+  goToSlide(1);
+}
+</script>
+</body>
+</html>

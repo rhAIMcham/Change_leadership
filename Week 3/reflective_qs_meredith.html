@@ -85,8 +85,8 @@ padding: 5px;
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
 
 <div class="notesBox">
-    <h3>Technical challenges vs. adaptive challenges</h3>
-  <p class="questionText">What factors should leaders consider when deciding whether a challenge requires a technical solution, an adaptive response, or a combination of both?</p>
+    <h3>Adaptive agility</h3>
+  <p class="questionText">How can an adaptive mindset help leaders view challenges as opportunities?</p>
 
   <textarea id="notesInput1" rows="8"
     ></textarea>
@@ -98,14 +98,14 @@ padding: 5px;
   </div>
 
   <div id="modelAnswer1" class="modelAnswer">
-Leaders must consider and analyse internal and external factors to enact meaningful organisational change, which can include fluctuating customer expectations and needs, market concerns and business positioning. Eliza Blank identified the technical limitations of a storefront and lack of knowledge as a barrier to purchasing plants and chose to adapt to a fully online experience for her customers while offering support for plant care to encourage consumers to purchase from her business.
+Adaptive agility involves recognising changes in circumstances, making timely decisions with the information available and adjusting direction as new information emerges. Despite facing initial adversity, Meredith Farm successfully transitioned its business model to survive a long drought and other environmental concerns. By remaining open to different perspectives and treating setbacks as opportunities to learn, leaders can respond more effectively to change and produce better results.
   </div>
 </div>
 
 
 <div class="notesBox">
-    <h3>Customer needs and underlying issues</h3>
-  <p class="questionText">How can leaders identify specific needs without alienating other potential customers?</p>
+    <h3>Balancing innovation with consistency</h3>
+  <p class="questionText">What role does a leader play when guiding a team through change, and how can their decisions influence the wider organisation and industry?</p>
 
   <textarea id="notesInput2" rows="8"
     ></textarea>
@@ -116,13 +116,12 @@ Leaders must consider and analyse internal and external factors to enact meaning
   </div>
 
   <div id="modelAnswer2" class="modelAnswer">
-Effective leaders look beyond current trends or popular decision-making and take the time to identify what is driving customers to purchase from and support different businesses. While The Sill’s initial success may be credited to the current popularity of houseplants and other indoor garden features, they were also able to retain and expand their customer base by appealing to anyone, regardless of their personal experience caring for plants.
-  </div>
+A leader’s role during change is to provide direction, communicate priorities and help others navigate uncertainty while remaining responsive to changing circumstances. The Camerons used their previous experience with farming and agriculture to guide their decisions when establishing Meredith Farm, while Sandy Cameron utilised her role as a veterinarian to provide a better quality of life for their animals, providing additional value for both the business and customers. Leaders do not have every answer, but they can create the conditions for success and the rapid development of new industry practices.  </div>
 </div>
 
 <div class="notesBox">
-    <h3>Change in a rapidly transforming world</h3>
-  <p class="questionText">How can leaders create the conditions for an organisation to adapt when existing approaches are already successful?</p>
+    <h3>Building resilience while facing challenges</h3>
+  <p class="questionText">How can leaders build resilience while navigating change and other challenges?</p>
 
   <textarea id="notesInput3" rows="8"
     ></textarea>
@@ -133,8 +132,7 @@ Effective leaders look beyond current trends or popular decision-making and take
   </div>
 
   <div id="modelAnswer3" class="modelAnswer">
-When a business or organisation is successful, there may be less incentive to rapidly change or adapt to meet new expectations. It is important to identify what factors are responsible for this current success, if those factors are likely to change and how those factors may be affected in the future. By choosing to expand online, The Sill was able to meet new customer demands as they developed and encourage plant care at all stages of experience.
-  </div>
+Effective change leadership does not mean achieving a perfect outcome or resolving every issue at once. Any transition may be difficult to navigate, requiring leaders to be resilient and reflective when guiding teams through change, especially if this change potentially impacts broader organisational function and security. As Meredith Farm prioritised sustainable and ethical farming practices, the Camerons were able to meaningfully respond to both criticism of their farming practices and their own environmental concerns without risking their businesses success. Recognising what you can control is crucial to finding constructive ways to navigate change. </div>
 </div>
 
 <script>
@@ -145,14 +143,14 @@ function initNotesBox(inputId, btnId, msgId, storageKey, answerId) {
   const answerBox = document.getElementById(answerId);
 
   const STORAGE_KEY = storageKey;
-  const ANSWER_SHOWN_KEY_CANVA = storageKey + '_answerShown';
+  const ANSWER_SHOWN_KEY_MEREDITH = storageKey + '_answerShown';
 
   // Load existing note (if any)
   const savedNote = localStorage.getItem(STORAGE_KEY);
   if (savedNote) textArea.value = savedNote;
 
   // If the answer was already revealed in a previous visit, keep it visible
-  if (localStorage.getItem(ANSWER_SHOWN_KEY_CANVA) === 'true') {
+  if (localStorage.getItem(ANSWER_SHOWN_KEY_MEREDITH) === 'true') {
     answerBox.classList.add('visible');
   }
 
@@ -168,7 +166,7 @@ function initNotesBox(inputId, btnId, msgId, storageKey, answerId) {
     // Reveal the suggested answer once the question has been answered and saved
     if (value.length > 0) {
       answerBox.classList.add('visible');
-      localStorage.setItem(ANSWER_SHOWN_KEY_CANVA, 'true');
+      localStorage.setItem(ANSWER_SHOWN_KEY_MEREDITH, 'true');
     }
   });
 
@@ -178,7 +176,7 @@ function initNotesBox(inputId, btnId, msgId, storageKey, answerId) {
   });
 }
 
-initNotesBox('notesInput1', 'saveBtn1', 'statusMsg1', 'canvaQ1', 'modelAnswer1');
-initNotesBox('notesInput2', 'saveBtn2', 'statusMsg2', 'canvaQ2', 'modelAnswer2');
-initNotesBox('notesInput3', 'saveBtn3', 'statusMsg3', 'canvaQ3', 'modelAnswer3');
+initNotesBox('notesInput1', 'saveBtn1', 'statusMsg1', 'meredithQ1', 'modelAnswer1');
+initNotesBox('notesInput2', 'saveBtn2', 'statusMsg2', 'meredithQ2', 'modelAnswer2');
+initNotesBox('notesInput3', 'saveBtn3', 'statusMsg3', 'meredithQ3', 'modelAnswer3');
 </script>
