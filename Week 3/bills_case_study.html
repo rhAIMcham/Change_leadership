@@ -1,0 +1,397 @@
+<head>
+<style>
+    /* =====================================================
+       1. VARIABLES  – change colours, sizes and spacing here
+       ===================================================== */
+    :root {
+      /* Brand colours */
+      --AIMblue: #4353A3;
+      --navy: #12195C;
+      --lightBlue: #AEBAE4;
+      --grey: #e7e9ec;
+      --cream: #F1EEDE;
+
+      /* Text colours */
+      --text-body: #768390;
+      --text-heading: #3D4351;
+      --text-secondary: #666660;
+
+      /* Timeline line colour */
+      --line-colour: #CCD5DB;
+
+      /* Sizes */
+      --page-margin: 170px;       /* left/right page margin */
+      --base-font-size: 19px;
+      --image-height: 220px;      /* period image height */
+      --radius-lg: 12px;
+    }
+
+
+    /* =====================================================
+       2. PAGE & TYPOGRAPHY
+       ===================================================== */
+    body {
+      margin: 0 var(--page-margin);
+      padding: 0;
+      background: #FFF;
+      color: var(--text-body);
+      font-family: "Effra", Helvetica, sans-serif;
+      font-size: var(--base-font-size);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      color: var(--text-heading);
+      margin-top: 0;
+    }
+
+    h2.timeline-title { font-size: 2em; }     /* period headings (e.g. 1993) */
+    h3.timeline-title { font-size: 1.5em; }   /* entry headings */
+
+    .timeline-content p { font-size: 1em; }
+    .timeline-info span { font-size: 1.05em; }
+
+    a { color: var(--AIMblue); }
+    a:hover {
+      color: var(--lightBlue);
+      text-decoration: none;
+    }
+
+    .container-fluid .row { padding: 4rem 0; }
+
+
+    /* =====================================================
+       3. TIMELINE STRUCTURE
+       ===================================================== */
+    .timeline {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      line-height: 1.4em;
+    }
+
+    .timeline h1,
+    .timeline h2,
+    .timeline h3 { line-height: inherit; }
+
+    .timeline-item {
+      position: relative;
+      padding-left: 40px;
+    }
+
+    .timeline-item:last-child { padding-bottom: 0; }
+
+    /* Date / label shown beside each entry */
+    .timeline-info {
+      margin: 0 0 .5em;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .timeline-content { padding-bottom: 40px; }
+    .timeline-content p:last-child { margin-bottom: 0; }
+    .timeline-content > table { width: 100%; }
+
+
+    /* =====================================================
+       4. TIMELINE MARKER (dot + vertical line)
+       ===================================================== */
+    .timeline-marker {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 15px;
+    }
+
+    /* The dot */
+    .timeline-marker:before {
+      content: "";
+      display: block;
+      position: absolute;
+      top: 4px;
+      left: 0;
+      width: 15px;
+      height: 15px;
+      background: var(--AIMblue);
+      border: 3px solid transparent;
+      border-radius: 100%;
+      transition: background .3s, border .3s;
+    }
+
+    /* The vertical line */
+    .timeline-marker:after {
+      content: "";
+      display: block;
+      position: absolute;
+      top: 24px;
+      bottom: 0;
+      left: 6px;
+      width: 3px;
+      background: var(--line-colour);
+    }
+
+    .timeline-item:last-child .timeline-marker:after { content: none; }
+
+    /* Hover: dot becomes a ring */
+    .timeline-item:not(.period):hover .timeline-marker:before {
+      background: transparent;
+      border: 3px solid var(--lightBlue);
+    }
+
+
+    /* =====================================================
+       5. PERIOD HEADERS (1993, 2000s, etc.)
+       ===================================================== */
+    .period { padding: 0; }
+
+    .period .timeline-info { display: none; }
+
+    .period .timeline-marker:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 30px;
+      width: 15px;
+      height: auto;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      border-top: 3px solid var(--line-colour);
+      border-bottom: 3px solid var(--line-colour);
+    }
+
+    .period .timeline-marker:after {
+      content: "";
+      top: auto;
+      height: 32px;
+    }
+
+    .period .timeline-content { padding: 40px 0 70px; }
+    .period .timeline-title { margin: 0; }
+
+
+    /* =====================================================
+       6. DESKTOP LAYOUT (tablet and wider)
+       ===================================================== */
+    @media (min-width: 768px) {
+      .timeline-split .timeline,
+      .timeline-centered .timeline { display: table; }
+
+      .timeline-split .timeline-item,
+      .timeline-centered .timeline-item {
+        display: table-row;
+        padding: 0;
+      }
+
+      .timeline-split .timeline-info,
+      .timeline-centered .timeline-info,
+      .timeline-split .timeline-marker,
+      .timeline-centered .timeline-marker,
+      .timeline-split .timeline-content,
+      .timeline-centered .timeline-content,
+      .timeline-split .period .timeline-info {
+        display: table-cell;
+        vertical-align: top;
+      }
+
+      .timeline-split .timeline-marker,
+      .timeline-centered .timeline-marker { position: relative; }
+
+      .timeline-split .timeline-content,
+      .timeline-centered .timeline-content { padding-left: 30px; }
+
+      .timeline-split .timeline-info,
+      .timeline-centered .timeline-info { padding-right: 30px; }
+
+      .timeline-split .period .timeline-title,
+      .timeline-centered .period .timeline-title {
+        position: relative;
+        left: -45px;
+      }
+    }
+
+
+    /* =====================================================
+       7. IMAGES & CAPTIONS
+       ===================================================== */
+    .single-image-panel {
+      margin: 0;
+      overflow: hidden;
+      background: var(--grey);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .08);
+    }
+
+    .single-image-panel.period-image {
+      max-width: 100%;
+      margin-top: 16px;
+    }
+
+    .single-image-panel img {
+      display: block;
+      width: 100%;
+      height: var(--image-height);
+      object-fit: cover;
+      object-position: left center;   /* which part of the image stays visible */
+    }
+
+    .gallery-caption {
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      border-top: 3px solid var(--AIMblue);
+    }
+
+
+    /* =====================================================
+       8. QUOTES
+       ===================================================== */
+    .timeline-quote {
+      margin: 18px 0;
+      padding: 14px 20px;
+      background: var(--cream);
+      border-left: 4px solid var(--AIMblue);
+      border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+      color: var(--navy);
+      font-style: italic;
+    }
+
+    /* Attribution line under a quote */
+    .timeline-quote cite {
+      display: block;
+      margin-top: 8px;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--text-secondary);
+    }
+</style>
+</head>
+<body>
+<div class="container-fluid"><div class="row example-basic"><div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+<ul class="timeline">
+
+<!-- 1993 -->
+<li class="timeline-item period"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<h2 class="timeline-title">1993</h2><p>Origins</p>
+<div class="single-image-panel period-image"><img src="https://placehold.co/1200x440?text=Image+1" alt="Bill Granger and the first Bills café" ><div class="gallery-caption">Caption: Origins, 1993</div></div>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>Early 1990s</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">A new kind of café</h3>
+<p>In the early 1990s, 24-year-old Bill Granger opened his first café, Bills, in Sydney, introducing a fresh approach to dining that focused on simple food, a relaxed atmosphere, and fostering a shared community. A self-taught chef who had initially moved from Melbourne to study art, Granger discovered his passion for food while working as a waiter.<br>
+Recognising Sydney’s vibrant morning culture and the opportunity to make dining out for breakfast more approachable, he built a simple café menu with corn fritters, scrambled eggs, and avocado on toast. The venue’s large windows, natural light and communal dining table encouraged customers to connect, creating a welcoming environment where eating out felt comfortable rather than formal or expensive.</p>
+<blockquote class="timeline-quote">“I grew up in Melbourne, and when I moved to Sydney, I was shocked by its morning life. People were on the beach, walking through the park, owning the day. It felt very Australian, very optimistic. I think avocado on toast is optimistic.”</blockquote>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>1993</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Standing out</h3>
+<p>At a time when Australia’s breakfast café culture was still developing, Granger’s holistic approach helped Bills stand out. He prioritised both the food and the overall customer experience, aiming to make every visitor feel valued and welcome. The communal table became a defining feature of the venue, encouraging social connection while improving service efficiency and seating in a small space.<br>
+His success demonstrates how leaders can identify emerging opportunities, challenge established expectations and develop new approaches in response to people’s needs. By combining a clear vision with an understanding of changing customer tastes and practical business decisions, Granger established a distinctive café experience that would grow into a successful brand.</p>
+</div></li>
+
+<!-- Late 1990s -->
+<li class="timeline-item period"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<h2 class="timeline-title">Late 1990s</h2><p>Growing empire</p>
+<div class="single-image-panel period-image"><img src="https://placehold.co/1200x440?text=Image+2" alt="Bills café in Surry Hills" ><div class="gallery-caption">Caption: Growing empire, late 1990s</div></div>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>1996</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Expanding across Sydney</h3>
+<p>By 1996, Bill Granger had expanded Bills to a second café in Surry Hills, followed by a third in Mosman before the end of the decade. The business attracted critical acclaim for its fresh approach to breakfast dining, while a list of celebrity clientele established Bills as a popular Sydney destination. Granger’s reputation for diligence and integrity also led to collaborations, television appearances and features in print media, raising the profile of both the chef and his growing business.</p>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>Partnership</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Creativity and financial discipline</h3>
+<p>Behind this success was the partnership between Granger and his future wife, Natalie Elliott, a documentary filmmaker who brought valuable business and financial expertise to the operation. Together, they balanced the creativity and distinctive identity of the Bills brand with the financial management needed to support its growth.</p>
+</div></li>
+
+<!-- 2000s -->
+<li class="timeline-item period"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<h2 class="timeline-title">2000s</h2><p>International acclaim</p>
+<div class="single-image-panel period-image"><img src="https://placehold.co/1200x440?text=Image+3" alt="Bill Granger cookbooks" ><div class="gallery-caption">Caption: International acclaim, 2000s</div></div>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>2000</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Sydney Food</h3>
+<p>The 2000s marked a turning point for Bill Granger with the publication of his first cookbook, Sydney Food, in 2000. The book introduced his kitchen and personality to a wider audience, reflecting the Bills café philosophy of creating simple, well-made dishes using quality ingredients. It is also widely credited with recording avocado on toast as an official recipe, gaining Granger international recognition and contributing to his growing global influence.</p>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>2002</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">The Egg Master of Sydney</h3>
+<p>Despite expanding into other food ventures, Bill Granger’s priority remained keeping consistent food and customer service standards at his venues. In 2002, Johnny Apple’s New York Times article titled The Egg Master of Sydney drew attention from across the Pacific.</p>
+<blockquote class="timeline-quote">“I would stack Mr. Granger’s [eggs] up against all corners, fully confident that they would hold their own.”<cite>Johnny Apple, The New York Times, 2002</cite></blockquote>
+<p>Supported by Natalie Elliott, Granger continued to build the business, releasing his second cookbook, Bill’s Open Kitchen, in 2003, which would also go on to become a bestseller.</p>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>2004</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Bill’s Food on screen</h3>
+<p>In 2004, Bill’s Food aired in Australia. The series was well-received in Australia before reaching international audiences, attracting two million viewers during its UK screening and eventually being broadcast in more than 22 countries.<br>
+This success demonstrated that Granger’s approachable cooking style and the welcoming philosophy behind Bills resonated with audiences around the world, solidifying his reputation as an international food personality.</p>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>2005</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Simply Bill</h3>
+<p>In 2005, Granger released his third cookbook, Simply Bill, further cementing his place in Australian kitchens. Through his books and television appearances, he continued to promote an approach to Australian food that focused on both ingredients and the experience of preparing and sharing meals.</p>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>2006</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Television abroad</h3>
+<p>Granger appeared on GMTV in June 2006 to present a week-long barbecue special filmed in the south of France. A second series of Bill’s Food was also released on various international networks.</p>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>2007</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Bills goes to Japan</h3>
+<p>In 2007, Bill Granger expanded the Bills brand internationally for the first time, opening a café in Kanagawa, Japan. This venture proved highly successful, attracting more than 230,000 diners before a second Japanese café opened in Yokohama in 2010.<br>
+Alongside this international growth, Granger released his 2009 cookbook, Holiday, which explored more diverse flavours and reflected the brand’s evolving culinary influences.</p>
+</div></li>
+
+<!-- 2010s -->
+<li class="timeline-item period"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<h2 class="timeline-title">2010s</h2><p>Stardom</p>
+<div class="single-image-panel period-image"><img src="https://placehold.co/1200x440?text=Image+4" alt="Granger and Co in London" ><div class="gallery-caption">Caption: Stardom, 2010s</div></div>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>2011</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Granger &amp; Co in London</h3>
+<p>Bill Granger moved to London in 2010 and shifted his focus from television production to refocus on his restaurants, with the final season of Bill’s Food airing in 2010. In 2011, he entered the British market with Granger and Co, retaining signature dishes of ricotta hotcakes, creamy scrambled eggs and avocado toast.<br>
+This expansion, while continuing to develop cookbooks, required significant commitment and adaptation to different food cultures, climates and locally available produce. Despite these challenges, Granger aimed to maintain the distinctive, relaxed and welcoming atmosphere associated with Bills in Sydney.</p>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>2014</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Stepping back from the limelight</h3>
+<p>2014 saw Granger continue the international expansion of Bills, opening cafés in Seoul and Hawaii, adding to his existing venues across Sydney, Japan and London. While this growth created exciting opportunities, it also increased the demands of managing a global business. Recognising his commitments to television and publishing were taking time and attention away from core operations, Granger decided to step back from the limelight.</p>
+<blockquote class="timeline-quote">“I basically said no to everything. Ultimately [writing and filming] takes a lot of time and takes you out of your main business for a while. Being on TV is a completely different mindset. You’ve got to look after yourself. You’re a performer. It’s all about you. Whereas restaurants are not about you, they’re about customers, your staff. I found it very hard to do both. Restaurants need a lot of attention.”<cite>Bill Granger, 2020</cite></blockquote>
+<p>In the following years, Granger focused on refining Bills’ recipes and ensuring each international venue adapted to its local environment while maintaining the brand’s distinctive identity. Stepping away from the public spotlight allowed him to concentrate on the restaurants and their ongoing development, while also creating more space for his growing family.</p>
+</div></li>
+
+<!-- 2020s -->
+<li class="timeline-item period"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<h2 class="timeline-title">2020s</h2><p>Resilience</p>
+<div class="single-image-panel period-image"><img src="https://placehold.co/1200x440?text=Image+5" alt="Customers sharing a table at Bills" ><div class="gallery-caption">Caption: Resilience, 2020s</div></div>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>2020</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Australian Food and the pandemic</h3>
+<p>In 2020, Granger released Australian Food, his first cookbook since 2013, reflecting on two decades of change in Australia’s food culture and the evolution of Sydney’s dining scene. The book celebrated the opportunities available to modern diners and the development of Australian cuisine since his first cookbook, Sydney Food, was published in 2000.<br>
+However, the COVID-19 pandemic disrupted these plans, forcing hospitality businesses to navigate lockdowns and restrictions that limited the social dining experiences central to the Bills concept.</p>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>Recovery</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Coming back together</h3>
+<p>As restrictions eased, customers returned to cafés, rediscovering the value of shared spaces. Familiar routines, and connecting with their communities.</p>
+<blockquote class="timeline-quote">“Suddenly, we remembered how much we loved those things we used to take for granted when we were chasing the latest fashions. What was great was how everyone bounced back and came together to support each other. And people came running back for avocado toast.”</blockquote>
+<p>While many hospitality businesses struggled during the pandemic, Bills’ diversified business model helped it withstand the disruption and emerge stronger.</p>
+</div></li>
+
+<!-- Present -->
+<li class="timeline-item period"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<h2 class="timeline-title">Present</h2><p>Legacy</p>
+<div class="single-image-panel period-image"><img src="https://placehold.co/1200x440?text=Image+6" alt="Bills today" ><div class="gallery-caption">Caption: Legacy, present day</div></div>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>Present</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">Continuing the work</h3>
+<p>Bill Granger passed away at the age of 54, leaving behind a successful international business and a lasting influence on Australian food culture. His wife and business partner, Natalie Elliott, has continued his work, guiding the business through a difficult period and maintaining its operation across Australia, Japan, South Korea and the United Kingdom. With 19 restaurants serving approximately 1.5 million people annually, Bills has demonstrated remarkable longevity in a competitive industry.<br>
+Although its menus and venues have evolved, the business has remained grounded in Granger’s original philosophy of combining quality food with warmth, connection and a welcoming customer experience.</p>
+<blockquote class="timeline-quote">“[Bill] was a trailblazer who did come at things in his own way. He wasn’t egocentric. He really understood what hospitality actually is.”<cite>Natalie Elliott</cite></blockquote>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>Legacy</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<h3 class="timeline-title">The Bill Granger Trailblazer Award</h3>
+<p>Granger’s legacy extends beyond his restaurants to the broader hospitality industry. His approach demonstrated that hospitality is more than just about preparing food – it is also how people feel, connect and experience a place. To recognise his contribution, his family partnered with the Good Food Guide to establish the Bill Granger Trailblazer Award, celebrating individuals, teams and businesses that push the boundaries of Australian food while championing warmth, integrity and hospitality.</p>
+</div></li>
+
+</ul></div></div></div>
+</body>

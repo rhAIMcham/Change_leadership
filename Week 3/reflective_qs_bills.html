@@ -1,0 +1,184 @@
+<style>
+
+  :root {
+  --AIMblue: #4353A3;
+  --darkBlue: #38416D;
+  --teal: #5DC8B9;
+  --cream: #F1EEDE;
+  --grey: #e7e9ec;
+  --rust: #AF4510;
+  --navy: #12195C;
+  --white: #ffffff;
+  --lightBlue: #AEBAE4;
+  }
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+.notesBox {
+ max-width: 700px; 
+ margin: 30px auto; 
+ padding: 1rem; 
+ background: #f8f9fa; 
+ border-radius: 12px; 
+ box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+textarea {
+width: 95%;
+padding: 0.75rem;
+border-radius: 8px;
+border: 1px solid #ccc;
+resize: vertical;
+font-size: 1rem; 
+font-family: 'Inter', sans-serif;
+}
+ .saved {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
+    margin-top: 0.5rem;
+ }
+
+ .savedMsg {
+ font-size: 0.9rem;
+color: var(--lightBlue);
+ opacity: 0;
+ transition: opacity 0.4s ease;
+ margin: 0;
+ min-width: 60px;   
+ }
+
+ .saveBtn {
+background-color: var(--navy); 
+color: white; 
+border: none; 
+border-radius: 6px;
+      padding: 0.5rem 1.25rem; 
+      font-size: 1rem; 
+      cursor: pointer;
+ }
+
+.questionText {
+margin-bottom: 0.5rem;
+font-size: 1rem;
+padding: 5px;
+}
+
+.modelAnswer {
+  display: none;
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--cream);
+  border-left: 4px solid var(--teal);
+  border-radius: 6px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--navy);
+}
+
+.modelAnswer.visible {
+  display: block;
+}
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+<div class="notesBox">
+    <h3>Identifying a problem or challenge to solve</h3>
+  <p class="questionText">How can leaders identify challenges or opportunities that require a different approach?</p>
+
+  <textarea id="notesInput1" rows="8"
+    ></textarea>
+
+  <!-- Flexbox row: Saved! stays left, Save button stays right -->
+  <div class="saved" >
+    <p id="statusMsg1" class="savedMsg">Saved!</p>
+    <button id="saveBtn1" class="saveBtn">Save</button>
+  </div>
+
+  <div id="modelAnswer1" class="modelAnswer">
+Leaders can identify challenges and opportunities by observing changes in their environment, listening to others and questioning existing ways of working. Rather than immediately jumping to solutions, they should take time to understand the problem, consider different perspectives and identify what needs to change. Granger recognised that Sydney’s breakfast culture offered an opportunity to create a different dining experience by focusing on simple food and a social connection rather than formal dining.
+  </div>
+</div>
+
+
+<div class="notesBox">
+    <h3>The importance of leadership through change</h3>
+  <p class="questionText">How did Bill Granger and his business adapt to changing circumstances while maintaining a consistent vision, and why is this important for leaders during change?</p>
+
+  <textarea id="notesInput2" rows="8"
+    ></textarea>
+
+  <div class="saved" >
+    <p id="statusMsg2" class="savedMsg">Saved!</p>
+    <button id="saveBtn2" class="saveBtn">Save</button>
+  </div>
+
+  <div id="modelAnswer2" class="modelAnswer">
+Effective leaders provide direction and maintain a clear sense of purpose while remaining flexible as circumstances evolve. Granger expanded Bills into international markets while staying consistent about what distinguished Bills from its competitors. This highlights the importance of flexibility in how change is implemented while maintaining clarity about the purpose, values and priorities that guide decisions.
+  </div>
+</div>
+
+<div class="notesBox">
+    <h3>Balancing innovation with consistency</h3>
+  <p class="questionText">How can leaders introduce change while maintaining the values and practices that are important to their team or organisation?</p>
+
+  <textarea id="notesInput3" rows="8"
+    ></textarea>
+
+  <div class="saved" >
+    <p id="statusMsg3" class="savedMsg">Saved!</p>
+    <button id="saveBtn3" class="saveBtn">Save</button>
+  </div>
+
+  <div id="modelAnswer3" class="modelAnswer">
+Leaders must recognise which aspects of their work should evolve and which should stay consistent. They can encourage new ideas, respond to changing needs and improve existing practices while maintaining the values and standards that build trust and provide a shared sense of purpose. Granger demonstrated that innovation does not mean abandoning his business model, and identifying what made his business appealing to customers.
+  </div>
+</div>
+
+<script>
+function initNotesBox(inputId, btnId, msgId, storageKey, answerId) {
+  const textArea = document.getElementById(inputId);
+  const saveBtn = document.getElementById(btnId);
+  const statusMsg = document.getElementById(msgId);
+  const answerBox = document.getElementById(answerId);
+
+  const STORAGE_KEY = storageKey;
+  const ANSWER_SHOWN_KEY_BILLS = storageKey + '_answerShown';
+
+  // Load existing note (if any)
+  const savedNote = localStorage.getItem(STORAGE_KEY);
+  if (savedNote) textArea.value = savedNote;
+
+  // If the answer was already revealed in a previous visit, keep it visible
+  if (localStorage.getItem(ANSWER_SHOWN_KEY_BILLS) === 'true') {
+    answerBox.classList.add('visible');
+  }
+
+  // Save on button click
+  saveBtn.addEventListener('click', () => {
+    const value = textArea.value.trim();
+    localStorage.setItem(STORAGE_KEY, value);
+
+    // Fade in "Saved!"
+    statusMsg.style.opacity = '1';
+    setTimeout(() => statusMsg.style.opacity = '0', 1500);
+
+    // Reveal the suggested answer once the question has been answered and saved
+    if (value.length > 0) {
+      answerBox.classList.add('visible');
+      localStorage.setItem(ANSWER_SHOWN_KEY_BILLS, 'true');
+    }
+  });
+
+  // Optional: auto-save while typing
+  textArea.addEventListener('input', () => {
+    localStorage.setItem(STORAGE_KEY, textArea.value.trim());
+  });
+}
+
+initNotesBox('notesInput1', 'saveBtn1', 'statusMsg1', 'billsQ1', 'modelAnswer1');
+initNotesBox('notesInput2', 'saveBtn2', 'statusMsg2', 'billsQ2', 'modelAnswer2');
+initNotesBox('notesInput3', 'saveBtn3', 'statusMsg3', 'billsQ3', 'modelAnswer3');
+</script>
