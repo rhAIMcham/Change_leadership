@@ -116,7 +116,7 @@ A leader’s responsibility extends beyond making decisions or introducing new p
   </div>
 
   <div id="modelAnswer2" class="modelAnswer">
-Technical problems often have identifiable solutions, while adaptive challenges are more complex as they involve changing workplace culture, decision-making and other behaviours. At Canvas Creative, missed deadlines might appear to be a technical problem that could be resolved through better scheduling. However, the team’s dependence on Marie and reluctance to make independent decisions reveal deeper adaptive challenges.
+Technical problems often have identifiable solutions, while adaptive challenges are more complex as they involve changing workplace culture, decision-making and other behaviours. At Frame of Mind Studios, missed deadlines might appear to be a technical problem that could be resolved through better scheduling. However, the team’s dependence on Marie and reluctance to make independent decisions reveal deeper adaptive challenges.
   </div>
 </div>
 
@@ -145,14 +145,14 @@ function initNotesBox(inputId, btnId, msgId, storageKey, answerId) {
   const answerBox = document.getElementById(answerId);
 
   const STORAGE_KEY = storageKey;
-  const ANSWER_SHOWN_KEY_CREATIVECANVAS = storageKey + '_answerShown';
+  const ANSWER_SHOWN_KEY_FOMS = storageKey + '_answerShown';
 
   // Load existing note (if any)
   const savedNote = localStorage.getItem(STORAGE_KEY);
   if (savedNote) textArea.value = savedNote;
 
   // If the answer was already revealed in a previous visit, keep it visible
-  if (localStorage.getItem(ANSWER_SHOWN_KEY_CREATIVECANVAS) === 'true') {
+  if (localStorage.getItem(ANSWER_SHOWN_KEY_FOMS) === 'true') {
     answerBox.classList.add('visible');
   }
 
@@ -168,7 +168,7 @@ function initNotesBox(inputId, btnId, msgId, storageKey, answerId) {
     // Reveal the suggested answer once the question has been answered and saved
     if (value.length > 0) {
       answerBox.classList.add('visible');
-      localStorage.setItem(ANSWER_SHOWN_KEY_CREATIVECANVAS, 'true');
+      localStorage.setItem(ANSWER_SHOWN_KEY_FOMS, 'true');
     }
   });
 
@@ -178,7 +178,7 @@ function initNotesBox(inputId, btnId, msgId, storageKey, answerId) {
   });
 }
 
-initNotesBox('notesInput1', 'saveBtn1', 'statusMsg1', 'creativeCanvasQ1', 'modelAnswer1');
-initNotesBox('notesInput2', 'saveBtn2', 'statusMsg2', 'creativeCanvasQ2', 'modelAnswer2');
-initNotesBox('notesInput3', 'saveBtn3', 'statusMsg3', 'creativeCanvasQ3', 'modelAnswer3');
+initNotesBox('notesInput1', 'saveBtn1', 'statusMsg1', 'FOMSQ1', 'modelAnswer1');
+initNotesBox('notesInput2', 'saveBtn2', 'statusMsg2', 'FOMSQ2', 'modelAnswer2');
+initNotesBox('notesInput3', 'saveBtn3', 'statusMsg3', 'FOMSQ3', 'modelAnswer3');
 </script>

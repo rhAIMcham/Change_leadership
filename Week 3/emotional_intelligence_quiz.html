@@ -96,7 +96,7 @@ h1 {
 }
 
 .nav-button {
-  min-width: 110px;
+  min-width: 160px;
   padding: 8px 16px;
   font-family: inherit;
   font-size: .9rem;
@@ -274,10 +274,9 @@ h1 {
 </head>
 <body>
 <div class="wrap" id="displayed">
-  <h1>Emotional Intelligence Self-Assessment</h1>
+  <h1>Emotional intelligence self-assessment</h1>
   <br>
-  <p class="intro">Comparing yourself to other leaders you know,
-  please indicate how well you believe you demonstrate the following qualities.</p>
+  <p class="intro">Reflecting on your own leadership journey and other leaders you have worked with in the past, how well do you:</p>
   <br>
   <nav aria-label="Assessment navigation">
     <div class="navigation" role="tablist" id="tabs"></div>
@@ -298,69 +297,39 @@ const FORMS = [
   {
     label: "Self-awareness",
     questions: [
-      "Understanding the impact your behaviour has on others",
-      "Being aware of your strengths and limitations",
-      "Asking others for feedback on your leadership",
-      "Responding effectively to feedback provided to you",
-      "Being consistent in what you say and do",
-      "Behaving in a way that is consistent with how you expect others to behave",
-      "Demonstrating awareness of your mood and emotions"
+      "Acknowledge your own limitations and strengths",
+      "Model ideal behaviours in the workplace",
+      "Understand how your behaviour impacts others",
+      "Honestly communicate your thoughts and opinions",
+      "Learn from your mistakes"
     ]
   },
   {
-    label: "Awareness of others",
+    label: "Self-management",
     questions: [
-      "Making others feel appreciated",
-      "Adjusting your style so that it fits well with others",
-      "Noticing when someone needs support and responding effectively",
-      "Accurately view situations from the perspective of others",
-      "Acknowledging the views and opinions of others",
-      "Accurately anticipating responses or reactions from others",
-      "Balancing achieving results with others’ needs"
+      "Constructively respond to feedback on your leadership",
+      "Remain consistent with your words and actions",
+      "Adjust your leadership style to benefit others",
+      "Consult others when making decisions",
+      "Reflect on your feelings when decision-making"
     ]
   },
-  { label: "Authenticity", 
+  { label: "Social awareness", 
     questions: [
-      "Being open about your thoughts, feelings and opinions",
-      "Expressing thoughts and feelings in a way that it sensitive to those of others",
-      "Facilitating robust, open debate",
-      "Being open and honest about mistakes",
-      "Honouring commitments and keeping promises",
-      "Encouraging others to put forward their thoughts, feelings and opinions",
-      "Responding effectively when challenged"
+      "Make others feel appreciated",
+      "Acknowledge the views and opinions of others",
+      "Accurately anticipate the responses of others to change",
+      "Maintain a positive work environment",
+      "Express thoughts and feelings sensitively to others"
   ] 
 },
-  { label: "Emotional reasoning",
+  { label: "Relationship management",
       questions: [
-      "Consulting others in decision-making",
-      "Explaining the rationale behind decisions you make",
-      "Involving others in decisions that affect their work",
-      "Considering issues from multiple perspectives",
-      "Taking the bigger picture into account when decision-making",
-      "Reflecting on feelings when decision-making",
-      "Making ethical decisions"
-  ] 
-},
-  { label: "Self-management", 
-      questions: [
-      "Effectively managing your emotions in difficult situations",
-      "Demonstrating a positive, energising demeanour",
-      "Managing your time effectively",
-      "Learning from your mistakes",
-      "Keeping up-to-date with industry trends and market conditions",
-      "Striving to improve your performance",
-      "Quickly adapting to new circumstances"
-  ] 
-},
-  { label: "Inspiring performance", 
-      questions: [
-      "Providing useful support and guidance",
-      "Providing constructive feedback on behaviour and performance",
-      "Helping others understand their purpose and contribution to the organisation",
-      "Noticing inappropriate behaviour in others and responding effectively",
-      "Maintaining a positive work environment",
-      "Helping facilitate others’ development and advance their careers",
-      "Recognising others’ hard work and achievements"
+      "Provide support and guidance during challenges",
+      "Encourage honesty and open debate in the workplace",
+      "Respond consistently to inappropriate behaviour in the workplace",
+      "Help others understand their contributions to the organisation",
+      "Facilitate the development of others in the workplace"
   ] 
 }
 ];
