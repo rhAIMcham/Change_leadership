@@ -47,7 +47,7 @@
     font-family: "IBM Plex Sans", sans-serif;
     background-color: var(--bg-app);
     color: var(--text-primary);
-        margin: auto 300px;
+        margin: auto 250px;
 }
 
 /* ===================== NAVBAR ===================== */
@@ -304,6 +304,9 @@ textarea.composer-input:focus, input.composer-input:focus { outline: none; borde
     .container { flex-direction: column; }
     .middle-panel, .right-panel { width: 100%; max-width: 100%; }
 }
+.bluegumBody {
+  margin: auto 50px;
+}
 </style>
 </head>
 <div class="bluegumBody">
@@ -400,9 +403,11 @@ textarea.composer-input:focus, input.composer-input:focus { outline: none; borde
     <section class="middle-panel">
 
         <div class="company-header">
-            <div class="company-logo" id="companyLogo">BC</div>
+            <div class="company-logo" id="companyLogo">
+                BB
+            </div>
             <div>
-                <h2 id="companyName">Bluegum Construction</h2>
+                <h2 id="companyName">Bluegum Builders</h2>
                 <p id="companyDesc">Commercial construction &amp; fitout · 500–1,000 employees</p>
             </div>
         </div>
@@ -531,7 +536,7 @@ let reviews = [
     { id: 6, name: "Project Manager", initials: "PM", avatarStyle: "blue", rating: 5,
       tenure: "Thirteen years as a project manager",
       title: "A company that really cares about people",
-      pros: "Leadership understands that this industry is ultimately about people, not just projects and deadlines. Our staff were supported when challenges arise, and there is a strong emphasis that everyone's contributions matter equally. Bluegum also takes a lot of pride in their relationships with clients. We're encouraged to develop a rapport and communicate openly with clients, staff and the leadership team. It creates a good culture where you feel trusted to do your job.",
+      pros: "Leadership understands that this industry is ultimately about people, not just projects and deadlines. Our staff were supported when challenges arose, and there is a strong emphasis that everyone's contributions matter equally. Bluegum also takes a lot of pride in their relationships with clients. We're encouraged to develop a rapport and communicate openly with clients, staff and the leadership team. It creates a good culture where you feel trusted to do your job.",
       cons: "We had a really hard time communicating across different sites. There was no strictly regulated process, so we spent a lot of time shouting at each other on the phone while driving in different directions. We always got the job done, but it was a bit of a time sink when you couldn't keep track of who had talked to who, and what they'd said.",
       timestamp: new Date("2023-01-05T10:30:00"), liked: false }
 ];

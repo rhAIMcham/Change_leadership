@@ -88,7 +88,7 @@ img {
     max-width: 600px;
 }
 .img-wrap {
-  width: 600px;
+  width: 100%;
   height: var(--img-height);
   border-radius: 8px;
   background-color: var(--gray-50);
@@ -114,7 +114,7 @@ img {
     color: var(--gray-800);
     line-height: 1.7;
     margin: 10px;
-    width: 500px;
+    max-width: 500px;
   }
 
   .sub-label {
@@ -152,6 +152,9 @@ img {
     .step-summary { min-width: auto; width: 100%; }
     .main { padding: 20px 16px; }
      :root { --img-height: 200px; }
+     .scene-card {
+        flex-direction: column;
+     }
   }
   .image-placeholder-label {
     color: var(--gray-400);
@@ -386,7 +389,7 @@ const textNodes = [
         id: 6,
           image: "marie_worried.jpg",
                     imageHeight: "450px",  
-        text: '<p><strong>Continues using the framework until the risks are fully understood.</strong> <br><br>Marie decides that the delays demonstrate the need for more thorough planning. She postpones additional tasks, asks Anh to document every outstanding decision and requires Carey to produce a more detailed risk report. <br><br>She believes that greater oversight will prevent mistakes and protect her reputation. Meanwhile, Rahul asks whether Frame of Mind Studios can update the project brief to reflect a competitor’s new product launch, but Marie cannot confirm when the team will be ready to respond. <br><br>Although the framework is providing guidance, Marie’s reluctance to use it flexibly has transformed it into another decision gate that her team must navigate as the number of incomplete tasks continues to arise. <br><br>In response, Carey’s workload increases faster than he can update the reports, and Anh questions Marie’s faith in her abilities as a professional designer. After a period of silence from Marie, Rahul begins exploring other agencies for the project.',
+        text: '<p><strong>Continues using the framework until the risks are fully understood.</strong> <br><br>Marie decides that the delays demonstrate the need for more thorough planning. She postpones additional tasks, asks Anh to document every outstanding decision and requires Carey to produce a more detailed risk report. <br><br>She believes that greater oversight will prevent mistakes and protect her reputation. Meanwhile, Rahul asks whether Frame of Mind Studios can update the project brief to reflect a competitor’s new product launch, but Marie cannot confirm when the team will be ready to respond. <br><br>Although the framework is providing guidance, Marie’s reluctance to use it flexibly has transformed it into another decision gate that her team must navigate as the number of incomplete tasks continues to rise. <br><br>In response, Carey’s workload increases faster than he can update the reports, and Anh questions Marie’s faith in her abilities as a professional designer. After a period of silence from Marie, Rahul begins exploring other agencies for the project.',
         options: [
             {
                 text: 'Restart',
@@ -410,7 +413,7 @@ const textNodes = [
         id: 8,
           image: "carey_thinking.jpg",
                     imageHeight: "450px",  
-        text: '<p><strong>Give the team decision making authority but continue approving most decisions.</strong><br><br>Marie decides that the team needs to become more independent and announces that staff should take greater responsibility for their work. She tells Anh to make more client decisions and expects Carey to resolve scheduling problems without escalating every issue. Marie believes that making her expectations clear will encourage staff to become more confident and reduce the delays caused by consistent approvals. However, she does not define boundaries, changes existing approval practices or explain how she will respond when staff make mistakes.<br><br>Initially, the team attempts to respond to Marie’s expectations. Anh makes a creative adjustment to Rahul’s campaign that Marie later reverses after receiving feedback. Carey reorganises the schedule only to have Marie change priorities after a conversation with another client. <br><br>Marie sees these incidents as evidence that staff need closer oversight, while the team sees them as proof that taking initiative can lead to criticism or wasted effort.<br><br>To move forward, Marie must recognise that accountability without appropriate authority, guidance and consistency are unlikely to create genuine autonomy.</p>',
+        text: '<p><strong>Give the team decision making authority but continue approving most decisions.</strong><br><br>Marie decides that the team needs to become more independent and announces that staff should take greater responsibility for their work. She tells Anh to make more client decisions and expects Carey to resolve scheduling problems without escalating every issue. Marie believes that making her expectations clear will encourage staff to become more confident and reduce the delays caused by consistent approvals. However, she does not define boundaries, change existing approval practices or explain how she will respond when staff make mistakes.<br><br>Initially, the team attempts to respond to Marie’s expectations. Anh makes a creative adjustment to Rahul’s campaign that Marie later reverses after receiving feedback. Carey reorganises the schedule only to have Marie change priorities after a conversation with another client. <br><br>Marie sees these incidents as evidence that staff need closer oversight, while the team sees them as proof that taking initiative can lead to criticism or wasted effort.<br><br>To move forward, Marie must recognise that accountability without appropriate authority, guidance and consistency are unlikely to create genuine autonomy.</p>',
         options: [
              {
                 text: 'Restart',
@@ -494,7 +497,7 @@ const textNodes = [
         id: 14,
           image: "carey_thinking.jpg",
                     imageHeight: "450px",  
-        text: '<p><strong>Introduce more authority and decision-making opportunities.</strong><br><br>Marie is concerned how her team has lost confidence in her leadership and decides to demonstrate that she trusts their professional judgement. She announces the designers will have significantly more authority over their projects, including routine client communication and creative decisions.<br><br>Anh is given Rahul’s project while Carey can reorganise production schedules and negotiate task priorities with the team. Marie explains that she will no longer approve every decision and expects staff to take responsibility for their work, believing that this sudden change will reduce frustration and encourage them to be more independent.<br><br>While her staff welcome the change, this sudden shift also creates uncertainty because the team has spent months relying on Marie for direction.<br><br>Additionally, Marie is struggling with how she responds at work and is frequently short-tempered and short with her designers. Rahul appreciates the faster responses but questions whether this new workflow will remain consistent quality, and Marie now has difficulty asserting herself at the studio.<br><br>Marie must consider how to maintain staff autonomy while establishing clear boundaries and appropriate support without taking back the authority she has just given. </p>',
+        text: '<p><strong>Introduce more authority and decision-making opportunities.</strong><br><br>Marie is concerned how her team has lost confidence in her leadership and decides to demonstrate that she trusts their professional judgement. She announces the designers will have significantly more authority over their projects, including routine client communication and creative decisions.<br><br>Anh is given Rahul’s project while Carey can reorganise production schedules and negotiate task priorities with the team. Marie explains that she will no longer approve every decision and expects staff to take responsibility for their work, believing that this sudden change will reduce frustration and encourage them to be more independent.<br><br>While her staff welcome the change, this sudden shift also creates uncertainty because the team has spent months relying on Marie for direction.<br><br>Additionally, Marie is struggling with how she responds at work and is frequently short-tempered and short with her designers. Rahul appreciates the faster responses but questions whether this new workflow will remain consistent in quality, and Marie now has difficulty asserting herself at the studio.<br><br>Marie must consider how to maintain staff autonomy while establishing clear boundaries and appropriate support without taking back the authority she has just given. </p>',
         options: [
             {
                 text: 'Restart',

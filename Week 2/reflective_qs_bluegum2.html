@@ -128,14 +128,14 @@ function initNotesBox(inputId, btnId, msgId, storageKey, answerId) {
   const answerBox = document.getElementById(answerId);
 
   const STORAGE_KEY = storageKey;
-  const ANSWER_SHOWN_KEY_BLUEGUM = storageKey + '_answerShown';
+  const ANSWER_SHOWN_KEY_BLUEGUM2 = storageKey + '_answerShown';
 
   // Load existing note (if any)
   const savedNote = localStorage.getItem(STORAGE_KEY);
   if (savedNote) textArea.value = savedNote;
 
   // If the answer was already revealed in a previous visit, keep it visible
-  if (localStorage.getItem(ANSWER_SHOWN_KEY_BLUEGUM) === 'true') {
+  if (localStorage.getItem(ANSWER_SHOWN_KEY_BLUEGUM2) === 'true') {
     answerBox.classList.add('visible');
   }
 
@@ -151,7 +151,7 @@ function initNotesBox(inputId, btnId, msgId, storageKey, answerId) {
     // Reveal the suggested answer once the question has been answered and saved
     if (value.length > 0) {
       answerBox.classList.add('visible');
-      localStorage.setItem(ANSWER_SHOWN_KEY_BLUEGUM, 'true');
+      localStorage.setItem(ANSWER_SHOWN_KEY_BLUEGUM2, 'true');
     }
   });
 
@@ -162,5 +162,5 @@ function initNotesBox(inputId, btnId, msgId, storageKey, answerId) {
 }
 
 initNotesBox('notesInput3', 'saveBtn3', 'statusMsg3', 'bluegumQ3', 'modelAnswer3');
-initNotesBox('notesInput4', 'saveBtn4', 'statusMsg', 'bluegumQ4', 'modelAnswer4');
+initNotesBox('notesInput4', 'saveBtn4', 'statusMsg4', 'bluegumQ4', 'modelAnswer4');
 </script>
