@@ -1,8 +1,11 @@
 window.InitUserScripts = function() {
   window.Script1 = function() {
-    var t1 = localStorage.getItem("IKEAQ1") || "(no response saved)";
-    var t2 = localStorage.getItem("IKEAQ2") || "(no response saved)";
-    var t3 = localStorage.getItem("IKEAQ3") || "(no response saved)";
+    var t1 = localStorage.getItem("metaQ1") || "(no response saved)";
+    var t2 = localStorage.getItem("metaQ2") || "(no response saved)";
+    var t3 = localStorage.getItem("metaQ3") || "(no response saved)";
+    var ikea1 = localStorage.getItem("IKEAQ1") || "(no response saved)";
+    var ikea2 = localStorage.getItem("IKEAQ2") || "(no response saved)";
+    var ikea3 = localStorage.getItem("IKEAQ3") || "(no response saved)";
 
     function loadScript(src, onload) {
       var s = document.createElement("script");
@@ -58,11 +61,11 @@ window.InitUserScripts = function() {
             day: "2-digit", month: "long", year: "numeric"
           });
 
-          page.drawText("Change Leadership Session 1 3/4 AIM", {
+          page.drawText("Change Leadership Session 1 Change in the workplace AIM", {
             x: margin, y: y, size: 21, font: fontBold, color: NAVY
           });
           y -= 22;
-          page.drawText("Change Leadership  ·  Session 1  · 3/4  " + dateStr, {
+          page.drawText("Change Leadership  ·  Session 1  · Change in the workplace  " + dateStr, {
             x: margin, y: y, size: 11, font: font, color: MUTED_GRAY
           });
           y -= 14;
@@ -226,6 +229,21 @@ window.InitUserScripts = function() {
               title: "Question 3",
               intro: "How can leaders use the results of previous changes to improve the way they respond to future challenges?",
               response: t3
+            },
+            {
+              title: "Question 1",
+              intro: "How can leaders use their knowledge of customers, competitors and industry trends to identify changes before they become major challenges?",
+              response: ikea1
+            },
+            {
+              title: "Question 2",
+              intro: "What can happen when an organisation responds to change only after it becomes a major problem?",
+              response: ikea2
+            },
+            {
+              title: "Question 3",
+              intro: "How can leaders use the results of previous changes to improve the way they respond to future challenges?",
+              response: ikea3
             }
           ];
 
@@ -292,7 +310,7 @@ window.InitUserScripts = function() {
               font: font,
               color: MUTED_GRAY
             });
-            pg.drawText("Change Leadership Session 1 3/4", {
+            pg.drawText("Change Leadership Session 1 Change in the workplace", {
               x: margin,
               y: 32,
               size: labelSize,
@@ -307,7 +325,7 @@ window.InitUserScripts = function() {
             var url  = URL.createObjectURL(blob);
             var a    = document.createElement("a");
             a.href     = url;
-            a.download = "Change Leadership Session 1 3/4 AIM.pdf";
+            a.download = "Change Leadership Session 1 Change in the workplace AIM.pdf";
             a.style.display = "none";
             document.body.appendChild(a);
             a.click();

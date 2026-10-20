@@ -58,11 +58,11 @@ window.InitUserScripts = function() {
             day: "2-digit", month: "long", year: "numeric"
           });
 
-          page.drawText("Change Leadership Session 1 4/4 AIM", {
+          page.drawText("Change Leadership Session 1 Your role in change AIM", {
             x: margin, y: y, size: 21, font: fontBold, color: NAVY
           });
           y -= 22;
-          page.drawText("Change Leadership  ·  Session 1  · 4/4  " + dateStr, {
+          page.drawText("Change Leadership  ·  Session 1  · Your role in change  " + dateStr, {
             x: margin, y: y, size: 11, font: font, color: MUTED_GRAY
           });
           y -= 14;
@@ -228,7 +228,43 @@ window.InitUserScripts = function() {
               response: t3
             }
           ];
+// ✏️ Intro section: appears before the question sections.
+// Each string in `paragraphs` becomes its own paragraph. Use **double asterisks** for bold.
+var introSection = {
+  title: "Introduction",
+  paragraphs: [
+    "In this lesson, you explored your role in change.",
+    "Hoppers Insurance is an Australian insurance company that has been supporting Australians for thirty years. After a company restructure and series of layoffs in different departments, agents were struggling to process client claims quickly while also managing other routine administerial tasks with the smaller headcount. Recognising that this workload was unsustainable for both clients and team members, the Hoppers leadership team decides to incorporate AI tools into their workflow to reduce congestion and stress. They have rebuilt the client-facing website to integrate AI tools.",
+    "You explored the two interfaces and read through an email from a disgruntled customer. Your responses are below."
+    
+  ],
+  // Label shown above the fillable box under the intro
+  fieldLabel: "Your thoughts:"
+};
 
+// Page-break check, same threshold the exercise loop uses
+if (y < FOOTER_RESERVE + 60) {
+  page = addPage();
+  y = pageH - 60;
+}
+
+y = drawSectionBanner(introSection.title, page, y);
+
+for (var ip = 0; ip < introSection.paragraphs.length; ip++) {
+  var paraResult = drawWrapped(introSection.paragraphs[ip], y, 11, font, BODY_GRAY, page);
+  page = paraResult.page;   // pick up whichever page we ended on
+  y = paraResult.y;
+  y -= 8;                   // small gap between paragraphs
+}
+
+y -= 6;                     // a little extra space before the text entry label
+
+// Fillable text entry spot under the intro paragraphs
+var introField = drawReflectionField(introSection.fieldLabel, page, y, 110);
+page = introField.page;
+y = introField.y;
+
+y -= 14; 
           for (var e = 0; e < exercises.length; e++) {
             var ex = exercises[e];
 
@@ -292,7 +328,7 @@ window.InitUserScripts = function() {
               font: font,
               color: MUTED_GRAY
             });
-            pg.drawText("Change Leadership Session 1 4/4", {
+            pg.drawText("Change Leadership Session 1 Your role in change", {
               x: margin,
               y: 32,
               size: labelSize,
@@ -307,7 +343,7 @@ window.InitUserScripts = function() {
             var url  = URL.createObjectURL(blob);
             var a    = document.createElement("a");
             a.href     = url;
-            a.download = "Change Leadership Session 1 4/4 AIM.pdf";
+            a.download = "Change Leadership Session 1 Your role in change AIM.pdf";
             a.style.display = "none";
             document.body.appendChild(a);
             a.click();
