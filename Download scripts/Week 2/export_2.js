@@ -57,11 +57,11 @@ window.InitUserScripts = function() {
             day: "2-digit", month: "long", year: "numeric"
           });
 
-          page.drawText("Change Leadership Session 1 What is change AIM", {
+          page.drawText("Change Leadership Session 2 Recognising when to change AIM", {
             x: margin, y: y, size: 21, font: fontBold, color: NAVY
           });
           y -= 22;
-          page.drawText("Change Leadership  ·  Session 1  · What is change  " + dateStr, {
+          page.drawText("Change Leadership  ·  Session 2  · Recognising when to change  " + dateStr, {
             x: margin, y: y, size: 11, font: font, color: MUTED_GRAY
           });
           y -= 14;
@@ -322,7 +322,7 @@ y -= 14;
               font: font,
               color: MUTED_GRAY
             });
-            pg.drawText("Change Leadership Session 1 What is change", {
+            pg.drawText("Change Leadership Session 2 Recognising when to change ", {
               x: margin,
               y: 32,
               size: labelSize,
@@ -337,7 +337,7 @@ y -= 14;
             var url  = URL.createObjectURL(blob);
             var a    = document.createElement("a");
             a.href     = url;
-            a.download = "Change Leadership Session 1 What is change AIM.pdf";
+            a.download = "Change Leadership Session 2 Recognising when to change AIM.pdf";
             a.style.display = "none";
             document.body.appendChild(a);
             a.click();
