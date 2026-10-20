@@ -228,7 +228,43 @@ window.InitUserScripts = function() {
               response: t3
             }
           ];
+// ✏️ Intro section: appears before the question sections.
+// Each string in `paragraphs` becomes its own paragraph. Use **double asterisks** for bold.
+var introSection = {
+  title: "Introduction",
+  paragraphs: [
+    "In this lesson, looked at what change is, and what being a change leader in a modern world means.",
+    "You explored how the modern workforce reacts to change, and what you as a change leader need to be prepared for when embarking on change in the modern time.",
+    "You also explored a long case study examining the history of Skype, looking at the decisions and external factors that shaped its journey."
+    
+  ],
+  // Label shown above the fillable box under the intro
+  fieldLabel: "Your thoughts:"
+};
 
+// Page-break check, same threshold the exercise loop uses
+if (y < FOOTER_RESERVE + 60) {
+  page = addPage();
+  y = pageH - 60;
+}
+
+y = drawSectionBanner(introSection.title, page, y);
+
+for (var ip = 0; ip < introSection.paragraphs.length; ip++) {
+  var paraResult = drawWrapped(introSection.paragraphs[ip], y, 11, font, BODY_GRAY, page);
+  page = paraResult.page;   // pick up whichever page we ended on
+  y = paraResult.y;
+  y -= 8;                   // small gap between paragraphs
+}
+
+y -= 6;                     // a little extra space before the text entry label
+
+// Fillable text entry spot under the intro paragraphs
+var introField = drawReflectionField(introSection.fieldLabel, page, y, 110);
+page = introField.page;
+y = introField.y;
+
+y -= 14; 
           for (var e = 0; e < exercises.length; e++) {
             var ex = exercises[e];
 
