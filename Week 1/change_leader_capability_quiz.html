@@ -278,6 +278,31 @@ const DATA = {
   }
 };
 
+const STORAGE_KEY = 'changeReadinessResults';
+
+function saveResults(teamTotals, selfTotals){
+  try {
+    const record = {
+      savedAt: new Date().toISOString(),
+      areas: AREAS,
+      team: teamTotals,
+      self: selfTotals
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(record));
+  } catch (e) {
+    console.warn('Could not save results', e);
+  }
+}
+
+function loadResults(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    return null;
+  }
+}
+
 function buildForm(formId, section){
   const form = document.getElementById(formId);
   AREAS.forEach(area=>{
@@ -327,6 +352,7 @@ function goToSlide(n){
   document.getElementById(`slide-${n}`).classList.add('active');
   currentSlide = n;
   updateButtons();
+  saveDraft();
 }
 function updateButtons(){
   document.querySelectorAll('.nav-button').forEach((btn,i)=>{
@@ -355,6 +381,8 @@ let chart;
 function showResults(){
   const teamTotals = AREAS.map(a=>sumArea('team', a));
   const selfTotals = AREAS.map(a=>sumArea('self', a));
+
+  saveResults(teamTotals, selfTotals);
 
   document.getElementById('CardHolder').classList.add('hidden');
   document.getElementById('displayed').classList.add('hidden');
@@ -392,6 +420,53 @@ function showResults(){
   html += '</ul><p>Areas with lower combined scores are the ones most worth focusing your change-readiness efforts on.</p>';
   results.innerHTML = html;
 }
+
+const previous = loadResults();
+if (previous) {
+  console.log('Last result from', previous.savedAt, previous);
+}
+
+
+const DRAFT_KEY = 'changeReadinessDraft';
+
+function saveDraft(){
+  try {
+    const answers = {};
+    document.querySelectorAll('input[type="radio"]:checked').forEach(input => {
+      answers[input.name] = Number(input.value);
+    });
+    localStorage.setItem(DRAFT_KEY, JSON.stringify({
+      savedAt: new Date().toISOString(),
+      slide: currentSlide,
+      answers
+    }));
+  } catch (e) {
+    console.warn('Could not save draft', e);
+  }
+}
+
+function loadDraft(){
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if (!raw) return;
+    const draft = JSON.parse(raw);
+    Object.entries(draft.answers || {}).forEach(([name, value]) => {
+      const input = document.querySelector(`input[name="${name}"][value="${value}"]`);
+      if (input) input.checked = true;
+    });
+    if (draft.slide === 1 || draft.slide === 2) goToSlide(draft.slide);
+  } catch (e) {
+    console.warn('Could not load draft', e);
+  }
+}
+
+function clearDraft(){
+  try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+}
+
+document.addEventListener('change', e => {
+  if (e.target.matches('input[type="radio"]')) saveDraft();
+});
 
 function backToAssessment(){
   document.getElementById('graphDisp').classList.add('hidden');

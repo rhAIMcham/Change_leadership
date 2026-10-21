@@ -6,6 +6,7 @@ window.InitUserScripts = function() {
     var ikea1 = localStorage.getItem("IKEAQ1") || "(no response saved)";
     var ikea2 = localStorage.getItem("IKEAQ2") || "(no response saved)";
     var ikea3 = localStorage.getItem("IKEAQ3") || "(no response saved)";
+    var quiz = localStorage.getItem("changeReadinessResults") || "(no response saved)";
 
     function loadScript(src, onload) {
       var s = document.createElement("script");
@@ -215,6 +216,11 @@ window.InitUserScripts = function() {
 
           // ✏️ Update titles, intro text, and reflection prompt to match your exercises
           var exercises = [ 
+            {
+              title: "Change Readiness Quiz",
+              intro: "You answered some questions about how ready you and your team were for change. Your results are recorded below.",
+              response: quiz
+            },
             {
               title: "Question 1 - Meta",
               intro: "How can leaders use their knowledge of customers, competitors and industry trends to identify changes before they become major challenges?",
