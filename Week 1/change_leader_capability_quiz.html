@@ -280,15 +280,23 @@ const DATA = {
 
 const STORAGE_KEY = 'changeReadinessResults';
 
+const DISPLAY_LABELS = {
+  'Team identity': 'Identity',
+  'Communication': 'Communication',
+  'Resilience': 'Resilience'
+};
+
+function formatResults(teamTotals, selfTotals){
+  const block = (title, scores) =>
+    [title]
+      .concat(AREAS.map((area, i) => `${DISPLAY_LABELS[area]} - ${scores[i]}/9`))
+      .join('\n');
+  return block('Team', teamTotals) + '\n' + block('Self', selfTotals);
+}
+
 function saveResults(teamTotals, selfTotals){
   try {
-    const record = {
-      savedAt: new Date().toISOString(),
-      areas: AREAS,
-      team: teamTotals,
-      self: selfTotals
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(record));
+    localStorage.setItem(STORAGE_KEY, formatResults(teamTotals, selfTotals));
   } catch (e) {
     console.warn('Could not save results', e);
   }
@@ -296,8 +304,7 @@ function saveResults(teamTotals, selfTotals){
 
 function loadResults(){
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
+    return localStorage.getItem(STORAGE_KEY);   // plain text now, no JSON.parse
   } catch (e) {
     return null;
   }
@@ -422,10 +429,7 @@ function showResults(){
 }
 
 const previous = loadResults();
-if (previous) {
-  console.log('Last result from', previous.savedAt, previous);
-}
-
+if (previous) console.log('Last saved result:\n' + previous);
 
 const DRAFT_KEY = 'changeReadinessDraft';
 
