@@ -225,7 +225,7 @@ window.InitUserScripts = function() {
             {
               title: "Quiz result",
               intro: "You answered some questions in a quiz about emotional intelligence. Your scores are included below.",
-              response: t2
+              response: t3
             }
           ];
 // ✏️ Intro section: appears before the question sections.
