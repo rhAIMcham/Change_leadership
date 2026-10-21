@@ -2,6 +2,7 @@ window.InitUserScripts = function() {
   window.Script1 = function() {
     var t1 = localStorage.getItem("mod3scenario2Q1") || "(no response saved)";
     var t2 = localStorage.getItem("mod3scenario2Q2") || "(no response saved)";
+    var t3 = localStorage.getItem("EmotionalIntelligenceResults") || "(no response saved)";
 
     function loadScript(src, onload) {
       var s = document.createElement("script");
@@ -220,6 +221,11 @@ window.InitUserScripts = function() {
               title: "Question 2 - Changing technology",
               intro: "What steps would you take to safely process your emotions during a highly stressful situation? How would you respond if your team member became upset, angry or confused?",
               response: t2
+            },
+            {
+              title: "Quiz result",
+              intro: "You answered some questions in a quiz about emotional intelligence. Your scores are included below.",
+              response: t2
             }
           ];
 // ✏️ Intro section: appears before the question sections.
@@ -228,7 +234,8 @@ var introSection = {
   title: "Introduction",
   paragraphs: [
     "In this lesson, you looked at emotional intelligence. Developing emotional intelligence assists leaders in understanding and managing their own emotions while recognising and responding effectively to the emotions of others.",
-    "You responded to a scenario where you were informed one of your direct reports was being made redundant. You were asked two questions about this and your answers are stored below."
+    "You responded to a scenario where you were informed one of your direct reports was being made redundant. You were asked two questions about this and your answers are stored below.",
+    "You also completed a quiz about emotional intelligence. Your answers are stored below."
     
   ],
   // Label shown above the fillable box under the intro
