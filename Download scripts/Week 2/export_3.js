@@ -1,11 +1,10 @@
 window.InitUserScripts = function() {
   window.Script1 = function() {
-    var t1 = localStorage.getItem("metaQ1") || "(no response saved)";
-    var t2 = localStorage.getItem("metaQ2") || "(no response saved)";
-    var t3 = localStorage.getItem("metaQ3") || "(no response saved)";
-    var ikea1 = localStorage.getItem("IKEAQ1") || "(no response saved)";
-    var ikea2 = localStorage.getItem("IKEAQ2") || "(no response saved)";
-    var ikea3 = localStorage.getItem("IKEAQ3") || "(no response saved)";
+    var t1 = localStorage.getItem("bluegumSCE2Q1") || "(no response saved)";
+    var t2 = localStorage.getItem("bluegumSCE2Q2") || "(no response saved)";
+    var s1 = localStorage.getItem("theSillQ1") || "(no response saved)";
+    var s2 = localStorage.getItem("theSillQ2") || "(no response saved)";
+    var s3 = localStorage.getItem("theSillQ3") || "(no response saved)"; 
 
     function loadScript(src, onload) {
       var s = document.createElement("script");
@@ -61,11 +60,11 @@ window.InitUserScripts = function() {
             day: "2-digit", month: "long", year: "numeric"
           });
 
-          page.drawText("Change Leadership Session 1 Change in the workplace AIM", {
+          page.drawText("Change Leadership - Diagnosis", {
             x: margin, y: y, size: 21, font: fontBold, color: NAVY
           });
           y -= 22;
-          page.drawText("Change Leadership  ·  Session 1  · Change in the workplace  " + dateStr, {
+          page.drawText("Change Leadership  ·  Session 2  · Diagnosis" + dateStr, {
             x: margin, y: y, size: 11, font: font, color: MUTED_GRAY
           });
           y -= 14;
@@ -216,46 +215,39 @@ window.InitUserScripts = function() {
           // ✏️ Update titles, intro text, and reflection prompt to match your exercises
           var exercises = [ 
             {
-              title: "Question 1",
-              intro: "How can leaders use their knowledge of customers, competitors and industry trends to identify changes before they become major challenges?",
+              title: "Question 1 - Bluegum Builders",
+              intro: "What actions would you take as a leader to address these ongoing challenges and reduce the impact on staff?",
               response: t1
             },
             {
-              title: "Question 2",
-              intro: "What can happen when an organisation responds to change only after it becomes a major problem?",
+              title: "Question 2 - Bluegum Builders",
+              intro: "How would you diagnose the problem to determine whether the remaining issues are technical, adaptive or a combination of both?",
               response: t2
             },
             {
-              title: "Question 3",
-              intro: "How can leaders use the results of previous changes to improve the way they respond to future challenges?",
-              response: t3
+              title: "Question 1 - The Sill",
+              intro: "What factors should leaders consider when deciding whether a challenge requires a technical solution, an adaptive response, or a combination of both?",
+              response: s1
             },
             {
-              title: "Question 1",
-              intro: "How can leaders use their knowledge of customers, competitors and industry trends to identify changes before they become major challenges?",
-              response: ikea1
+              title: "Question 2 - The Sill",
+              intro: "How can leaders identify specific needs without alienating other potential customers?",
+              response: s2
             },
             {
-              title: "Question 2",
-              intro: "What can happen when an organisation responds to change only after it becomes a major problem?",
-              response: ikea2
-            },
-            {
-              title: "Question 3",
-              intro: "How can leaders use the results of previous changes to improve the way they respond to future challenges?",
-              response: ikea3
+              title: "Question 3 - The Sill",
+              intro: "How can leaders create the conditions for an organisation to adapt when existing approaches are already successful?",
+              response: s3
             }
           ];
-
-          // ✏️ Intro section: appears before the question sections.
+// ✏️ Intro section: appears before the question sections.
 // Each string in `paragraphs` becomes its own paragraph. Use **double asterisks** for bold.
 var introSection = {
   title: "Introduction",
   paragraphs: [
-    "In this lesson, you explored change in the workplace.",
-    "You looked at incremental or developmental change, transitional, rapid or developmental change and transrformational or continuous change. You looked at common factors for change, and reasons against change.",
-    "You also looked at some traditional change methodologies, and examined how change failed at Meta. Your answers are recorded below.",
-    "You also explored successful change, and looked at how IKEA implemented successful change to its workforce."
+    "In this lesson, you read about diagnosing the problem and the process. Misdiagnosing an adaptive challenge as technical can result in quick fixes that fail to address the underlying issue, contributing to frustration, resistance and recurring problems. Accurate diagnosis can identify the source of the problem and determine the most productive response.",
+    "You listened to a voice mail and were asked to respond to it. The voicemail was from someone in your network reaching out for advice. Your responses are recorded below.",
+    "You also read through a case study about The Sill, and responded to some questions. Your answers are stored below."
     
   ],
   // Label shown above the fillable box under the intro
@@ -348,7 +340,7 @@ y -= 14;
               font: font,
               color: MUTED_GRAY
             });
-            pg.drawText("Change Leadership Session 1 Change in the workplace", {
+            pg.drawText("Change Leadership Session 2 Diagnosis ", {
               x: margin,
               y: 32,
               size: labelSize,
@@ -363,7 +355,7 @@ y -= 14;
             var url  = URL.createObjectURL(blob);
             var a    = document.createElement("a");
             a.href     = url;
-            a.download = "Change Leadership Session 1 Change in the workplace AIM.pdf";
+            a.download = "Change Leadership Session 2 Diagnosis.pdf";
             a.style.display = "none";
             document.body.appendChild(a);
             a.click();

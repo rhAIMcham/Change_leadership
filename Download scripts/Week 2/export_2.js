@@ -57,7 +57,7 @@ window.InitUserScripts = function() {
             day: "2-digit", month: "long", year: "numeric"
           });
 
-          page.drawText("Change Leadership Session 2 Recognising when to change AIM", {
+          page.drawText("Change Leadership - Recognising when to change", {
             x: margin, y: y, size: 21, font: fontBold, color: NAVY
           });
           y -= 22;

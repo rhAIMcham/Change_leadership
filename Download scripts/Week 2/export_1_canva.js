@@ -2,7 +2,7 @@ window.InitUserScripts = function() {
   window.Script1 = function() {
     var t1 = localStorage.getItem("canvaQ1") || "(no response saved)";
     var t2 = localStorage.getItem("canvaQ2") || "(no response saved)";
-    var t3 = localStorage.getItem("canvaQ3") || "(no response saved)"; curiosityNotes1
+    var t3 = localStorage.getItem("canvaQ3") || "(no response saved)"; 
     var c1 = localStorage.getItem("curiosityNotes1") || "(no response saved)";
     var c2 = localStorage.getItem("curiosityNotes2") || "(no response saved)";
     var c3 = localStorage.getItem("curiosityNotes3") || "(no response saved)";
@@ -61,7 +61,7 @@ window.InitUserScripts = function() {
             day: "2-digit", month: "long", year: "numeric"
           });
 
-          page.drawText("Change Leadership Session 2 Adaptive leadership in the workplace AIM", {
+          page.drawText("Change Leadership - Adaptive leadership in the workplace", {
             x: margin, y: y, size: 21, font: fontBold, color: NAVY
           });
           y -= 22;
@@ -216,37 +216,37 @@ window.InitUserScripts = function() {
           // ✏️ Update titles, intro text, and reflection prompt to match your exercises
           var exercises = [ 
                         {
-              title: "Curiosity in the workplace",
+              title: "Curiosity in the workplace - Workplace curiosity",
               intro: "Strategies to support curiosity in the workplace, such as encouraging questions without judgement.",
               response: c1
             },
                         {
-              title: "Empower experimentation and exploration",
+              title: "Empower experimentation and exploration - Workplace curiosity",
               intro: "Strategies to empower experimentation and exploration in the workplace, such as creating opportunities to experiment.",
               response: c2
             },
                         {
-              title: "Build collaboration and diversity",
+              title: "Build collaboration and diversity - Workplace curiosity",
               intro: "Strategies to build collaboration and diversity in the workplace, such as sharing responsibility and providing meaningful opportunities to contribute.",
               response: c3
             },
                         {
-              title: "Recognise and reward curiosity",
+              title: "Recognise and reward curiosity - Workplace curiosity",
               intro: "Strategies to recognise and reward curiosity, such as avoiding punishing reasonable experimentation by distinguishing between thoughtful learning opportunities and avoidable mistakes caused by poor planning.",
               response: c4
             },
             {
-              title: "Question 1",
+              title: "Question 1 - Canva",
               intro: "What different challenges did Canva face as it introduced AI, and how did these challenges interact with each other?",
               response: t1
             },
             {
-              title: "Question 2",
+              title: "Question 2 - Canva",
               intro: "How can leaders effectively lead their teams through significant change?",
               response: t2
             },
             {
-              title: "Question 3",
+              title: "Question 3 - Canva",
               intro: "How can leaders remain adaptable when circumstances, expectations and priorities change?",
               response: t3
             }
@@ -256,9 +256,8 @@ window.InitUserScripts = function() {
 var introSection = {
   title: "Introduction",
   paragraphs: [
-    "In this lesson, looked at what change is, and what being a change leader in a modern world means.",
-    "You explored how the modern workforce reacts to change, and what you as a change leader need to be prepared for when embarking on change in the modern time.",
-    "You also explored a long case study examining the history of Skype, looking at the decisions and external factors that shaped its journey."
+    "In this lesson, looked at the adaptive leader mindset and skillset. The adaptive leadership mindset begins with curiosity, humility, and an acceptance of uncertainty. Adaptive leaders recognise that complex challenges rarely have a single correct answer, and that their own expertise is not the only resource available to solve problems in the workplace. Asking questions, seeking perspectives and remaining open to learning allows leaders to consider and reflect before reacting.",
+    "You also explored a long case study examining the history of Canva, looking at the decisions and external factors that shaped its journey."
     
   ],
   // Label shown above the fillable box under the intro
