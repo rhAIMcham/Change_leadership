@@ -1,0 +1,395 @@
+<head>
+<style>
+    /* =====================================================
+       1. VARIABLES  – change colours, sizes and spacing here
+       ===================================================== */
+    :root {
+      /* Brand colours */
+      --AIMblue: #4353A3;
+      --navy: #12195C;
+      --lightBlue: #AEBAE4;
+      --grey: #e7e9ec;
+      --cream: #F1EEDE;
+
+      /* Text colours */
+      --text-body: #768390;
+      --text-heading: #3D4351;
+      --text-secondary: #666660;
+
+      /* Timeline line colour */
+      --line-colour: #CCD5DB;
+
+      /* Sizes */
+      --page-margin: 170px;       /* left/right page margin */
+      --base-font-size: 19px;
+      --image-height: 220px;      /* period image height */
+      --radius-lg: 12px;
+    }
+
+
+    /* =====================================================
+       2. PAGE & TYPOGRAPHY
+       ===================================================== */
+    body {
+      margin: 0 var(--page-margin);
+      padding: 0;
+      background: #FFF;
+      color: var(--text-body);
+      font-family: "Effra", Helvetica, sans-serif;
+      font-size: var(--base-font-size);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      color: var(--text-heading);
+      margin-top: 0;
+    }
+
+    h2.timeline-title { font-size: 2em; }     /* period headings (e.g. 1930s) */
+    h3.timeline-title { font-size: 1.5em; }   /* entry headings */
+
+    .timeline-content p { font-size: 1em; }
+    .timeline-info span { font-size: 1.05em; }
+
+    a { color: var(--AIMblue); }
+    a:hover {
+      color: var(--lightBlue);
+      text-decoration: none;
+    }
+
+    .container-fluid .row { padding: 4rem 0; }
+
+
+    /* =====================================================
+       3. TIMELINE STRUCTURE
+       ===================================================== */
+    .timeline {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      line-height: 1.4em;
+    }
+
+    .timeline h1,
+    .timeline h2,
+    .timeline h3 { line-height: inherit; }
+
+    .timeline-item {
+      position: relative;
+      padding-left: 40px;
+    }
+
+    .timeline-item:last-child { padding-bottom: 0; }
+
+    /* Date / label shown beside each entry */
+    .timeline-info {
+      margin: 0 0 .5em;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .timeline-content { padding-bottom: 40px; }
+    .timeline-content p:last-child { margin-bottom: 0; }
+    .timeline-content > table { width: 100%; }
+
+
+    /* =====================================================
+       4. TIMELINE MARKER (dot + vertical line)
+       ===================================================== */
+    .timeline-marker {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 15px;
+    }
+
+    /* The dot */
+    .timeline-marker:before {
+      content: "";
+      display: block;
+      position: absolute;
+      top: 4px;
+      left: 0;
+      width: 15px;
+      height: 15px;
+      background: var(--AIMblue);
+      border: 3px solid transparent;
+      border-radius: 100%;
+      transition: background .3s, border .3s;
+    }
+
+    /* The vertical line */
+    .timeline-marker:after {
+      content: "";
+      display: block;
+      position: absolute;
+      top: 24px;
+      bottom: 0;
+      left: 6px;
+      width: 3px;
+      background: var(--line-colour);
+    }
+
+    .timeline-item:last-child .timeline-marker:after { content: none; }
+
+    /* Hover: dot becomes a ring */
+    .timeline-item:not(.period):hover .timeline-marker:before {
+      background: transparent;
+      border: 3px solid var(--lightBlue);
+    }
+
+
+    /* =====================================================
+       5. PERIOD HEADERS (1930s, 1950s, etc.)
+       ===================================================== */
+    .period { padding: 0; }
+
+    .period .timeline-info { display: none; }
+
+    .period .timeline-marker:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 30px;
+      width: 15px;
+      height: auto;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      border-top: 3px solid var(--line-colour);
+      border-bottom: 3px solid var(--line-colour);
+    }
+
+    .period .timeline-marker:after {
+      content: "";
+      top: auto;
+      height: 32px;
+    }
+
+    .period .timeline-content { padding: 40px 0 70px; }
+    .period .timeline-title { margin: 0; }
+
+
+    /* =====================================================
+       6. DESKTOP LAYOUT (tablet and wider)
+       ===================================================== */
+    @media (min-width: 768px) {
+      .timeline-split .timeline,
+      .timeline-centered .timeline { display: table; }
+
+      .timeline-split .timeline-item,
+      .timeline-centered .timeline-item {
+        display: table-row;
+        padding: 0;
+      }
+
+      .timeline-split .timeline-info,
+      .timeline-centered .timeline-info,
+      .timeline-split .timeline-marker,
+      .timeline-centered .timeline-marker,
+      .timeline-split .timeline-content,
+      .timeline-centered .timeline-content,
+      .timeline-split .period .timeline-info {
+        display: table-cell;
+        vertical-align: top;
+      }
+
+      .timeline-split .timeline-marker,
+      .timeline-centered .timeline-marker { position: relative; }
+
+      .timeline-split .timeline-content,
+      .timeline-centered .timeline-content { padding-left: 30px; }
+
+      .timeline-split .timeline-info,
+      .timeline-centered .timeline-info { padding-right: 30px; }
+
+      .timeline-split .period .timeline-title,
+      .timeline-centered .period .timeline-title {
+        position: relative;
+        left: -45px;
+      }
+    }
+
+
+    /* =====================================================
+       7. IMAGES & CAPTIONS
+       ===================================================== */
+    .single-image-panel {
+      margin: 0;
+      overflow: hidden;
+      background: var(--grey);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .08);
+    }
+
+    .single-image-panel.period-image {
+      max-width: 100%;
+      margin-top: 16px;
+    }
+
+    .single-image-panel img {
+      display: block;
+      width: 100%;
+      height: var(--image-height);
+      object-fit: cover;
+      object-position: left center;   /* which part of the image stays visible */
+    }
+
+    .gallery-caption {
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      border-top: 3px solid var(--AIMblue);
+    }
+
+
+    /* =====================================================
+       8. QUOTES
+       ===================================================== */
+    .timeline-quote {
+      margin: 18px 0;
+      padding: 14px 20px;
+      background: var(--cream);
+      border-left: 4px solid var(--AIMblue);
+      border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+      color: var(--navy);
+      font-style: italic;
+    }
+
+    /* Attribution line under a quote */
+    .timeline-quote cite {
+      display: block;
+      margin-top: 8px;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--text-secondary);
+    }
+</style>
+</head>
+<body>
+<div class="container-fluid"><div class="row example-basic"><div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+
+<ul class="timeline">
+
+<!-- 1930s -->
+<li class="timeline-item period"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<h2 class="timeline-title">1930s</h2>
+<div class="single-image-panel period-image"><img src="https://s3.ap-southeast-2.amazonaws.com/learn.aim.com.au/Guided+Pathways/Change+Leadership/Module+4/rmwilliams/rmwilliams_1.png" alt="A black and white photograph of a man working in a rudimentary workshop with the text 'Early Days'."><div class="gallery-caption">Rufus Wilton, an Adnyamathanha man working in William's original factory.</div></div>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>Early life</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>Reginald Murray Williams was the found of the now ubiquitous Australian footwear and clothing manufacturer, R.M. Williams. Growing up in a rural community in the early 20th century, Williams developed practical skills in horsemanship and leatherworking. Disinterested in formal education and reluctant to embrace his family’s move to Adelaide, he left home at 16 years old to explore the Australian bush, living and working alongside local Aboriginal communicates and taking on various rural occupations.<br><br>
+The Great Depression further disrupted traditional rural life, forcing Williams and many others to seek new opportunities elsewhere.</p>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>1930s</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>During this period, Williams worked across south-west and central Australia as a lime burner, camel driver and drover. While living near the Nepabunna Mission at Italowie Gorge with his first wife, Thelma, he met travelling stockman Michael George Smith, a skilled Aboriginal leatherworker known as Dollar Mick. Dollar Mick helped Williams make his first pair of boots, initially out of practical necessity when cash were scarce and workers often received payment in kind.<br><br>
+Combining Dollar Mick’s craftmanship with Williams’ determination, they developed the distinctive ‘one piece of leather’ boot design that would become synonymous with R.M. Williams and establish the foundations of the iconic Australian brand.</p>
+<blockquote class="timeline-quote">“My success began the night Dollar came in his mule buggy and asked me to stay.”<cite>Williams, 1984</cite></blockquote>
+<p>The durable, seamless boot design combined Williams’ leatherworking expertise with practical features for stockmen, and early sales to local customers and influential pastoralist Sir Sidney Kidman helped him recognise and expand the commercial potential of his business.<br><br>
+With assistance from the local Adnyamathanha people, Williams expanded his business to include other leatherworking products, producing and selling shoes, saddles and bridles to the locals in the foothills of the Flinders Rangers.</p>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>1934</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>By 1934, tension with the neighbouring mission and ambitions for further growth prompted Willims to relocate his workshop to Percy Street in Adelaide, establishing a small factory on his father’s property and reaching a broader customer base. Although the demand for his boots continued to grow, building a profitable business proved challenging. When an opportunity arose to invest in a gold mine in the Northern Territory, Williams took a calculated risk that paid off, with the mine eventually becoming one of the most productive of its size.</p>
+</div></li>
+
+<!-- 1950s -->
+<li class="timeline-item period"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<h2 class="timeline-title">1950s</h2>
+<div class="single-image-panel period-image"><img src="https://s3.ap-southeast-2.amazonaws.com/learn.aim.com.au/Guided+Pathways/Change+Leadership/Module+4/rmwilliams/rmwilliams_2.png" alt="An image saying 'Expansion' with illustrations of lace up boots."><div class="gallery-caption">Success in Adelaide</div></div>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>Following the success of his business and gamble with the gold mine investment, Williams established himself as a wealthy Adelaide businessman. The company expanded beyond boots to produce hats and clothing for rural communities, selling through its factory shopfront and mail order. However, city life did not suit Williams, and as his marriage to Thelma deteriorated, he left Adelaide and eventually relocated to Queensland, where he spent the remainder of his life.<br><br>
+Despite his distance from Adelaide, Williams remained closely involved in the business, using his wealth to invest in skilled workers, better production methods and high-quality leather. As the company grew, the durability and craftmanship of its products became central to its reputation, establishing a distinct brand identity built around handmade Australian footwear made to last.</p>
+</div></li>
+
+<!-- 1960s -->
+<li class="timeline-item period"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<h2 class="timeline-title">1960s</h2>
+<div class="single-image-panel period-image"><img src="https://s3.ap-southeast-2.amazonaws.com/learn.aim.com.au/Guided+Pathways/Change+Leadership/Module+4/rmwilliams/rmwilliams_3.png" alt="An image saying 'The Craftsman' showing the iconic boot in its original advertisement."><div class="gallery-caption">Pushing the form to new heights</div></div>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>In the 1960s, R.M. Williams introduced one of its most iconic designs, the 1966 Craftsman, marking the brand’s successful move into broad use footwear. Combining a refined silhouette with traditional leatherworking techniques, the boot offered both style and durability. Its hand-stitched, replaceable sole also was also distinct from many competitors glue-based construction methods.<br>
+Drawing on three decades of experience, Williams retained his signature one-piece leather construction while creating a more premium design that appealed to a broader Australian market.</p>
+</div></li>
+
+<!-- 1970s -->
+<li class="timeline-item period"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<h2 class="timeline-title">1970s</h2>
+<div class="single-image-panel period-image"><img src="https://s3.ap-southeast-2.amazonaws.com/learn.aim.com.au/Guided+Pathways/Change+Leadership/Module+4/rmwilliams/rmwilliams_4.png" alt="An image saying Nation wide stores with an illustration of the RM Williams workshop."><div class="gallery-caption">Crossing the border from South Australia</div></div>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>In 1978, R.M. Williams opened its first store outside Adelaide in Toowoomba, Queensland. Until then, the business had relied largely on mail orders and third-party retailers, with customers often measuring their own feet to purchase footwear. With Williams now based in Queensland and rapidly gaining celebrity status, the company expanded its retail presence to Sydney, Melbourne, Brisbane and Perth.<br>
+R.M. Williams also began accepting international mail orders, taking the brand to customers around the world.</p>
+</div></li>
+
+<!-- 1980s -->
+<li class="timeline-item period"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<h2 class="timeline-title">1980s</h2>
+<div class="single-image-panel period-image"><img src="https://s3.ap-southeast-2.amazonaws.com/learn.aim.com.au/Guided+Pathways/Change+Leadership/Module+4/rmwilliams/rmwilliams_5.png" alt="An image of the iconic crocodile dundee hat, which RM Williams would go on to sell versions of, with the text international stage"><div class="gallery-caption">Australian tourism explodes</div></div>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>Early 1980s</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>As the Australian national identity became associated with the outback and the mythology of the bushman, R.M. Williams’ connection to this heritage became a powerful part of its brand identity. Throughout the 1980s, its boots came to symbolise a practical, hardworking and distinctly Australian way of life reinforced by the reputation of its founder. This image aligned with Australia’s growing international reputation for an easy-going, adventurous and distinctly ‘larrikin’ spirit, popularised through cultural figures and films such as Crocodile Dundee and, later, Steve Irwin.</p>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>1988</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>By the late 1980s, Williams was in his eighties and, in 1988, sold the business to South Australian stock and station agents Bennett &amp; Fisher Limited. In his later years, he turned his attention to preserving Australia’s rural heritage and advocating for regional communications. Among his contributions was establishing the Australian Stockman’s Hall of Fame in 1988, where his early collaborator Dollar Mick is also memorialised.<br>
+Under its new ownership, R.M. Williams sought to capitalise on growing international interest in Australian brands and expanded its overseas distribution. In 1989, the company opened its first international store in Knightsbridge, London. However, production limitations and internal challenges within the parent company would soon constrain further expansion.</p>
+</div></li>
+
+<!-- 1990s -->
+<li class="timeline-item period"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<h2 class="timeline-title">1990s</h2>
+<div class="single-image-panel period-image"><img src="https://s3.ap-southeast-2.amazonaws.com/learn.aim.com.au/Guided+Pathways/Change+Leadership/Module+4/rmwilliams/rmwilliams_6.png" alt="An image saying In New Hands with a photograph of Ken Cowley"><div class="gallery-caption">Ken Cowley, who stepped in to rescue the business.</div></div>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>Following yeas of mismanagement, Bennett &amp; Fisher Limited collapsed into bankruptcy in 1993, unable to overcome debts of nearly $16 million. After a period of financial uncertainty, R.M. Williams was rescued by Kerry Stokes and Ken Cowley, who restructured the business as R.M. Williams Holdings in 1995. Stokes, then chair of Australia’s Seven Network, brought the resources and business experience needed to stabilise the brand.<br>
+Under the new ownership, R.M. Williams continued to expand beyond its rural origins, finding a place in corporate offices and premium city markets. The 1990s saw manufacturing for all goods remain in Australia, with moleskin and denim proving popular choices from their catalogue.<br><br>
+The brand also gained international recognition, with Bill Clinton famously photographed wearing its boots during his first presidential campaign, followed by a growing number of high-profile admirers.</p>
+</div></li>
+
+<!-- 2000s -->
+<li class="timeline-item period"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<h2 class="timeline-title">2000s</h2>
+<div class="single-image-panel period-image"><img src="https://s3.ap-southeast-2.amazonaws.com/learn.aim.com.au/Guided+Pathways/Change+Leadership/Module+4/rmwilliams/rmwilliams_7.png" alt="An image saying 'convenient comfort' with a pair of RM williams boots showcasing their rubber soles."><div class="Introducing rubber soles">Caption: 2000s</div></div>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>2000</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>With its new ownership team, R.M. Williams expanded its product range and pursed several high-profile brand partnerships, including the 2000 Sydney Olympics. These collaborations promoted the brand as a proud Australian product to an international audience. The company also introduced greater variety in its footwear, expanding its range of rubber-soled boots to meet changing customer preferences.</p>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"><span>Mid 2000s</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>While traditional boots featured leather soles, rubber alternatives offered greater comfort and practicality for customers spending more time walking on city footpaths and slippery urban surfaces.<br>
+However, the company faced increasing economic pressures as domestic manufacturing costs arose. Although footwear production remained at its original South Australian workshop, some garment manufacturing moved overseas to reduce expenses.<br><br>
+At $350 a pair, Craftsman boots were becoming increasingly expensive, while the brand struggled to define its place between traditional workwear and corporate footwear. Combined with difficult economic conditions for Australian farmers and rural communities, this uncertainty contributed to declining profits and a loss of connection with some of its traditional customers, a market that would prove difficult to win back.</p>
+</div></li>
+
+<!-- 2010s -->
+<li class="timeline-item period"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<h2 class="timeline-title">2010s</h2>
+<div class="single-image-panel period-image"><img src="https://s3.ap-southeast-2.amazonaws.com/learn.aim.com.au/Guided+Pathways/Change+Leadership/Module+4/rmwilliams/rmwilliams_8.png" alt="An image saying Luxury with an image of the RM Williams store in London."><div class="gallery-caption">Elevation to a luxury brand</div></div>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>In 2013, R.M. Williams was acquired by Singapore-based L Catterton Asia, a private equity firm backed by luxury fashion group LVMH. Under its new leadership, the company increasingly targeted urban customers who were attracted to the aesthetic and comfort of the shoes without having a personal connection to the brands’ rural origins.<br><br>
+This shift towards the luxury market saw prices rise from a few hundred dollars to around $495 by 2016. Significant investment also supported international expansion, with stores opening in cities including New York and London, while products reached almost 500 department stores worldwide.<br><br>
+By this point, R.M. Williams boots had evolved from practical rural workwear into a symbol of corporate Australian identity and premium fashion. The boots were popular with members of parliament and different celebrity figures, including High Jackman, who also acted as a brand ambassador and 5% equity owner. While this repositioning strengthened sales and international recognition, rising prices placed on the boots beyond the reach of many traditional customers.<br><br>
+Questions about manufacturing practices and the influence of international ownership also generated uncertainty among loyalists about whether the products justified their premium price. The brand responded by revisiting its archives and adopting a classic, timeless aesthetic across its marketing, packaging and retail stores, recognising that luxury pricing required a premium customer experience.</p>
+</div></li>
+
+<!-- 2020s -->
+<li class="timeline-item period"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<h2 class="timeline-title">2020s</h2>
+<div class="single-image-panel period-image"><img src="https://s3.ap-southeast-2.amazonaws.com/learn.aim.com.au/Guided+Pathways/Change+Leadership/Module+4/rmwilliams/rmwilliams_9.png" alt="An image saying Timeless charm with a photograph of modern RM Williams boots"><div class="gallery-caption">Preserving legacy while modernising</div></div>
+</div></li>
+<li class="timeline-item"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>In 2020, R.M. Williams was acquired by Australian mining billionaires Andrew and Nicola Forrest’s Tattarang group for $190 million, returning the brand to Australian ownership. The new owners refocused on its heritage and Australian identity, appointing former Nike executive Paul Grosman and investing in local manufacturing. This included upgrading the original South Australian factory and opening a second Adelaide workshop in 2025, increasing production capacity while keeping a commitment to Australian-made products.<br><br>
+The company also expanded its repair operations, which receive around 30,000 pairs of boots annually, and brough leather wallet production in-house for the first time. Brand partnerships further strengthened its connection to Australian culture, including outfitting the Commonwealth Games team in 2022 and launching a multi-year collaboration with Rugby Australia in 2023.<br><br>
+Recognising that its products were not suited to increasingly short fashion cycles, R.M. Williams refocused in durability, quality and sustainability. It achieved B Corp certification in 2024 and strengthened its commitments to renewable energy, reducing carbon emissions, workplace equality and natural fibres.<br>
+These investments have supported significant revenue growth and expanded international reach, particularly in the UK, although substantial manufacturing and infrastructure investment means profitability remains a longer-term goal.</p>
+</div></li>
+
+</ul></div></div></div>
+</body>

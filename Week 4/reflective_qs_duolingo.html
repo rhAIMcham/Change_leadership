@@ -1,0 +1,184 @@
+<style>
+
+  :root {
+  --AIMblue: #4353A3;
+  --darkBlue: #38416D;
+  --teal: #5DC8B9;
+  --cream: #F1EEDE;
+  --grey: #e7e9ec;
+  --rust: #AF4510;
+  --navy: #12195C;
+  --white: #ffffff;
+  --lightBlue: #AEBAE4;
+  }
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+.notesBox {
+ max-width: 700px; 
+ margin: 30px auto; 
+ padding: 1rem; 
+ background: #f8f9fa; 
+ border-radius: 12px; 
+ box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+textarea {
+width: 95%;
+padding: 0.75rem;
+border-radius: 8px;
+border: 1px solid #ccc;
+resize: vertical;
+font-size: 1rem; 
+font-family: 'Inter', sans-serif;
+}
+ .saved {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
+    margin-top: 0.5rem;
+ }
+
+ .savedMsg {
+ font-size: 0.9rem;
+color: var(--lightBlue);
+ opacity: 0;
+ transition: opacity 0.4s ease;
+ margin: 0;
+ min-width: 60px;   
+ }
+
+ .saveBtn {
+background-color: var(--navy); 
+color: white; 
+border: none; 
+border-radius: 6px;
+      padding: 0.5rem 1.25rem; 
+      font-size: 1rem; 
+      cursor: pointer;
+ }
+
+.questionText {
+margin-bottom: 0.5rem;
+font-size: 1rem;
+padding: 5px;
+}
+
+.modelAnswer {
+  display: none;
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--cream);
+  border-left: 4px solid var(--teal);
+  border-radius: 6px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--navy);
+}
+
+.modelAnswer.visible {
+  display: block;
+}
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+<div class="notesBox">
+    <h3>Rapidly adapting to challenges and managing risk</h3>
+  <p class="questionText">How can leaders balance the need to respond quickly to emerging opportunities with the responsibility to assess risks, consider unintended consequences and protect long-term organisational success?</p>
+
+  <textarea id="notesInput1" rows="8"
+    ></textarea>
+
+  <!-- Flexbox row: Saved! stays left, Save button stays right -->
+  <div class="saved" >
+    <p id="statusMsg1" class="savedMsg">Saved!</p>
+    <button id="saveBtn1" class="saveBtn">Save</button>
+  </div>
+
+  <div id="modelAnswer1" class="modelAnswer">
+	Rapid adaptation allows organisations to remain relevant, respond to changing customer expectations and take advantage of opportunities when they materialise. For successful change, it must be acknowledged that the risks associated with rapid change increase when decisions affect the organisation’s core product or reputation. Leaders need to distinguish between changes that are relatively easy to reverse, such as experimenting with social media content, and changes that may have more significant consequences, like altering how learning content is produced.  
+  </div>
+</div>
+
+
+<div class="notesBox">
+    <h3>Building an identity while meeting organisational goals</h3>
+  <p class="questionText">How can leaders maintain a distinctive and authentic organisational identity while pursuing commercial objectives and operational efficiency? What should they do when priorities began to conflict?</p>
+
+  <textarea id="notesInput2" rows="8"
+    ></textarea>
+
+  <div class="saved" >
+    <p id="statusMsg2" class="savedMsg">Saved!</p>
+    <button id="saveBtn2" class="saveBtn">Save</button>
+  </div>
+
+  <div id="modelAnswer2" class="modelAnswer">
+	A strong organisational identity can distinguish a company from competitors, build an emotional connection with customers and improve the overall experience a company can provide. However, when an organisation pivots or pursues new goals, these decisions can conflict with the values and expectations that helped establish its reputation. This does not mean an organisation must avoid innovation, but instead align new approaches with the organisation’s purpose, and assess whether changes compromise the quality of the customer experience.
+  </div>
+</div>
+
+<div class="notesBox">
+    <h3>Planning for future uncertainty and emerging risks</h3>
+  <p class="questionText">How should leaders use an organisation’s existing strengths to plan for future growth without assuming previous success will protect them from emerging risks?</p>
+
+  <textarea id="notesInput3" rows="8"
+    ></textarea>
+
+  <div class="saved" >
+    <p id="statusMsg3" class="savedMsg">Saved!</p>
+    <button id="saveBtn3" class="saveBtn">Save</button>
+  </div>
+
+  <div id="modelAnswer3" class="modelAnswer">
+Past success can provide an organisation with valuable resources, customer relationships, technical expertise and brand recognition, but this does not guarantee that future decisions will be successful. Duolingo’s established user base and engaging learning model led to rapid online expansion, but changing an established business model introduces uncertainties about product quality and brand credibility. Establishing indicators can reveal whether an initiative is meeting expectations and identify contingency measures if risks begin to materialise. 
+  </div>
+</div>
+
+<script>
+function initNotesBox(inputId, btnId, msgId, storageKey, answerId) {
+  const textArea = document.getElementById(inputId);
+  const saveBtn = document.getElementById(btnId);
+  const statusMsg = document.getElementById(msgId);
+  const answerBox = document.getElementById(answerId);
+
+  const STORAGE_KEY = storageKey;
+  const ANSWER_SHOWN_KEY_DUO = storageKey + '_answerShown';
+
+  // Load existing note (if any)
+  const savedNote = localStorage.getItem(STORAGE_KEY);
+  if (savedNote) textArea.value = savedNote;
+
+  // If the answer was already revealed in a previous visit, keep it visible
+  if (localStorage.getItem(ANSWER_SHOWN_KEY_DUO) === 'true') {
+    answerBox.classList.add('visible');
+  }
+
+  // Save on button click
+  saveBtn.addEventListener('click', () => {
+    const value = textArea.value.trim();
+    localStorage.setItem(STORAGE_KEY, value);
+
+    // Fade in "Saved!"
+    statusMsg.style.opacity = '1';
+    setTimeout(() => statusMsg.style.opacity = '0', 1500);
+
+    // Reveal the suggested answer once the question has been answered and saved
+    if (value.length > 0) {
+      answerBox.classList.add('visible');
+      localStorage.setItem(ANSWER_SHOWN_KEY_DUO, 'true');
+    }
+  });
+
+  // Optional: auto-save while typing
+  textArea.addEventListener('input', () => {
+    localStorage.setItem(STORAGE_KEY, textArea.value.trim());
+  });
+}
+
+initNotesBox('notesInput1', 'saveBtn1', 'statusMsg1', 'duoQ1', 'modelAnswer1');
+initNotesBox('notesInput2', 'saveBtn2', 'statusMsg2', 'duoQ2', 'modelAnswer2');
+initNotesBox('notesInput3', 'saveBtn3', 'statusMsg3', 'duoQ3', 'modelAnswer3');
+</script>
