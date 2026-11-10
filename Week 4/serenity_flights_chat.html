@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -287,6 +288,89 @@ svg:hover { fill: var(--teal); }
   .chat-body { flex: 1; overflow-y: scroll; max-height: 300px; overflow-x: hidden; }
   .chat-answers-box { flex-direction: column; }
 }
+
+/* =====================
+    REFLECTION SECTION
+    (aligned to the 960px chat window)
+===================== */
+.container {
+  width: 1000px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 20px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.instructions {
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid var(--AIMblue);
+  padding: 18px 22px;
+  line-height: 1.6;
+}
+.instructions h2 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+
+.reflection {
+  background: var(--white);
+  border: 1px solid var(--border-medium);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+.reflection-bar {
+  padding: 10px 20px;
+  background: var(--bg-message-head);
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 13px; font-weight: 600;
+}
+.question { padding: 20px; border-bottom: 1px solid var(--border-subtle); }
+.question-head { display: flex; gap: 12px; margin-bottom: 10px; }
+.question-num {
+  flex-shrink: 0;
+  width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg-selected-row); color: var(--darkBlue);
+  font-size: 12px; font-weight: 700;
+}
+.question-text { max-width: 75ch; font-size: 14px; font-weight: 600; line-height: 1.5; padding-top: 2px; }
+.question-text span { display: block; margin-top: 6px; font-weight: 400; color: var(--text-secondary); }
+
+.question textarea {
+  display: block;
+  width: 100%;
+  min-height: 140px;
+  padding: 12px 14px;
+  font-family: inherit; font-size: 14px; line-height: 1.6;
+  color: var(--text-primary);
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  resize: vertical;
+}
+.question textarea:focus { outline: none; border-color: var(--AIMblue); background: var(--white); }
+
+.reflection-footer {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  padding: 12px 20px;
+  background: var(--bg-message-head);
+}
+.savedMsg { font-size: 13px; color: var(--AIMblue); opacity: 0; transition: opacity 0.4s ease; }
+.savedMsg.error { color: var(--rust); }
+.saveBtn {
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  color: var(--white); background-color: var(--AIMblue);
+  border: none; border-radius: 99px;
+  padding: 8px 22px; cursor: pointer;
+}
+.saveBtn:hover { background-color: var(--darkBlue); }
+.saveBtn:focus-visible { outline: 2px solid var(--AIMblue); outline-offset: 2px; }
+
+@media only screen and (max-width: 767px) {
+  .container { padding: 0 12px 24px; }
+  .question { padding: 16px 14px; }
+}
 </style>
 </head>
 <body>
@@ -381,6 +465,48 @@ svg:hover { fill: var(--teal); }
   </div>
 
 </div>
+</div>
+
+<!-- REFLECTION -->
+<div class="container">
+  <div class="instructions">
+    <h2>Reflection</h2>
+    <p>Using what you have read about each of your team members, reflect on how to manage resistance in a team and build trust with people during change.</p>
+  </div>
+
+  <div class="reflection" id="questionBox">
+    <div class="reflection-bar">Your reflection</div>
+
+    <div class="question">
+      <div class="question-head">
+        <span class="question-num" aria-hidden="true">1</span>
+        <label class="question-text" for="reflect1">How did your chosen responses influence each team member’s willingness to engage with you? What might each person’s response reveal about the underlying reasons for their resistance?</label>
+      </div>
+      <textarea id="reflect1" data-q="1"></textarea>
+    </div>
+
+    <div class="question">
+      <div class="question-head">
+        <span class="question-num" aria-hidden="true">2</span>
+        <label class="question-text" for="reflect2">How can you distinguish between resistance that requires a supportive conversation and resistance that requires further action?
+          <span>Consider how you would balance empathy with accountability, particularly when resistance affects team collaboration or compliance.</span></label>
+      </div>
+      <textarea id="reflect2" data-q="2"></textarea>
+    </div>
+
+    <div class="question">
+      <div class="question-head">
+        <span class="question-num" aria-hidden="true">3</span>
+        <label class="question-text" for="reflect3">What additional information might you seek before deciding your next steps?</label>
+      </div>
+      <textarea id="reflect3" data-q="3"></textarea>
+    </div>
+
+    <div class="reflection-footer">
+      <p id="reflectStatus" class="savedMsg" role="status">Saved!</p>
+      <button id="reflectSave" class="saveBtn" type="button">Save</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -684,6 +810,83 @@ function setActive(el) {
 document.querySelectorAll('.activity-icon, #phoneSection .dm-item').forEach(el => {
   el.addEventListener('keydown', e => {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
+  });
+});
+
+/* =========================================================
+   REFLECTION — save answers (plus the learner's chat choices) as a PDF
+   ========================================================= */
+const QUESTIONS = {
+  1: 'How did your chosen responses influence each team member’s willingness to engage with you? What might each person’s response reveal about the underlying reasons for their resistance?',
+  2: 'How can you distinguish between resistance that requires a supportive conversation and resistance that requires further action? Consider how you would balance empathy with accountability, particularly when resistance affects team collaboration or compliance.',
+  3: 'What additional information might you seek before deciding your next steps?'
+};
+
+function flashStatus(text, isError) {
+  const el = document.getElementById('reflectStatus');
+  el.textContent = text;
+  el.classList.toggle('error', !!isError);
+  el.style.opacity = 1;
+  clearTimeout(flashStatus.t);
+  flashStatus.t = setTimeout(() => { el.style.opacity = 0; }, 3000);
+}
+
+function saveReflectionPdf() {
+  const answers = [1, 2, 3].map(n => document.getElementById('reflect' + n).value.trim());
+  if (!answers.some(Boolean)) { flashStatus('Write at least one answer before saving.', true); return; }
+  if (!window.jspdf) { flashStatus('The PDF tool did not load. Check your connection and try again.', true); return; }
+
+  const doc = new window.jspdf.jsPDF({ unit: 'pt', format: 'a4' });
+  const M = 48, W = doc.internal.pageSize.getWidth() - M * 2, BOTTOM = doc.internal.pageSize.getHeight() - M;
+  let y = M;
+  function write(text, size, bold, gap, colour) {
+    doc.setFont('helvetica', bold ? 'bold' : 'normal');
+    doc.setFontSize(size);
+    doc.setTextColor(colour || '#1a1a1a');
+    doc.splitTextToSize(text, W).forEach(line => {
+      if (y > BOTTOM) { doc.addPage(); y = M; }
+      doc.text(line, M, y);
+      y += size * 1.45;
+    });
+    y += gap || 0;
+  }
+
+  write('Reflection: managing resistance during change', 16, true, 4, '#12195C');
+  write(username, 10, false, 14, '#666660');
+
+  Object.values(people).forEach(p => {
+    const s = state[p.id];
+    write('Your chat with ' + p.name, 11, true, 2, '#4353A3');
+    if (s.chosen === null) {
+      write('No response selected.', 10, false, 10, '#666660');
+    } else {
+      const o = p.options[s.chosen];
+      write('You: ' + plain(o.learner), 10, false, 4);
+      write(p.name + ': ' + plain(o.reply), 10, false, 12, '#444444');
+    }
+  });
+
+  y += 6;
+  [1, 2, 3].forEach((n, i) => {
+    write(n + '. ' + QUESTIONS[n], 11, true, 3, '#12195C');
+    write(answers[i] || '(No answer)', 10.5, false, 14);
+  });
+
+  doc.save('Reflection - ' + firstName + '.pdf');
+  flashStatus('Saved!');
+}
+document.getElementById('reflectSave').addEventListener('click', saveReflectionPdf);
+
+/* AUTO-SAVE — each answer is kept in localStorage as plain text while the learner types
+   (keys: reflectionAnswer1, reflectionAnswer2, reflectionAnswer3) */
+document.querySelectorAll('.question textarea').forEach(box => {
+  box.addEventListener('input', () => {
+    const key = 'serenitySeflectionAnswer' + box.dataset.q;
+    const text = box.value.trim();
+    try {
+      if (text) localStorage.setItem(key, text);
+      else localStorage.removeItem(key);          // nothing typed, nothing stored
+    } catch (err) { /* storage unavailable */ }
   });
 });
 

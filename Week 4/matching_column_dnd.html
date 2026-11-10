@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drag and drop two column</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --AIMblue: #4353A3;
+      --darkBlue: #38416D;
+      --teal: #5DC8B9;
+      --cream: #F1EEDE;
+      --grey: #e7e9ec;
+      --rust: #AF4510;
+      --navy: #060732;
+      --white: #ffffff;
+      --lightBlue: #AEBAE4;
+      --correct: #0f7c2e;
+      --incorrect: #d32f2f;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: "IBM Plex Sans", sans-serif;
+      padding: 30px 20px;
+    }
+    .container { margin: 0 auto; max-width: 1200px; }
+
+    /* ---------- Pile ---------- */
+    .pile-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+    .pile-label {
+      font-weight: 600;
+      color: var(--darkBlue);
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .pile {
+      position: relative;
+      width: 340px;
+      max-width: 100%;
+      min-height: 120px;
+    }
+    /* layers peeking out beneath the top card */
+    .pile::before,
+    .pile::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      background: var(--lightBlue);
+      border: 1px solid var(--navy);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .pile::before { transform: translate(8px, 8px); }
+    .pile::after  { transform: translate(16px, 16px); background: var(--darkBlue); z-index: -1; }
+    .pile.has-2::before, .pile.has-3::before, .pile.has-4::before, .pile.has-5::before, .pile.has-6::before, .pile.has-6::after { opacity: 1; }
+    .pile.has-2::after { opacity: 0; }
+    .pile.has-3::after, .pile.has-4::after, .pile.has-5::after { opacity: 1; }
+    .pile.empty::before, .pile.empty::after { opacity: 0; }
+
+    #cardHome { position: relative; z-index: 1; }
+    /* only the top card of the pile is visible */
+    #cardHome .card:not(:first-child) { display: none; }
+
+    .pile-empty {
+      display: none;
+      padding: 30px 16px;
+      text-align: center;
+      color: var(--darkBlue);
+      border: 2px dashed var(--lightBlue);
+      border-radius: 16px;
+    }
+    .pile.empty .pile-empty { display: block; }
+    .pile-count { margin-top: 28px; font-size: 0.9em; color: var(--darkBlue); }
+
+    /* ---------- Columns ---------- */
+    .board {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding-bottom: 20px;
+    }
+    .column {
+      border: solid black 2px;
+      background: var(--navy);
+      color: white;
+      border-radius: 8px;
+      padding: 12px;
+      width: 340px;
+      max-width: 100%;
+      height: fit-content;
+    }
+    .column-header {
+      font-weight: 600;
+      font-size: 1.1em;
+      padding: 8px 12px 20px;
+      text-align: center;
+    }
+    .cards-container { min-height: 100px; padding: 4px; border-radius: 6px; }
+    .board .cards-container.drag-over { background: rgba(174, 186, 228, 0.25); }
+    #cardHome.drag-over { background: transparent; }
+
+    /* ---------- Cards ---------- */
+    .card {
+      padding: 16px;
+      margin-bottom: 10px;
+      cursor: grab;
+      color: black;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      border: 1px solid var(--navy);
+    }
+    #cardHome .card { margin-bottom: 0; }
+    .card.dragging { opacity: 0.5; transform: rotate(3deg); }
+    .card.correct   { border: 2px solid var(--correct); }
+    .card.incorrect { border: 2px solid var(--incorrect); }
+
+    .card-feedback {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(0, 0, 0, 0.15);
+      font-size: 0.9em;
+      line-height: 1.5;
+    }
+    .card-feedback::before { display: block; font-weight: 600; }
+    .card-feedback.correct::before   { content: "That\2019s right"; color: var(--correct); }
+    .card-feedback.incorrect::before { content: "Not quite"; color: var(--incorrect); }
+
+    /* newest card in a column gets a brief highlight */
+    @keyframes arrive { from { transform: translateY(-12px); opacity: 0; } to { transform: none; opacity: 1; } }
+    .board .card.just-dropped { animation: arrive 0.25s ease-out; }
+    @media (prefers-reduced-motion: reduce) { .board .card.just-dropped { animation: none; } }
+
+    /* ---------- Modal / submit (unchanged behaviour) ---------- */
+    #submitBtn {
+      display: block; margin: 30px auto; padding: 12px 40px;
+      background: var(--AIMblue); color: white; border: none; border-radius: 6px;
+      font-size: 1.1em; font-weight: 600; cursor: pointer; opacity: 0.5;
+    }
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5);
+      justify-content: center; align-items: center; z-index: 1000;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-content { background: white; padding: 40px; border-radius: 12px; max-width: 600px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+    .modal-content h2 { color: var(--darkBlue); margin-bottom: 20px; font-size: 1.8em; }
+    .modal-content p { font-size: 1.1em; line-height: 1.6; color: #5e6c84; margin-bottom: 10px; }
+    .modal-close-btn { margin-top: 20px; padding: 12px 30px; background: var(--AIMblue); color: white; border: none; border-radius: 6px; font-size: 1em; cursor: pointer; }
+    .modal-close-btn:hover { background: var(--darkBlue); }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="pile-area">
+      <div class="pile-label">Drag the top card to a column. Items can be moved between columns.</div>
+      <div class="pile has-6" id="pile">
+        <div class="cards-container" data-column="dragItems" id="cardHome">
+          <div class="card" id="cola1" draggable="true"><p>Change the project approach or scope to eliminate the threat entirely. For example, use an established technology rather than introduce an unfamiliar system that the team cannot adequately support.</p></div>
+          <div class="card" id="colb3" draggable="true"><p>Work with another team, organisation or specialist to maximise an opportunity and share responsibility for achieving its benefits.</p></div>
+           <div class="card" id="colb1" draggable="true"><p>Take deliberate action to ensure an opportunity occurs and maximise its benefits. For example, allocate experienced staff to a critical task to accelerate implementation.</p></div>
+          <div class="card" id="cola3" draggable="true"><p>Shift responsibility from managing the financial or operational risk to a third party. For example, use insurance or specialist contractors to manage specific risks.</p></div>
+         
+          <div class="card" id="cola5" draggable="true"><p>Refer the risk to the leadership team or another authority when it falls outside the project leader&rsquo;s responsibility or decision-making capability.</p></div>
+          <div class="card" id="colb5" draggable="true"><p>Remain prepared to take advantage of an opportunity if it arises without committing additional resources to pursuing it.</p></div>
+          <div class="card" id="cola2" draggable="true"><p>Introduce controls to reduce the likelihood or impact of a risk. For example, provide additional staff training to reduce implementation errors when introducing new processes.</p></div>
+          <div class="card" id="colb2" draggable="true"><p>Increase the likelihood or potential benefit of an opportunity. For example, provide additional resources to improve the efficiency of a new process.</p></div>
+          <div class="card" id="cola4" draggable="true"><p>Acknowledge the risk and decide not to take any additional action, often because the potential impact is relatively minor. For example, accept a small delay to a non-critical task.</p></div>
+          <div class="card" id="colb4" draggable="true"><p>Refer an opportunity to a high level of leadership when it requires decisions or resources beyond the project&rsquo;s authority.</p></div>
+        </div>
+        <div class="pile-empty">All cards sorted.</div>
+      </div>
+      <div class="pile-count" id="pileCount" aria-live="polite"></div>
+    </div>
+
+    <div class="board">
+      <div class="column">
+        <div class="column-header">Strategies for managing negative risks (threats)</div>
+        <div class="cards-container" data-column="cola"></div>
+      </div>
+      <div class="column">
+        <div class="column-header">Strategies for managing positive risks (opportunities)</div>
+        <div class="cards-container" data-column="colb"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <button onclick="checkAnswers()" id="submitBtn" disabled>Submit</button> -->
+  <div class="modal-overlay" id="resultsModal">
+    <div class="modal-content">
+      <h2 id="modalTitle"></h2>
+      <div id="modalMessage"></div>
+      <button class="modal-close-btn" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+
+<script>
+let draggedCard = null;
+const correctAnswers = {
+  cola: ['cola1', 'cola2', 'cola3', 'cola4', 'cola5'],
+  colb: ['colb1', 'colb2', 'colb3', 'colb4', 'colb5']
+};
+
+function initDragAndDrop() {
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('dragstart', handleDragStart);
+    card.addEventListener('dragend', handleDragEnd);
+  });
+  document.querySelectorAll('.cards-container').forEach(c => {
+    c.addEventListener('dragover', handleDragOver);
+    c.addEventListener('drop', handleDrop);
+    c.addEventListener('dragleave', handleDragLeave);
+    c.addEventListener('dragenter', handleDragEnter);
+  });
+  updatePile();
+}
+
+function handleDragStart(e) {
+  draggedCard = this;
+  this.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', this.id); // needed for Firefox
+}
+
+function handleDragEnd() {
+  this.classList.remove('dragging');
+  document.querySelectorAll('.cards-container').forEach(c => c.classList.remove('drag-over'));
+}
+
+function handleDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  return false;
+}
+
+function handleDragEnter(e) {
+  const zone = e.target.closest('.cards-container');
+  if (zone) zone.classList.add('drag-over');
+}
+
+function handleDragLeave(e) {
+  if (!e.currentTarget.contains(e.relatedTarget)) e.currentTarget.classList.remove('drag-over');
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  e.stopPropagation();
+
+  const dropZone = e.target.closest('.cards-container');
+  if (!dropZone || !draggedCard) return false;
+  dropZone.classList.remove('drag-over');
+
+  // Clear any earlier feedback on this card
+  draggedCard.classList.remove('correct', 'incorrect', 'just-dropped');
+  const oldBox = draggedCard.querySelector('.card-feedback');
+  if (oldBox) oldBox.remove();
+
+  // Newest dropped card goes to the top (of the pile or of a column)
+  dropZone.prepend(draggedCard);
+
+  const column = dropZone.dataset.column;
+  if (column !== 'dragItems') {
+    const state = correctAnswers[column].includes(draggedCard.id) ? 'correct' : 'incorrect';
+    draggedCard.classList.add(state, 'just-dropped');
+
+    const box = document.createElement('div');
+    box.className = 'card-feedback ' + state;
+    draggedCard.appendChild(box);
+  }
+
+  updatePile();
+  checkIfAllDragged();
+  return false;
+}
+
+function updatePile() {
+  const n = document.querySelectorAll('#cardHome .card').length;
+  const pile = document.getElementById('pile');
+  pile.classList.toggle('empty', n === 0);
+  pile.classList.toggle('has-2', n === 2);
+  pile.classList.toggle('has-3', n === 3);
+  pile.classList.toggle('has-4', n === 4);
+  pile.classList.toggle('has-5', n === 5);
+  pile.classList.toggle('has-6', n >= 6);
+  document.getElementById('pileCount').textContent =
+    n === 0 ? '' : n + (n === 1 ? ' card left' : ' cards left');
+}
+
+function checkIfAllDragged() {
+  const remaining = document.querySelectorAll('#cardHome .card');
+  const submitBtn = document.getElementById('submitBtn');
+  if (remaining.length === 0 && submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.style.opacity = '1';
+  }
+}
+
+function checkAnswers() {
+  let allCorrect = true;
+  const colaCards = document.querySelectorAll('[data-column="cola"] .card');
+  const colbCards = document.querySelectorAll('[data-column="colb"] .card');
+  colaCards.forEach(c => { if (!correctAnswers.cola.includes(c.id)) allCorrect = false; });
+  colbCards.forEach(c => { if (!correctAnswers.colb.includes(c.id)) allCorrect = false; });
+
+  if (allCorrect && colaCards.length === 5 && colbCards.length === 5) {
+    showModal('Correct!', 'All cards are in the correct columns!');
+  } else {
+    showModal('Results', '<p>Not quite.</p>');
+  }
+}
+
+function showModal(title, message) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalMessage').innerHTML = message;
+  document.getElementById('resultsModal').classList.add('show');
+}
+function closeModal() {
+  document.getElementById('resultsModal').classList.remove('show');
+}
+
+initDragAndDrop();
+</script>
+</body>
+</html>

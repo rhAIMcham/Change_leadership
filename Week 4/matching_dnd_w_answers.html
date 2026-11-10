@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drag and drop matching</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --AIMblue: #4353A3;
+      --darkBlue: #38416D;
+      --teal: #5DC8B9;
+      --cream: #F1EEDE;
+      --grey: #e7e9ec;
+      --rust: #AF4510;
+      --navy: #060732;
+      --white: #ffffff;
+      --lightBlue: #AEBAE4;
+      --correct: #0f7c2e;
+      --incorrect: #d32f2f;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: "IBM Plex Sans", sans-serif;
+      padding: 30px 20px;
+    }
+    .container { margin: 0 auto; max-width: 1200px; }
+
+    /* ---------- Pile ---------- */
+    .pile-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+    .pile-label {
+      font-weight: 600;
+      color: var(--darkBlue);
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .pile {
+      position: relative;
+      width: 340px;
+      max-width: 100%;
+      min-height: 120px;
+    }
+    /* layers peeking out beneath the top card */
+    .pile::before,
+    .pile::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      background: var(--lightBlue);
+      border: 1px solid var(--navy);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .pile::before { transform: translate(8px, 8px); }
+    .pile::after  { transform: translate(16px, 16px); background: var(--darkBlue); z-index: -1; }
+    .pile.has-2::before, .pile.has-3::before, .pile.has-3::after { opacity: 1; }
+    .pile.empty::before, .pile.empty::after { opacity: 0; }
+
+    #cardHome { position: relative; z-index: 1; min-height: 0; }
+    /* only the top card of the pile is visible */
+    #cardHome .card:not(:first-child) { display: none; }
+
+    .pile-empty {
+      display: none;
+      padding: 30px 16px;
+      text-align: center;
+      color: var(--darkBlue);
+      border: 2px dashed var(--lightBlue);
+      border-radius: 16px;
+    }
+    .pile.empty .pile-empty { display: block; }
+    .pile-count { margin-top: 28px; font-size: 0.9em; color: var(--darkBlue); }
+
+    /* ---------- Matching board ---------- */
+    .board {
+      background: var(--navy);
+      color: white;
+      border: solid black 2px;
+      border-radius: 8px;
+      padding: 12px;
+      max-width: 760px;
+      margin: 0 auto 20px;
+    }
+    .board-headers,
+    .match-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .board-headers {
+      font-weight: 600;
+      font-size: 1.1em;
+      padding: 8px 4px 16px;
+      text-align: center;
+    }
+    .match-row { align-items: start; padding: 4px; margin-bottom: 12px; }
+    .match-row:last-child { margin-bottom: 0; }
+
+    .prompt-card {
+      padding: 16px;
+      background: var(--lightBlue);
+      color: var(--navy);
+      border-radius: 16px;
+      border: 1px solid var(--navy);
+      font-weight: 600;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+    }
+
+    /* drop slot */
+    .slot {
+      min-height: 130px;
+      border: 2px dashed var(--lightBlue);
+      border-radius: 16px;
+      padding: 4px;
+      transition: background 0.15s;
+    }
+    .slot.drag-over { background: rgba(174, 186, 228, 0.25); }
+    .slot .card { margin-bottom: 0; }
+
+    @media (max-width: 600px) {
+      .board-headers { display: none; }
+      .match-row { grid-template-columns: 1fr; gap: 8px; }
+    }
+
+    /* ---------- Cards ---------- */
+    .card {
+      padding: 16px;
+      margin-bottom: 10px;
+      cursor: grab;
+      color: black;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      border: 1px solid var(--navy);
+    }
+    #cardHome .card { margin-bottom: 0; }
+    .card.dragging { opacity: 0.5; transform: rotate(3deg); }
+    .card.correct   { border: 2px solid var(--correct); }
+    .card.incorrect { border: 2px solid var(--incorrect); }
+    .card.locked    { cursor: default; }
+
+    .card-feedback {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(0, 0, 0, 0.15);
+      font-size: 0.9em;
+      line-height: 1.5;
+    }
+    .card-feedback::before { display: block; font-weight: 600; margin-bottom: 4px; }
+    .card-feedback.correct::before   { content: "Correct match";   color: var(--correct); }
+    .card-feedback.incorrect::before { content: "Not quite"; color: var(--incorrect); }
+
+    @keyframes arrive { from { transform: translateY(-12px); opacity: 0; } to { transform: none; opacity: 1; } }
+    .board .card.just-dropped { animation: arrive 0.25s ease-out; }
+    @media (prefers-reduced-motion: reduce) { .board .card.just-dropped { animation: none; } }
+
+    .complete-msg {
+      display: none;
+      text-align: center;
+      font-weight: 600;
+      color: var(--correct);
+      margin-top: 20px;
+    }
+    .complete-msg.show { display: block; }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="pile-area">
+      <div class="pile-label">Cards can be moved until they are matched correctly.</div>
+      <div class="pile has-3" id="pile">
+        <!-- data-match = the id of the slot this card belongs in -->
+        <div class="cards-container" data-pile="true" id="cardHome">
+          <div class="card" id="card3" data-match="pair3" draggable="true"><p>The leader responds to uncertainty by increasing oversight, prescribing exactly how new processes must be implemented and requiring approval before team members can make decisions.</p></div>
+          <div class="card" id="card1" data-match="pair1" draggable="true"><p>The leader takes over when change creates problems, makes decisions on behalf of the team and focuses on finding immediate solutions.</p></div>
+          <div class="card" id="card2" data-match="pair2" draggable="true"><p>The leader shields team members from any discomfort, avoids difficult conversations about resistance and attempts to resolve concerns without involving those affected.</p></div>
+        </div>
+        <div class="pile-empty">All cards matched.</div>
+      </div>
+      <div class="pile-count" id="pileCount" aria-live="polite"></div>
+    </div>
+
+    <div class="board">
+      <div class="board-headers">
+        <div>Leader behaviours</div>
+        <div>Team response</div>
+      </div>
+
+      <div class="match-row">
+        <div class="prompt-card">Team members avoid engaging with difficult aspects of the change, expect the leader to resolve their concerns and miss opportunities to develop confidence in the workplace.</div>
+        <div class="cards-container slot" data-slot="pair1"></div>
+      </div>
+      <div class="match-row">
+        <div class="prompt-card">Team members become increasingly reliant on the leader to resolve implementation problems, hesitate to make decisions independently and wait for direction when unexpected challenges arise.</div>
+        <div class="cards-container slot" data-slot="pair2"></div>
+      </div>
+      <div class="match-row">
+        <div class="prompt-card">Team members comply only with new requirements on the surface but become disengaged, withhold concerns or avoid taking initiative due to feeling powerless over how the change is incorporated.</div>
+        <div class="cards-container slot" data-slot="pair3"></div>
+      </div>
+    </div>
+
+    <div class="complete-msg" id="completeMsg" role="status">All three pairs matched.</div>
+  </div>
+
+<script>
+let draggedCard = null;
+
+// Feedback shown on the card after it is dropped on a slot.
+// 'correct' shows when the card is in the right slot, 'incorrect' when it is not.
+const feedback = {
+  card1: {
+    correct:   'When leaders repeatedly solve problems for their team, team members may become dependent on them for decisions and direction. ',
+    incorrect: 'Not quite. Try another card.'
+  },
+  card2: {
+    correct:   'Avoiding difficult conversations can prevent team members from addressing concerns and learning to adapt.',
+    incorrect: 'Not quite. Try another card.'
+  },
+  card3: {
+    correct:   'Excessive control can reduce team members’ autonomy, discourage feedback and contribute to shallow compliance rather than genuine engagement.',
+    incorrect: 'Not quite. Try another card.'
+  }
+};
+
+const TOTAL_PAIRS = 3;
+
+function initDragAndDrop() {
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('dragstart', handleDragStart);
+    card.addEventListener('dragend', handleDragEnd);
+  });
+  document.querySelectorAll('.cards-container').forEach(c => {
+    c.addEventListener('dragover', handleDragOver);
+    c.addEventListener('drop', handleDrop);
+    c.addEventListener('dragleave', handleDragLeave);
+    c.addEventListener('dragenter', handleDragEnter);
+  });
+  updatePile();
+}
+
+function handleDragStart(e) {
+  if (this.classList.contains('locked')) { e.preventDefault(); return; }
+  draggedCard = this;
+  this.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', this.id); // needed for Firefox
+}
+
+function handleDragEnd() {
+  this.classList.remove('dragging');
+  document.querySelectorAll('.cards-container').forEach(c => c.classList.remove('drag-over'));
+}
+
+function handleDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  return false;
+}
+
+function handleDragEnter(e) {
+  const zone = e.target.closest('.cards-container');
+  if (zone && zone.dataset.slot) zone.classList.add('drag-over');
+}
+
+function handleDragLeave(e) {
+  if (!e.currentTarget.contains(e.relatedTarget)) e.currentTarget.classList.remove('drag-over');
+}
+
+function resetCard(card) {
+  card.classList.remove('correct', 'incorrect', 'just-dropped');
+  const box = card.querySelector('.card-feedback');
+  if (box) box.remove();
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  e.stopPropagation();
+
+  const dropZone = e.target.closest('.cards-container');
+  if (!dropZone || !draggedCard) return false;
+  dropZone.classList.remove('drag-over');
+
+  resetCard(draggedCard);
+
+  if (dropZone.dataset.pile) {
+    // Returned to the pile: goes to the bottom so the next card shows on top
+    dropZone.appendChild(draggedCard);
+  } else {
+    // Dropped on a slot: if an incorrect card is already there, send it back to the pile
+    const existing = dropZone.querySelector('.card');
+    if (existing && existing !== draggedCard) {
+      if (existing.classList.contains('locked')) return false; // slot already solved
+      resetCard(existing);
+      document.getElementById('cardHome').appendChild(existing);
+    }
+
+    dropZone.appendChild(draggedCard);
+
+    const isCorrect = draggedCard.dataset.match === dropZone.dataset.slot;
+    const state = isCorrect ? 'correct' : 'incorrect';
+    draggedCard.classList.add(state, 'just-dropped');
+
+    const box = document.createElement('div');
+    box.className = 'card-feedback ' + state;
+    box.textContent = feedback[draggedCard.id]?.[state] || '';
+    draggedCard.appendChild(box);
+
+    if (isCorrect) {
+      draggedCard.classList.add('locked');
+      draggedCard.setAttribute('draggable', 'false');
+    }
+  }
+
+  updatePile();
+  checkComplete();
+  return false;
+}
+
+function updatePile() {
+  const n = document.querySelectorAll('#cardHome .card').length;
+  const pile = document.getElementById('pile');
+  pile.classList.toggle('empty', n === 0);
+  pile.classList.toggle('has-2', n === 2);
+  pile.classList.toggle('has-3', n >= 3);
+  document.getElementById('pileCount').textContent =
+    n === 0 ? '' : n + (n === 1 ? ' card left' : ' cards left');
+}
+
+function checkComplete() {
+  const solved = document.querySelectorAll('.slot .card.correct').length;
+  document.getElementById('completeMsg').classList.toggle('show', solved === TOTAL_PAIRS);
+}
+
+initDragAndDrop();
+</script>
+</body>
+</html>
