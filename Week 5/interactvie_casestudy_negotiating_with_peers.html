@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Chat simulation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --AIMblue: #4353A3;
+  --darkBlue: #38416D;
+  --teal: #5DC8B9;
+  --rust: #AF4510;
+  --navy: #12195C;
+  --white: #ffffff;
+  --bg-app: #f0ede8;
+  --bg-activity-pane: #454545;
+  --bg-panel: #ffffff;
+  --bg-message-head: #f5f3f0;
+  --bg-selected-row: #e6f1fb;
+  --bg-input: #f5f3f0;
+  --text-primary: #1a1a1a;
+  --text-secondary: #555;
+  --text-muted: #999;
+  --border-subtle: #dedad3;
+  --border-medium: #ccc8c0;
+  --border: rgba(0,0,0,0.1);
+  --purple-mid: #6264A7;
+  --chat-bg: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --online: #6EBB8A;
+  --away: #F4A540;
+  --busy: #E04D4D;
+  --radius-md: 8px;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+svg {
+  fill: white;
+  cursor: pointer;
+  transition: 300ms ease;
+  width: 30px;
+  margin: 5px;
+}
+
+svg:hover {
+  fill: var(--teal);
+}
+
+.workArea3 {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.teams-app {
+  display: flex;
+  width: 960px;
+  height: 600px;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  background: var(--bg-panel);
+}
+
+.activity-bar {
+  width: 65px;
+  flex-shrink: 0;
+  background: var(--bg-activity-pane);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.activity-bar-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.activity-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.13);
+}
+
+.messages-waiting {
+  display: flex;
+}
+
+.missed-teams-dot {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 1.5px solid white;
+  font-size: 11px;
+  color: white;
+  text-align: center;
+}
+
+.status-online {
+  background: var(--online);
+}
+
+.status-away {
+  background: var(--away);
+}
+
+.status-busy {
+  background: var(--busy);
+}
+
+#chatSection {
+  display: flex;
+  width: 895px;
+}
+
+.left-sidebar {
+  color: black;
+  width: 210px;
+  flex-shrink: 0;
+  background: var(--bg-app);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-header {
+  padding: 14px 12px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sidebar-header-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  flex: 1;
+}
+
+.dm-unread-count {
+  background: var(--busy);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 10px;
+  margin-left: auto;
+}
+
+.dm-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin: 1px 5px;
+  transition: background 0.1s;
+}
+
+.dm-item:hover .dm-name {
+  color: var(--AIMblue);
+}
+
+.dm-item.active {
+  background: white;
+}
+
+.dm-item.active .dm-name {
+  color: var(--navy);
+}
+
+.dm-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.status-dot {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1.5px solid var(--bg-app);
+}
+
+.dm-name {
+  font-size: 12px;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--chat-bg);
+  min-width: 0;
+}
+
+.chat-header {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-message-head);
+}
+
+.chat-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.chat-header-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.chat-header-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.date-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.date-divider::before, .date-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.chat-group {
+  display: flex;
+  gap: 10px;
+  padding: 3px;
+  align-items: flex-start;
+  border-radius: 6px;
+  margin-top: 7px;
+}
+
+.chat-group:hover {
+  background: var(--bg-secondary);
+}
+
+.chat-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.chat-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.chat-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.chat-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.chat-time {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.chat-text {
+  font-size: 13px;
+  color: var(--text-primary);
+  line-height: 1.55;
+}
+
+.learnerOption {
+  border: solid 1px var(--border-medium);
+  padding: 10px;
+  border-radius: 8px;
+  margin: 5px;
+  cursor: pointer;
+  transition: 300ms ease;
+  background-color: var(--bg-selected-row);
+  color: var(--text-muted);
+}
+
+.learnerOption:hover, .learnerOption:focus-visible {
+  background: white;
+  margin-left: 7px;
+  color: black;
+  outline: none;
+}
+
+.chat-answers-box {
+  border-radius: 8px;
+  display: flex;
+}
+
+.explainerP {
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  margin: 10px;
+}
+
+.av-blue {
+  background: #B5D4F4;
+  color: #0C447C;
+}
+
+.av-teal {
+  background: #9FE1CB;
+  color: #085041;
+}
+
+.av-coral {
+  background: #F5C4B3;
+  color: #712B13;
+}
+
+.av-purple {
+  background: #9EA2D4;
+  color: #3C3489;
+}
+
+.new-message {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.new-message.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.typing-dots span {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 3px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  animation: typingBounce 1s infinite ease-in-out;
+}
+
+.typing-dots span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.typing-dots span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes typingBounce {
+  0%, 80%, 100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  40% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .chat-header-desc {
+    text-wrap: wrap;
+  }
+  .teams-app {
+    flex-direction: column;
+    height: auto;
+    width: 100%;
+    max-width: 100%;
+  }
+  .activity-bar {
+    width: auto;
+    flex-direction: row;
+  }
+  .activity-bar-top {
+    flex-direction: row;
+    justify-content: space-around;
+    margin: 0;
+  }
+  #chatSection {
+    width: 100%;
+  }
+  .left-sidebar {
+    width: 80px;
+  }
+  .dm-item {
+    flex-direction: column;
+  }
+  .chat-pane {
+    width: auto;
+    overflow: auto;
+  }
+  .chat-body {
+    flex: 1;
+    overflow-y: scroll;
+    max-height: 300px;
+    overflow-x: hidden;
+  }
+  .chat-answers-box {
+    flex-direction: column;
+  }
+}
+
+/* REFLECTION */
+.container {
+  width: 1000px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 20px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.instructions {
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid var(--AIMblue);
+  padding: 18px 22px;
+  line-height: 1.6;
+}
+
+.instructions h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.reflection {
+  background: var(--white);
+  border: 1px solid var(--border-medium);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+
+.reflection-bar {
+  padding: 10px 20px;
+  background: var(--bg-message-head);
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.question {
+  padding: 20px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.question-head {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.question-num {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-selected-row);
+  color: var(--darkBlue);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.question-text {
+  max-width: 75ch;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  padding-top: 2px;
+}
+
+.question textarea {
+  display: block;
+  width: 100%;
+  min-height: 140px;
+  padding: 12px 14px;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  resize: vertical;
+}
+
+.question textarea:focus {
+  outline: none;
+  border-color: var(--AIMblue);
+  background: var(--white);
+}
+
+@media only screen and (max-width: 767px) {
+  .container {
+    padding: 0 12px 24px;
+  }
+  .question {
+    padding: 16px 14px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="workArea3" id="work3">
+<div class="teams-app">
+
+  <div class="activity-bar">
+    <div class="activity-bar-top">
+      <div class="messages-waiting">
+        <div class="activity-icon" title="Chat" aria-label="Chat">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 32C114.6 32 0 125.1 0 240c0 49.6 21.4 95 57 130.7C44.5 421.1 2.7 466 2.2 466.5a8 8 0 0 0-1.5 8.7A7.83 7.83 0 0 0 8 480c66.3 0 116-31.8 140.6-51.4A305 305 0 0 0 256 448c141.4 0 256-93.1 256-208S397.4 32 256 32z" opacity=".4"/><path d="M128 208a32 32 0 1 0 32 32 32 32 0 0 0-32-32zm128 0a32 32 0 1 0 32 32 32 32 0 0 0-32-32zm128 0a32 32 0 1 0 32 32 32 32 0 0 0-32-32z"/></svg>
+        </div>
+        <span class="missed-teams-dot status-busy" id="totalUnread">1</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="chatSection">
+    <div class="left-sidebar">
+      <div class="sidebar-header"><span class="sidebar-header-title">Chats</span></div>
+      <div id="dmList"></div>
+    </div>
+    <div class="chat-pane">
+      <div class="chat-header">
+        <div class="chat-header-left">
+          <i id="header-icon"></i>
+          <div>
+            <div class="chat-header-name" id="chat-title"></div>
+            <div class="chat-header-desc" id="chat-desc"></div>
+          </div>
+        </div>
+      </div>
+      <div class="chat-body" id="chat-body"></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<div class="container">
+  <div class="instructions">
+    <h2>Reflection</h2>
+    <p>Using what you have read about Michael and the two approaches you explored, reflect on how to respond when someone resists change.</p>
+  </div>
+
+  <div class="reflection" id="questionBox">
+    <div class="reflection-bar">Your reflection</div>
+
+    <div class="question">
+      <div class="question-head">
+        <span class="question-num" aria-hidden="true">1</span>
+        <label class="question-text" for="reflect1">Having explored two different approaches to responding to Michael’s refusal, how might you decide whether negotiation or influence is more appropriate when someone resists change?</label>
+      </div>
+      <textarea id="reflect1" data-q="1"></textarea>
+    </div>
+
+    <div class="question">
+      <div class="question-head">
+        <span class="question-num" aria-hidden="true">2</span>
+        <label class="question-text" for="reflect2">If neither approach is successful, how would you navigate the relationship while maintaining a professional relationship and continuing to support the change?</label>
+      </div>
+      <textarea id="reflect2" data-q="2"></textarea>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* LEARNER (name comes from the LMS) */
+function titleCase(s) { return s.replace(/\b\w/g, c => c.toUpperCase()); }
+let storedName = 'nl test', storedInitial = 'a';
+try {
+  storedName = localStorage.getItem('riseUserName') || storedName;
+  storedInitial = localStorage.getItem('lastInitialToken') || storedInitial;
+} catch (e) {}
+const username = titleCase(storedName.trim()) + ' ' + storedInitial.toUpperCase();
+const firstName = titleCase(storedName.trim()).split(' ')[0];
+const userIcon = storedName.trim().slice(0, 1).toUpperCase() + storedInitial.toUpperCase();
+
+/* DATA — [NAME] becomes the learner's first name */
+const people = {
+  michael: {
+    id: 'michael', name: 'Michael', initials: 'M', av: 'av-blue', status: 'online',
+    desc: 'Online · he/him · Join date: 4 years ago',
+    unread: 1,
+    messages: [
+      { time: '10:58 AM', text: [
+        `Hi [NAME],`,
+        `I’ve thought about this a bit more, and I’ve decided to bow out from the new system rollout. I don’t see the value in changing something that already works, and I have other priorities that need my attention. I understand this is something you’re being forced to push, but I don’t agree with the decision and am not interested in being involved. I think it’s best if you find someone else to help.`,
+        `Thanks`
+      ] }
+    ],
+    options: [
+      { learner: [
+          `I understand that you have concerns about the value of the new system, and I appreciate you have other priorities competing for your time. However, your involvement is important because our teams will be closely working together, and your support will affect communication across departments.`,
+          `Could we look at what your involvement might realistically involve and whether there’s a way to accommodate some of your existing commitments? Perhaps we could agree on a more focused contribution, like identifying potential issues before implementation? I’d like to see whether we can find an arrangement that addresses some of your concerns while still supporting the org.`
+        ],
+        reply: [
+          `I appreciate you trying to find a compromise, but I don’t think reducing my involvement is going to change how I feel about the project. I don’t believe this is the right approach, and I don’t want to commit to something that I don’t support. I think my position is pretty clear.`
+        ] },
+      { learner: [
+          `I appreciate that you are comfortable with our current process, particularly given your experience working with them. However, I think it’s worth considering how the new system could address some of the difficulties coordinating work across departments.`,
+          `Your experience could be particularly valuable in identifying where the implementation may not work as intended. Instead of viewing your involvement as support, there may be an opportunity to help shape how this change is introduced and ensure practical considerations are taken into account.`,
+          `I would encourage you to reconsider whether stepping away entirely would be the best action for your team.`
+        ],
+        reply: [
+          `I understand what you’re saying, and I can see why the organisation thinks this system might be useful. But I still don’t agree that it will solve any ongoing problems. I’ve seen similar initiatives introduced before, and they clearly haven’t delivered on what was promised. I don’t want to lend credibility to something I don’t believe in.`
+        ] }
+    ]
+  }
+};
+
+const REPLY_TIME = '11:15 AM';
+const state = { michael: { chosen: null, replied: false } };
+let currentId = 'michael';
+
+/* HELPERS */
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function para(arr) { return '<p>' + arr.map(t => esc(t.replace(/\[NAME\]/g, firstName))).join('<br><br>') + '</p>'; }
+function plain(arr) { return arr.map(t => t.replace(/\[NAME\]/g, firstName)).join(' '); }
+function group(avClass, initials, name, time, bodyHtml, extra) {
+  return `
+    <div class="chat-group${extra ? ' ' + extra : ''}">
+      <div class="chat-avatar ${avClass}">${esc(initials)}</div>
+      <div class="chat-content">
+        <div class="chat-meta"><span class="chat-name">${esc(name)}</span><span class="chat-time">${esc(time)}</span></div>
+        <div class="chat-text">${bodyHtml}</div>
+      </div>
+    </div>`;
+}
+
+/* CHAT RENDERING */
+function threadHtml(id) {
+  const p = people[id], s = state[id];
+  let html = '<div class="date-divider">Today</div>';
+  html += p.messages.map(m => group(p.av, p.initials, p.name, m.time, para(m.text))).join('');
+  if (s.chosen === null) {
+    html += `
+      <div>
+        <div class="explainerP"><p>Select the option you would send in this scenario.</p></div>
+        <div class="chat-answers-box">
+          ${p.options.map((o, i) => `
+            <div class="chat-options learnerOption" data-choice="${i}" tabindex="0" role="button">${para(o.learner)}</div>`).join('')}
+        </div>
+      </div>`;
+  } else {
+    const o = p.options[s.chosen];
+    html += group('av-teal', userIcon, username, REPLY_TIME, para(o.learner), 'learner');
+    if (s.replied) html += group(p.av, p.initials, p.name, REPLY_TIME, para(o.reply));
+  }
+  return html;
+}
+
+function setChat(id) {
+  currentId = id;
+  const p = people[id];
+  document.getElementById('chat-title').textContent = p.name;
+  document.getElementById('chat-desc').textContent = p.desc;
+  document.getElementById('header-icon').innerHTML = `<div class="chat-avatar ${p.av}">${esc(p.initials)}</div>`;
+  const body = document.getElementById('chat-body');
+  body.innerHTML = threadHtml(id);
+  body.scrollTop = body.scrollHeight;
+}
+
+function renderDMs() {
+  document.getElementById('dmList').innerHTML = Object.values(people).map(p => `
+    <div class="dm-item${p.id === currentId ? ' active' : ''}" data-dm="${p.id}" tabindex="0" role="button">
+      <div class="dm-avatar ${p.av}">${esc(p.initials)}<span class="status-dot status-${p.status}"></span></div>
+      <span class="dm-name">${esc(p.name)}</span>
+      ${p.unread ? `<span class="dm-unread-count">${p.unread}</span>` : ''}
+    </div>`).join('');
+  const total = Object.values(people).reduce((n, p) => n + p.unread, 0);
+  const dot = document.getElementById('totalUnread');
+  dot.textContent = total;
+  dot.style.display = total ? 'block' : 'none';
+}
+
+function loadDM(id) { people[id].unread = 0; renderDMs(); setChat(id); }
+
+/* CHOOSING A REPLY */
+function chooseOption(index) {
+  const id = currentId, p = people[id], s = state[id];
+  if (s.chosen !== null) return;
+  s.chosen = index;
+
+  const body = document.getElementById('chat-body');
+  body.innerHTML = threadHtml(id) + `
+    <div class="chat-group typing-indicator" id="typing-${id}">
+      <div class="chat-avatar ${p.av}">${esc(p.initials)}</div>
+      <div class="chat-content"><div class="chat-text typing-dots"><span></span><span></span><span></span></div></div>
+    </div>`;
+  body.scrollTop = body.scrollHeight;
+
+  const o = p.options[index];
+  try {   // saved for use elsewhere in the course
+    localStorage.setItem(p.name + 'Choice', plain(o.learner));
+    localStorage.setItem(p.name + 'Response', plain(o.reply));
+  } catch (e) {}
+
+  setTimeout(() => {
+    s.replied = true;
+    const indicator = document.getElementById('typing-' + id);
+    if (indicator) indicator.remove();
+    const el = document.createElement('div');
+    el.innerHTML = group(p.av, p.initials, p.name, REPLY_TIME, para(o.reply), 'new-message');
+    const node = el.firstElementChild;
+    body.appendChild(node);
+    requestAnimationFrame(() => node.classList.add('visible'));
+    body.scrollTop = body.scrollHeight;
+  }, 1400);
+}
+
+document.getElementById('chat-body').addEventListener('click', e => {
+  const opt = e.target.closest('[data-choice]');
+  if (opt) chooseOption(Number(opt.dataset.choice));
+});
+document.getElementById('chat-body').addEventListener('keydown', e => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const opt = e.target.closest('[data-choice]');
+  if (opt) { e.preventDefault(); chooseOption(Number(opt.dataset.choice)); }
+});
+document.getElementById('dmList').addEventListener('click', e => {
+  const item = e.target.closest('[data-dm]');
+  if (item) loadDM(item.dataset.dm);
+});
+
+/* AUTO-SAVE — each answer is kept in localStorage as plain text while the learner types */
+document.querySelectorAll('.question textarea').forEach(box => {
+  box.addEventListener('input', () => {
+    const key = 'serenitySeflectionAnswer' + box.dataset.q;
+    const text = box.value.trim();
+    try {
+      if (text) localStorage.setItem(key, text);
+      else localStorage.removeItem(key);
+    } catch (err) {}
+  });
+});
+
+/* BOOT */
+people.michael.unread = 0;
+renderDMs();
+setChat('michael');
+</script>
+</body>
+</html>

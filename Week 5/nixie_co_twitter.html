@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Chirper</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-app:#fff;--bg-panel:#fff;--bg-hover:#f7f7f7;--bg-input:#eff3f4;--bg-trend-card:#f7f9f9;
+  --accent:#1d9bf0;--accent-hover:#1a8cd8;--accent-tint:#e8f5fe;--like-red:#f91880;--repost-green:#00ba7c;
+  --text-primary:#0f1419;--text-secondary:#536471;--text-muted:#8b98a5;--border-subtle:#eff3f4;--border-medium:#cfd9de;
+  --nav-bg:rgba(255,255,255,.9);--green-tint:#e5f9f2;--red-tint:#fde2ec;--banner-bg:#f1f4f6;
+  --avatar-blue:#7ea6d9;--avatar-teal:#6fc2ac;--avatar-coral:#e3987b;--avatar-purple:#a9a4dd;--avatar-dark:#0f1419;
+  --avatar-gold:#c9a24a;--avatar-rose:#d98aa5;--avatar-slate:#7b8794;--avatar-sage:#8fae7e;--avatar-sky:#5fb3d6;
+  --radius-md:16px;--radius-pill:9999px;color-scheme:light;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{font-family:"IBM Plex Sans",sans-serif;min-height:100vh;color:var(--text-primary)}
+a{color:inherit;text-decoration:none}
+.navbar{
+    /* position:fixed; */
+    top:0;left:0;
+    width:990px;
+    height:53px;
+    background:rgb(169 207 148);
+    backdrop-filter:blur(8px);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:1000;
+    border-bottom:1px solid var(--border-subtle);
+    padding-top:env(safe-area-inset-top,0px);
+    box-sizing:content-box;
+margin: auto;
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--nav-bg);backdrop-filter:blur(8px);z-index:1001}
+.nav-inner{width:100%;max-width:990px;padding:0 20px;display:flex;align-items:center}
+.nav-brand{font-size:1.3rem;font-weight:700;letter-spacing:-.02em;display:flex;align-items:center;gap:6px}
+.nav-brand .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);display:inline-block}
+.page-shell{max-width:990px;margin:0 auto;display:flex;align-items:flex-start;
+box-shadow: 0 8px 40px rgba(0, 0, 0, 0.18);
+}
+.feed-container{width:600px;max-width:100%;min-width:0;border-left:1px solid var(--border-subtle);border-right:1px solid var(--border-subtle);padding-bottom:60px;max-height:900px;overflow-y:scroll}
+.panel-title{font-size:20px;font-weight:700;padding:14px 16px;border-bottom:1px solid var(--border-subtle)}
+
+/* BANNER SLOT */
+.banner{width:100%;aspect-ratio:3/1;background:var(--banner-bg);border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.banner img{width:100%;height:100%;object-fit:cover;display:block}
+.banner-ph{border:2px dashed var(--border-medium);border-radius:var(--radius-md);color:var(--text-muted);font-size:14px;text-align:center;padding:18px 24px;margin:16px;line-height:1.5}
+
+.compose-card{border-bottom:1px solid var(--border-subtle);padding:12px 16px}
+.compose-row{display:flex;gap:12px;align-items:flex-start}
+.avatar{width:44px;height:44px;min-width:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff}
+.avatar.xs{width:32px;height:32px;min-width:32px;font-size:11px}
+.av-blue{background:var(--avatar-blue)}.av-teal{background:var(--avatar-teal)}.av-coral{background:var(--avatar-coral)}.av-purple{background:var(--avatar-purple)}
+.av-dark{background:var(--avatar-dark);color:#fff}.av-gold{background:var(--avatar-gold)}.av-rose{background:var(--avatar-rose)}
+.av-slate{background:var(--avatar-slate)}.av-sage{background:var(--avatar-sage)}.av-sky{background:var(--avatar-sky)}
+.compose-input-wrap{flex:1;padding-top:8px;min-width:0}
+.compose-input{width:100%;font-family:inherit;font-size:19px;color:var(--text-primary);background:none;border:none;resize:none;min-height:44px;line-height:1.4}
+.compose-input::placeholder{color:var(--text-muted)}.compose-input:focus{outline:none}
+.compose-footer{display:flex;align-items:center;justify-content:flex-end;gap:14px;margin-top:8px;padding-top:10px;border-top:1px solid var(--border-subtle)}
+.char-count{font-size:13px;color:var(--text-muted)}.char-count.near-limit{color:var(--like-red);font-weight:600}
+.post-btn{font-family:inherit;font-size:15px;font-weight:700;color:#fff;background:var(--accent);border:none;border-radius:var(--radius-pill);padding:8px 20px;cursor:pointer}
+.post-btn:disabled{opacity:.5;cursor:not-allowed}.post-btn:not(:disabled):hover{background:var(--accent-hover)}
+
+.feed-list{display:flex;flex-direction:column}
+.post-card{border-bottom:1px solid var(--border-subtle);padding:12px 16px;transition:background-color .1s}
+.post-card:hover{background:var(--bg-hover)}
+.post-card.new-post{animation:postIn .25s ease}
+@keyframes postIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.pin-label{font-size:13px;font-weight:600;color:var(--text-muted);margin:0 0 6px 56px}
+.post-row{display:flex;gap:12px}
+.post-body{flex:1;min-width:0;margin-right:4px}
+.post-meta{display:flex;align-items:baseline;gap:5px;flex-wrap:wrap}
+.post-name{font-size:15px;font-weight:700}
+.verified{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--accent);color:#fff;font-size:10px;align-self:center}
+.post-handle,.post-time{font-size:15px;color:var(--text-muted)}
+.post-time::before{content:"·";margin-right:5px}
+.post-text{font-size:15px;line-height:1.45;margin-top:2px;white-space:pre-wrap;word-wrap:break-word}
+.post-card.pinned .post-text{font-size:15.5px}
+.post-image{margin-top:10px;border-radius:var(--radius-md);overflow:hidden;border:1px solid var(--border-subtle)}
+.post-image img{width:100%;display:block}
+.av-news{background:#c8102e}
+.post-actions{display:flex;justify-content:space-between;max-width:340px;margin-top:10px}
+.action-btn{display:flex;align-items:center;gap:6px;background:none;border:none;font-family:inherit;font-size:13px;color:var(--text-muted);cursor:pointer;padding:6px 8px;border-radius:var(--radius-pill);transition:background-color .15s,color .15s}
+.action-btn:hover{background:var(--accent-tint);color:var(--accent)}
+.action-btn.repost:hover{background:var(--green-tint);color:var(--repost-green)}
+.action-btn.like:hover{background:var(--red-tint);color:var(--like-red)}
+.action-btn .icon{font-size:15px;line-height:1}
+.action-btn.like.liked{color:var(--like-red);font-weight:600}
+.action-btn.repost.reposted{color:var(--repost-green);font-weight:600}
+.action-btn.reply .caret{font-size:10px;transition:transform .15s;display:inline-block}
+.action-btn.reply.open .caret{transform:rotate(180deg)}
+.replies-panel{margin-top:10px;padding:10px 0 0 12px;border-left:2px solid var(--border-subtle);display:flex;flex-direction:column;gap:10px}
+.reply-item{display:flex;gap:8px;align-items:flex-start}
+.reply-bubble{background:var(--bg-input);border-radius:var(--radius-md);padding:7px 12px;flex:1;min-width:0}
+.reply-meta{display:flex;align-items:baseline;gap:5px;flex-wrap:wrap}
+.reply-name{font-size:13px;font-weight:700}
+.reply-handle,.reply-time{font-size:12px;color:var(--text-muted)}
+.reply-time::before{content:"·";margin-right:5px}
+.reply-text{font-size:13.5px;line-height:1.4;margin-top:1px;word-wrap:break-word}
+.replies-empty{font-size:13px;color:var(--text-muted)}
+.reply-composer{display:flex;gap:8px;align-items:center}
+.reply-input{flex:1;min-width:0;font-family:inherit;font-size:13.5px;color:var(--text-primary);background:var(--bg-input);border:1px solid transparent;border-radius:var(--radius-pill);padding:8px 14px}
+.reply-input:focus{outline:none;border-color:var(--accent)}
+.reply-send-btn{font-family:inherit;font-size:12.5px;font-weight:700;color:#fff;background:var(--accent);border:none;border-radius:var(--radius-pill);padding:8px 14px;cursor:pointer}
+.reply-send-btn:disabled{opacity:.5;cursor:not-allowed}
+
+.trend-rail{width:350px;max-width:350px;min-width:0;padding:12px 16px;position:sticky;top:53px}
+.trend-card{background:var(--bg-trend-card);border-radius:var(--radius-md);overflow:hidden}
+.trend-card-title{font-size:19px;font-weight:700;padding:12px 16px 4px}
+.trend-item{display:block;padding:10px 16px;cursor:pointer}
+.trend-item:hover{background:var(--bg-hover)}
+.trend-meta,.trend-count{font-size:12.5px;color:var(--text-muted)}
+.trend-topic{font-size:14.5px;font-weight:700;margin-top:1px}
+@media (max-width:900px){.trend-rail{display:none}.page-shell{justify-content:center}}
+</style>
+</head>
+<body>
+
+<nav class="navbar"><div class="nav-inner"><div class="nav-brand"><span class="dot"></span>Chirper</div></div></nav>
+
+<div class="page-shell">
+  <div class="feed-container">
+    <div class="panel-title">Home</div>
+
+
+
+    <div class="feed-list" id="feedList"></div>
+  </div>
+
+  <aside class="trend-rail"><div class="trend-card" id="trendCard"></div></aside>
+</div>
+
+<script>
+/* ===== COMPANY BANNER: paste your image URL (or data: URI) here ===== */
+const BANNER_SRC = "https://s3.ap-southeast-2.amazonaws.com/learn.aim.com.au/Guided+Pathways/Change+Leadership/Module+5/nixie_banner_2.png";
+
+const MIN = 60000, HR = 3600000;
+const ago = ms => new Date(Date.now() - ms);
+
+let posts = [
+  {
+    id: 100, pinned: true, verified: true,
+    name: "NIXIE & Co.", handle: "@nixieco", avatarInitials: "NX", avatarStyle: "av-dark",
+    timestamp: ago(5 * HR),
+    image: BANNER_SRC,
+    text: "To our NIXIE family,\n\nWe’ve heard your concerns about our recent Live Your Fullest Life campaign. We understand why this partnership has disappointed you, given our commitment to supporting disadvantaged communities in achieving their own dreams.\n\nWe recognise that our commercial decisions need to reflect the values we communicate as a company. In this instance, we did not give enough thought to how this partnership could be perceived in the context of those values.\n\nWe are listening to our customers, employees and community as we reflect on our mistakes and review the situation. We are committed to rebuilding the trust between our team and our customers. We appreciate those who have raised their concerns with us. We have more to learn, and we are committed to ensuring our actions better reflect our words.\n\nXXX",
+    reposts: 842, likes: 1930, liked: false, reposted: false, showReplies: false, repliesList: []
+  },
+  {
+    id: 101, pinned: true, verified: true,
+    name: "Sydney News Network", handle: "@sydneynewsnet", avatarInitials: "SN", avatarStyle: "av-news",
+    timestamp: ago(6 * HR),
+    text: "#NIXIEandNO #NIXIEControversy\n\nNIXIE & Co. is facing backlash after launching their Live Your Fullest Life campaign in collaboration with the Melbourne Cup. Users online have pointed out the hypocrisy in an ethical lifestyle company compromising its values for commercial exposure.\n\nThe controversy has prompted debate about whether businesses should be judged by their stated values, their commercial partnerships, or both.",
+    reposts: 410, likes: 972
+  },
+  { id: 1, name: "Helen R", handle: "@helenr_2005", avatarInitials: "HR", avatarStyle: "av-rose", timestamp: ago(4 * HR + 40 * MIN),
+    text: "I started shopping at NIXIE in 2005 because I believed in their commitment to ethical clothing. Seeing this campaign go live without engaging with the customers who have been supporting them from the beginning is just incredibly disappointing.",
+    reposts: 214, likes: 1480 },
+  { id: 2, name: "Dani K", handle: "@danik_writes", avatarInitials: "DK", avatarStyle: "av-purple", timestamp: ago(4 * HR + 10 * MIN),
+    text: "Corporate apology starter pack:\n☑️ We hear you\n☑️ We acknowledge your concerns\n☑️ We are reviewing the situation\n☑️ We have more to learn\n☐ Actually say what we're going to do",
+    reposts: 1120, likes: 5320 },
+  { id: 3, name: "Tom A", handle: "@tomabides", avatarInitials: "TA", avatarStyle: "av-teal", timestamp: ago(3 * HR + 50 * MIN),
+    text: "I actually appreciate Nixie acknowledging that they got this wrong rather than pretending everyone misunderstood the ad. Companies need to be able to admit to their mistakes #NixieControversy",
+    reposts: 37, likes: 296 },
+  { id: 4, name: "Greg P", handle: "@gregp_syd", avatarInitials: "GP", avatarStyle: "av-slate", timestamp: ago(3 * HR + 20 * MIN),
+    text: "People are acting like NIXIE & Co. suddenly became a gambling company. It was one Melbourne Cup campaign. Businesses are allowed to market their products and make money.",
+    reposts: 18, likes: 143 },
+  { id: 5, name: "Mei L", handle: "@meilin_brand", avatarInitials: "ML", avatarStyle: "av-sky", timestamp: ago(3 * HR),
+    text: "Interesting case of a brand discovering that reputational risk isn’t always about the product you’re selling. Sometimes it’s about who you choose to associate with.",
+    reposts: 92, likes: 611 },
+  { id: 6, name: "Sam W", handle: "@samwrites_things", avatarInitials: "SW", avatarStyle: "av-coral", timestamp: ago(2 * HR + 30 * MIN),
+    text: "nixie: we love our customers and want to support our natural world. we are presenting ourselves as a brand with morals and conviction to distinguish ourselves from our competition in an oversaturated market. we also love animals and have spoken out publicly against other companies using animal testing. we will not compromise on our ideals for a quick cheque\nthe literal dead horse just out of frame:",
+    reposts: 2460, likes: 11800 },
+  { id: 7, name: "Kat B", handle: "@katbee", avatarInitials: "KB", avatarStyle: "av-gold", timestamp: ago(2 * HR),
+    text: "Is now the time to say that their clothes have gotten worse since the buyout and one of their cleansers gave me a rash? #NIXIEandNO",
+    reposts: 64, likes: 872 },
+  { id: 8, name: "Dr Amara O", handle: "@amara_ethics", avatarInitials: "AO", avatarStyle: "av-sage", timestamp: ago(95 * MIN),
+    text: "Don’t just review the campaign. Review who approved it, what questions were asked and whose voices were excluded from the conversation. If nothing changes internally, the statement is just PR #NIXIEControversy",
+    reposts: 388, likes: 2105 },
+  { id: 9, name: "Liam C", handle: "@liamcreates", avatarInitials: "LC", avatarStyle: "av-blue", timestamp: ago(75 * MIN),
+    text: "Ignoring everything else, I can’t believe how tacky it was. It looked like they filmed the ad in a parking lot, and none of the product shots match their other campaigns. Just a bizarre choice by NIXIE all around #NixieControversy",
+    reposts: 21, likes: 254 },
+  { id: 10, name: "Rhea N", handle: "@rheanotes", avatarInitials: "RN", avatarStyle: "av-teal", timestamp: ago(50 * MIN),
+    text: "“We didn’t give enough consideration” is probably the key sentence in Nixie & Co.’s statement. That sounds less like a marketing mistake and more like a failure at the top. #NixieControversy",
+    reposts: 176, likes: 988 },
+  { id: 11, name: "Jess M", handle: "@jessmcl", avatarInitials: "JM", avatarStyle: "av-rose", timestamp: ago(20 * MIN),
+    text: "I have been a customer for years and this genuinely makes me reconsider where I spend my money. Ethical branding creates expectations. You can’t ask customers to care about your values then ignore them when they’re inconvenient",
+    reposts: 305, likes: 1642 }
+].map(p => Object.assign({ image: null, liked: false, reposted: false, showReplies: false, repliesList: [] }, p));
+
+let trends = [
+  { category: "Trending in Australia", topic: "#NixieControversy", count: "18.4K posts" },
+  { category: "Business · Trending", topic: "Live Your Fullest Life", count: "9,212 posts" },
+  { category: "Trending", topic: "#NIXIEandNO", count: "2,870 posts" },
+  { category: "Fashion · Trending", topic: "Ethical Clothing", count: "6,031 posts" },
+  { category: "Trending in Australia", topic: "Melbourne Cup", count: "41.2K posts" }
+];
+
+let nextReplyId = 200;
+let nextId = Math.max(...posts.map(p => p.id)) + 1;
+
+function escapeHtml(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML}
+function formatTimestamp(date){
+  const ms = Date.now() - date, m = Math.round(ms/60000), h = Math.round(ms/3600000), d = Math.round(ms/86400000);
+  if (m < 1) return "now"; if (m < 60) return m + "m"; if (h < 24) return h + "h"; if (d < 7) return d + "d";
+  return date.toLocaleDateString(undefined,{day:"numeric",month:"short"});
+}
+
+function renderTrends(){
+  document.getElementById("trendCard").innerHTML = `<div class="trend-card-title">What’s happening</div>` +
+    trends.map(t => `<div class="trend-item"><div class="trend-meta">${escapeHtml(t.category)}</div><div class="trend-topic">${escapeHtml(t.topic)}</div><div class="trend-count">${escapeHtml(t.count)}</div></div>`).join("");
+}
+
+function renderFeed(){
+  const list = document.getElementById("feedList");
+  const ordered = [...posts.filter(p => p.pinned), ...posts.filter(p => !p.pinned)];
+  list.innerHTML = ordered.map(p => `
+    <div class="post-card${p.isNew ? " new-post" : ""}${p.pinned ? " pinned" : ""}" data-id="${p.id}">
+      ${p.pinned ? '<div class="pin-label">📌 Pinned</div>' : ""}
+      <div class="post-row">
+        <div class="avatar ${p.avatarStyle}">${escapeHtml(p.avatarInitials)}</div>
+        <div class="post-body">
+          <div class="post-meta">
+            <span class="post-name">${escapeHtml(p.name)}</span>${p.verified ? '<span class="verified" title="Verified">✓</span>' : ""}
+            <span class="post-handle">${escapeHtml(p.handle)}</span>
+            <span class="post-time">${formatTimestamp(p.timestamp)}</span>
+          </div>
+          <div class="post-text">${escapeHtml(p.text)}</div>
+          ${p.image ? `<div class="post-image"><img src="${escapeHtml(p.image)}" alt="Post image"></div>` : ""}
+          <div class="post-actions">
+            <button class="action-btn repost${p.reposted ? " reposted" : ""}" onclick="toggleRepost(${p.id})"><span class="icon">🔁</span><span>${p.reposts}</span></button>
+            <button class="action-btn like${p.liked ? " liked" : ""}" onclick="toggleLike(${p.id})"><span class="icon">${p.liked ? "❤️" : "🤍"}</span><span>${p.likes}</span></button>
+            <button class="action-btn share" onclick="sharePost(${p.id})"><span class="icon">📤</span></button>
+          </div>
+          ${p.showReplies ? `
+            <div class="replies-panel">
+              ${p.repliesList.length === 0 ? '<div class="replies-empty">No replies yet. Be the first to reply.</div>' :
+                p.repliesList.map(r => `
+                <div class="reply-item">
+                  <div class="avatar xs ${r.avatarStyle}">${escapeHtml(r.avatarInitials)}</div>
+                  <div class="reply-bubble">
+                    <div class="reply-meta"><span class="reply-name">${escapeHtml(r.name)}</span><span class="reply-handle">${escapeHtml(r.handle)}</span><span class="reply-time">${formatTimestamp(r.timestamp)}</span></div>
+                    <div class="reply-text">${escapeHtml(r.text)}</div>
+                  </div>
+                </div>`).join("")}
+              <div class="reply-composer">
+                <div class="avatar xs av-blue">You</div>
+                <input type="text" class="reply-input" id="replyInput-${p.id}" placeholder="Post your reply" oninput="updateReplyState(${p.id})" onkeydown="if(event.key==='Enter'){event.preventDefault();addReply(${p.id});}">
+                <button class="reply-send-btn" id="replySendBtn-${p.id}" onclick="addReply(${p.id})" disabled>Reply</button>
+              </div>
+            </div>` : ""}
+        </div>
+      </div>
+    </div>`).join("");
+  posts.forEach(p => p.isNew = false);
+}
+
+
+const find = id => posts.find(p => p.id === id);
+function toggleLike(id){const p=find(id);if(!p)return;p.liked=!p.liked;p.likes+=p.liked?1:-1;renderFeed()}
+function toggleRepost(id){const p=find(id);if(!p)return;p.reposted=!p.reposted;p.reposts+=p.reposted?1:-1;renderFeed()}
+
+
+renderFeed(); renderTrends();
+</script>
+</body>
+</html>

@@ -1,0 +1,434 @@
+<!--
+  Outlook-style email activity: one static email with a video embed and two reflective questions beneath it.
+  Each answer autosaves to localStorage (one key per question) and also saves on its Save button.
+  Self-contained: copy this whole block (style, markup, script) into your page.
+  To edit the email, video or questions, change the EMAIL object at the top of the script.
+-->
+<style>
+  .outlook-mock {
+    font-family: "Segoe UI", "Segoe UI Web", Arial, sans-serif;
+    max-width: 700px;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 1px solid #d1d1d1;
+    border-radius: 2px;
+box-shadow: 0 8px 40px rgba(0, 0, 0, 0.18);
+    color: #1b1b1b;
+    font-size: 14px;
+  }
+
+  /* Title bar */
+  .outlook-mock__titlebar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f3f2f1;
+    border-bottom: 1px solid #d1d1d1;
+    padding: 6px 12px;
+    border-radius: 2px 2px 0 0;
+  }
+  .outlook-mock__dot { width: 10px; height: 10px; border-radius: 50%; }
+  .outlook-mock__dot--red { background: #ff5f57; }
+  .outlook-mock__dot--yellow { background: #febc2e; }
+  .outlook-mock__dot--green { background: #28c840; }
+  .outlook-mock__titlebar-text { margin-left: 6px; font-size: 12px; color: #605e5c; }
+
+  /* Toolbar */
+  .outlook-mock__toolbar {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 8px 16px;
+    border-bottom: 1px solid #edebe9;
+    background: #ffffff;
+    flex-wrap: wrap;
+  }
+  .outlook-mock__toolbar-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: #323130;
+    cursor: default;
+  }
+  .outlook-mock__toolbar-icon { width: 16px; height: 16px; display: inline-block; border-radius: 2px; }
+  .outlook-mock__toolbar-icon--reply { background: #0078d4; }
+  .outlook-mock__toolbar-icon--replyall { background: #106ebe; }
+  .outlook-mock__toolbar-icon--forward { background: #005a9e; }
+  .outlook-mock__toolbar-icon--delete { background: #a4262c; }
+  .outlook-mock__toolbar-icon--flag { background: #d83b01; }
+
+  /* Message header */
+  .outlook-mock__header { padding: 16px 20px 12px 20px; border-bottom: 1px solid #edebe9; }
+  .outlook-mock__subject { font-size: 20px; font-weight: 600; color: #201f1e; margin: 0 0 12px 0; }
+  .outlook-mock__row { display: flex; align-items: flex-start; gap: 12px; }
+  .outlook-mock__avatar {
+    flex: 0 0 auto;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .outlook-mock__from-block { flex: 1 1 auto; min-width: 0; }
+  .outlook-mock__from-name { font-weight: 600; font-size: 14px; color: #201f1e; }
+  .outlook-mock__from-email { font-size: 12.5px; color: #605e5c; }
+  .outlook-mock__to-line { font-size: 12.5px; color: #605e5c; margin-top: 2px; }
+  .outlook-mock__timestamp { flex: 0 0 auto; font-size: 12.5px; color: #605e5c; white-space: nowrap; }
+
+  /* Body */
+  .outlook-mock__body { padding: 20px; line-height: 1.55; color: #201f1e; }
+  .outlook-mock__body p { margin: 0 0 14px 0; }
+  .outlook-mock__body p:last-child { margin-bottom: 0; }
+  .outlook-mock__signoff { font-weight: 600; }
+
+  /* Bulleted list inside the email (e.g. the launch timeline) */
+  .outlook-mock__list-intro { margin: 0 0 6px 0; }
+  .outlook-mock__list { margin: 0 0 14px 0; padding-left: 22px; }
+  .outlook-mock__list li { margin: 0 0 6px 0; padding-left: 2px; }
+  .outlook-mock__list li:last-child { margin-bottom: 0; }
+
+  /* Video embed (sits after the email text, before the sign-off) */
+  .outlook-mock__video { margin: 4px 0 18px 0; }
+  .outlook-mock__video-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #f3f2f1;
+    border: 1px solid #d1d1d1;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .outlook-mock__video-frame iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .outlook-mock__video-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 16px;
+    font-size: 13px;
+    color: #605e5c;
+  }
+
+  /* Reflective questions (beneath the email) */
+  .outlook-mock__questions {
+    border-top: 1px solid #edebe9;
+    background: #faf9f8;
+    padding: 6px 20px 8px 20px;
+    border-radius: 0 0 2px 2px;
+  }
+  .outlook-mock__q { padding: 14px 0 16px 0; }
+  .outlook-mock__q + .outlook-mock__q { border-top: 1px solid #edebe9; }
+  .outlook-mock__question {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #201f1e;
+    margin: 0 0 8px 0;
+  }
+  .outlook-mock__textarea {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 130px;
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #201f1e;
+    background: #ffffff;
+    border: 1px solid #8a8886;
+    border-radius: 2px;
+    resize: vertical;
+  }
+  .outlook-mock__textarea:focus {
+    outline: none;
+    border-color: #0078d4;
+    box-shadow: 0 0 0 1px #0078d4;
+  }
+  .outlook-mock__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+  }
+  .outlook-mock__saved {
+    font-size: 13px;
+    color: #107c10;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    margin: 0;
+    min-width: 60px;
+  }
+  .outlook-mock__send {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: #ffffff;
+    background: #0078d4;
+    border: none;
+    border-radius: 2px;
+    padding: 7px 18px;
+    cursor: pointer;
+  }
+  .outlook-mock__send:hover { background: #106ebe; }
+
+  @media (max-width: 520px) {
+    .outlook-mock__row { flex-wrap: wrap; }
+    .outlook-mock__timestamp { width: 100%; padding-left: 52px; }
+  }
+</style>
+
+<div class="outlook-mock" id="outlookMock">
+
+  <div class="outlook-mock__titlebar">
+    <span class="outlook-mock__dot outlook-mock__dot--red"></span>
+    <span class="outlook-mock__dot outlook-mock__dot--yellow"></span>
+    <span class="outlook-mock__dot outlook-mock__dot--green"></span>
+    <span class="outlook-mock__titlebar-text">Inbox &mdash; Outlook</span>
+  </div>
+
+  <div class="outlook-mock__toolbar">
+    <span class="outlook-mock__toolbar-item"><span class="outlook-mock__toolbar-icon outlook-mock__toolbar-icon--reply"></span>Reply</span>
+    <span class="outlook-mock__toolbar-item"><span class="outlook-mock__toolbar-icon outlook-mock__toolbar-icon--replyall"></span>Reply All</span>
+    <span class="outlook-mock__toolbar-item"><span class="outlook-mock__toolbar-icon outlook-mock__toolbar-icon--forward"></span>Forward</span>
+    <span class="outlook-mock__toolbar-item"><span class="outlook-mock__toolbar-icon outlook-mock__toolbar-icon--delete"></span>Delete</span>
+    <span class="outlook-mock__toolbar-item"><span class="outlook-mock__toolbar-icon outlook-mock__toolbar-icon--flag"></span>Flag</span>
+  </div>
+
+  <div class="outlook-mock__header">
+    <p class="outlook-mock__subject" id="omSubject"></p>
+    <div class="outlook-mock__row">
+      <div class="outlook-mock__avatar" id="omAvatar"></div>
+      <div class="outlook-mock__from-block">
+        <div class="outlook-mock__from-name" id="omFromName"></div>
+        <div class="outlook-mock__from-email" id="omFromEmail"></div>
+        <div class="outlook-mock__to-line" id="omTo"></div>
+      </div>
+      <div class="outlook-mock__timestamp" id="omTime"></div>
+    </div>
+  </div>
+
+  <div class="outlook-mock__body" id="omBody"></div>
+
+  <!-- Question boxes are built by the script -->
+  <div class="outlook-mock__questions" id="omQuestions"></div>
+
+</div>
+
+<script>
+(function () {
+
+  /* =====================
+      EMAIL CONTENT
+      Edit the email text, video and questions here.
+
+      paragraphs: each entry is either
+        - a plain string (a normal paragraph), or
+        - { list: { intro: "...", items: [{ date: "...", text: "..." }] } } (a bulleted list)
+
+      video.src: paste the URL of your video, e.g.
+        AWS (S3 / CloudFront) file: https://your-bucket.s3.amazonaws.com/video.mp4
+          (direct .mp4/.webm/.mov links play in a native video player)
+        YouTube: https://www.youtube.com/embed/VIDEO_ID
+        Vimeo:   https://player.vimeo.com/video/VIDEO_ID
+        Leave it empty ("") to show a placeholder box instead.
+  ===================== */
+  const EMAIL = {
+    subject: "Re: Re: Live Your Fullest Life (launch)",
+    initials: "MH",
+    avatarColor: "#c4314b",
+    fromName: "Marissa H",
+    fromEmail: "marissah@nixie.co.au",
+    to: "To: Team",
+    time: "Thurs 10:31 PM",
+    paragraphs: [
+      "Hi everyone,",
+      "Following the launch of our ‘Live your fullest life’ campaign with the Melbourne Cup, I wanted to provide an update on the response so far and outline how we intend to move forward.",
+      "While the campaign has generated considerable visibility for NIXIE, the response from our existing customer base has been more mixed than we anticipated. There has been some criticism across different social media channels, with customers questioning how the campaign aligns with our brand values. The discussion has also attracted attention from several influencers and online commentators, extending well beyond our usual audience.",
+      "Although this is not the response we had hoped for, it is important that we view this as an opportunity to listen to our customers, better understand their concerns and demonstrate that we take their feedback seriously. We have built NIXIE & Co. on trust and keeping that trust will remain central when approaching this situation.",
+      {
+        list: {
+          intro: "Our immediate priorities include:",
+          items: [
+            { text: "Responding to customer concerns constructively" },
+            { text: "Developing consistent messaging across our platforms" },
+            { text: "Working with our partners to assess the remaining campaign activities" },
+            { text: "Reconnecting with existing customers, influencers and supporters" },
+            { text: "Reviewing how we approach commercial partnerships" }
+          ]
+        }
+      },
+      "I want to reassure everyone that we are taking a considered approach. If you receive difficult enquiries, please direct them through the appropriate channels so we can maintain a consistent company response.",
+      "We have an opportunity to demonstrate the kind of organisation we want to be, particularly when faced with difficult circumstances. While the current response to this campaign presents some challenges, our long-term objectives remain unchanged. I am confident that by working together, we can address the immediate concerns and realign ourselves for future success.",
+      "Thank you for your continued commitment and professionalism."
+    ],
+    signoff: "Thanks, Marissa H, Marketing and Product",
+    questions: [
+      {
+        storageKey: "nixieQuestion2",
+        text: "How would you distinguish between a reactive response to the immediate controversy and an adaptive approach that addresses the underlying challenges facing NIXIE & Co.? What action would you prioritise, and how could leadership avoid making short term decisions that create further problems for the organisation?"
+      },
+      {
+        storageKey: "nixieQuestion3",
+        text: "Given the interconnected challenges, how would you lead NIXIE to regain consumer trust and commercial viability? What would you need to reconsider about the organisation's existing approach to ensure it can adapt to future challenges?"
+      }
+    ]
+  };
+
+  /* =====================
+      STORAGE HELPERS
+      Fail quietly if localStorage is blocked.
+  ===================== */
+  const store = {
+    get(k)    { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
+  };
+
+  const $ = (id) => document.getElementById(id);
+
+  /* =====================
+      RENDER THE EMAIL (static)
+  ===================== */
+  $("omSubject").textContent     = EMAIL.subject;
+  $("omAvatar").textContent      = EMAIL.initials;
+  $("omAvatar").style.background = EMAIL.avatarColor;
+  $("omFromName").textContent    = EMAIL.fromName;
+  $("omFromEmail").textContent   = EMAIL.fromEmail;
+  $("omTo").textContent          = EMAIL.to;
+  $("omTime").textContent        = EMAIL.time;
+
+  const body = $("omBody");
+
+  EMAIL.paragraphs.forEach((item) => {
+    if (typeof item === "string") {
+      const p = document.createElement("p");
+      p.textContent = item;
+      body.appendChild(p);
+      return;
+    }
+
+    if (item.list) {
+      if (item.list.intro) {
+        const intro = document.createElement("p");
+        intro.className = "outlook-mock__list-intro";
+        intro.textContent = item.list.intro;
+        body.appendChild(intro);
+      }
+      const ul = document.createElement("ul");
+      ul.className = "outlook-mock__list";
+      item.list.items.forEach((entry) => {
+        const li = document.createElement("li");
+        if (entry.date) {
+          const strong = document.createElement("strong");
+          strong.textContent = entry.date;
+          li.appendChild(strong);
+          li.appendChild(document.createTextNode(": " + entry.text));
+        } else {
+          li.textContent = entry.text;
+        }
+        ul.appendChild(li);
+      });
+      body.appendChild(ul);
+    }
+  });
+
+  /* =====================
+      VIDEO EMBED (after the email text, before the sign-off)
+  ===================== */
+  
+  /* =====================
+      SIGN-OFF
+  ===================== */
+  const sign = document.createElement("p");
+  sign.className = "outlook-mock__signoff";
+  sign.textContent = EMAIL.signoff;
+  body.appendChild(sign);
+
+  /* =====================
+      RENDER THE QUESTIONS
+      One textarea, Save button and autosave per question.
+  ===================== */
+  const questionsEl = $("omQuestions");
+  const saveNowFns = [];
+
+  EMAIL.questions.forEach((q, i) => {
+    const wrap = document.createElement("div");
+    wrap.className = "outlook-mock__q";
+
+    const label = document.createElement("p");
+    label.className = "outlook-mock__question";
+    label.id = "omQuestion" + i;
+    label.textContent = q.text;
+
+    const textArea = document.createElement("textarea");
+    textArea.className = "outlook-mock__textarea";
+    textArea.setAttribute("aria-labelledby", label.id);
+    textArea.value = store.get(q.storageKey) || "";
+
+    const actions = document.createElement("div");
+    actions.className = "outlook-mock__actions";
+
+    const savedMsg = document.createElement("p");
+    savedMsg.className = "outlook-mock__saved";
+    savedMsg.textContent = "Saved!";
+
+    const saveBtn = document.createElement("button");
+    saveBtn.type = "button";
+    saveBtn.className = "outlook-mock__send";
+    saveBtn.textContent = "Save";
+
+    actions.appendChild(savedMsg);
+    actions.appendChild(saveBtn);
+    wrap.appendChild(label);
+    wrap.appendChild(textArea);
+    wrap.appendChild(actions);
+    questionsEl.appendChild(wrap);
+
+    let timer = null;
+    let fadeTimer = null;
+
+    function flashSaved() {
+      savedMsg.style.opacity = "1";
+      clearTimeout(fadeTimer);
+      fadeTimer = setTimeout(() => { savedMsg.style.opacity = "0"; }, 1500);
+    }
+
+    // Write straight away (manual save, and on page close)
+    function saveNow() {
+      clearTimeout(timer);
+      store.set(q.storageKey, textArea.value);
+    }
+    saveNowFns.push(saveNow);
+
+    saveBtn.addEventListener("click", () => {
+      saveNow();
+      flashSaved();
+    });
+
+    // Autosave while typing (debounced, untrimmed so spaces aren't lost)
+    textArea.addEventListener("input", () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        if (store.set(q.storageKey, textArea.value)) flashSaved();
+      }, 600);
+    });
+  });
+
+  // Save everything if the page is closed or hidden mid-typing
+  window.addEventListener("pagehide", () => saveNowFns.forEach((fn) => fn()));
+
+})();
+</script>

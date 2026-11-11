@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>missed call interface</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+    --AIMblue: #4353A3;
+    --darkBlue: #38416D;
+    --navy: #12195C;
+    --lightBlue: #AEBAE4;
+    --white: #ffffff;
+    --bg-input: #f5f3f0;
+    --bg-screen: #f5f3f0;
+    --text-primary: #1a1a1a;
+    --text-secondary: #666660;
+    --text-muted: #999994;
+    --border-subtle: #dedad3;
+    --radius-lg: 12px;
+    --radius-pill: 99px;
+    --missed: #c4402f;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: "IBM Plex Sans", sans-serif;
+    padding: 20px;
+    min-height: 100vh;
+    color: var(--text-primary);
+    /* background: linear-gradient(150deg, rgba(232,228,222,0.47) 0%, rgba(174,186,228,0.49) 100%); */
+}
+
+.container { max-width: 800px; margin: 0 auto; }
+
+/* PHONE */
+.phone-stage { display: flex; justify-content: center; padding: 24px 0 32px; }
+
+.phone {
+    width: 310px;
+    height: 560px;
+    background: var(--text-primary);
+    border-radius: 44px;
+    padding: 9px;
+    box-shadow: 0 12px 28px rgba(18,25,92,0.2);
+}
+
+.screen {
+    position: relative;
+    height: 100%;
+    background: var(--bg-screen);
+    border-radius: 36px;
+    overflow: hidden;
+}
+
+.notch {
+    position: absolute;
+    top: 10px; left: 50%;
+    transform: translateX(-50%);
+    width: 84px; height: 22px;
+    background: var(--text-primary);
+    border-radius: var(--radius-pill);
+}
+
+.panel {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 64px 22px 24px;
+}
+.panel[hidden] { display: none; }
+
+/* main view */
+.caller { text-align: center; }
+
+.avatar {
+    width: 64px; height: 64px;
+    margin: 0 auto 12px;
+    border-radius: 50%;
+    background: var(--lightBlue);
+    color: var(--navy);
+    font-size: 20px;
+    font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+}
+
+.caller-name { font-size: 22px; font-weight: 600; }
+
+.caller-sub {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 4px;
+    font-size: 14px;
+    color: var(--missed);
+}
+.caller-sub svg { width: 13px; height: 13px; }
+
+.actions { display: flex; gap: 10px; margin-top: 20px; }
+
+.pill {
+    flex: 1;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 9px 0;
+    color: var(--AIMblue);
+    background: var(--white);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+}
+.pill:hover { border-color: var(--AIMblue); }
+.actions audio { width: 100%; height: 40px; }
+.actions audio[hidden], .actions button[hidden] { display: none; }
+
+.list {
+    margin-top: auto;
+    background: var(--white);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 13px 14px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text-primary);
+    text-align: left;
+    text-decoration: none;
+    background: none;
+    border: none;
+    border-top: 1px solid var(--border-subtle);
+    cursor: pointer;
+}
+.row:first-child { border-top: none; }
+.row:hover { background: var(--bg-input); }
+.row svg { width: 18px; height: 18px; min-width: 18px; color: var(--AIMblue); }
+.row span { flex: 1; }
+.row small { font-size: 12px; color: var(--text-muted); }
+
+.pill:focus-visible, .row:focus-visible, .back:focus-visible { outline: 2px solid var(--AIMblue); outline-offset: 2px; }
+
+/* transcript view */
+.back {
+    align-self: flex-start;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--AIMblue);
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+.t-title { margin: 10px 0 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle); }
+.t-title h3 { font-size: 16px; }
+.t-title p { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+.transcript { flex: 1; overflow-y: auto; }
+.transcript p { font-size: 14px; line-height: 1.5; margin-bottom: 12px; }
+
+/* QUESTION BOXES */
+/* .unlistened {
+    opacity: 0;
+}
+.listened {
+    opacity: 1;
+        transition: opacity 300ms ease-in;
+} */
+.questions {
+    background-color: var(--white);
+    border-radius: 4px;
+    border: var(--border-subtle) solid 1px;
+    padding: 12px;
+}
+
+.notesBox { padding-bottom: 14px; margin-bottom: 14px; border-bottom: var(--border-subtle) solid 1px; }
+.notesBox:last-child { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+
+.questionText { margin-bottom: 8px; font-size: 14px; font-weight: 600; line-height: 1.4; }
+
+.notesBox textarea {
+    display: block;
+    width: 100%;
+    padding: 10px 14px;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--text-primary);
+    background-color: var(--bg-input);
+    border: var(--border-subtle) solid 1px;
+    border-radius: var(--radius-lg);
+    resize: vertical;
+}
+.notesBox textarea:focus { outline: none; border-color: var(--AIMblue); background-color: var(--white); }
+
+.saved { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+.savedMsg { font-size: 13px; color: var(--AIMblue); opacity: 0; transition: opacity 0.4s ease; min-width: 60px; }
+
+.saveBtn {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--white);
+    background-color: var(--AIMblue);
+    border: none;
+    border-radius: var(--radius-pill);
+    padding: 6px 16px;
+    cursor: pointer;
+}
+.saveBtn:hover { background-color: var(--darkBlue); }
+</style>
+</head>
+<body>
+<div class="container">
+
+    <div class="phone-stage">
+        <div class="phone">
+            <div class="screen">
+                <div class="notch"></div>
+
+                <div class="panel" id="panelMain">
+                    <div class="caller">
+                        <div class="avatar" id="callerInitials"></div>
+                        <div class="caller-name" id="callerName"></div>
+                        <div class="caller-sub">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7 7 17M7 7v10h10"/></svg>
+                            <span id="callerSub"></span>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button class="pill" id="playVoicemail" type="button">Play voicemail</button>
+                        <audio id="voicemailAudio" controls preload="none" hidden></audio>
+                    </div>
+
+                    <div class="list">
+                        <button class="row" id="openTranscript" type="button">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                            <span>View transcript</span>
+                            <small>0:49</small>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="panel" id="panelTranscript" hidden>
+                    <button class="back" id="closeTranscript" type="button">‹ Back</button>
+                    <div class="t-title">
+                        <h3 id="tName"></h3>
+                        <p>Voicemail transcript</p>
+                    </div>
+                    <div class="transcript" id="transcriptBody"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="questions" id="questionBox">
+        <div class="notesBox">
+            <p class="questionText">How would you respond to Taylor while considering the wider organisational implications of the incident?</p>
+            <textarea id="notesInput1" rows="8"></textarea>
+            <div class="saved">
+                <p id="statusMsg1" class="savedMsg">Saved!</p>
+                <button id="saveBtn1" class="saveBtn">Save</button>
+            </div>
+        </div>
+
+        <div class="notesBox">
+            <p class="questionText">When multiple challenges emerge simultaneously, how can leaders distinguish between the immediate issue requiring action and the underlying organisational problems that may have contributed to it?</p>
+            <textarea id="notesInput2" rows="8"></textarea>
+            <div class="saved">
+                <p id="statusMsg2" class="savedMsg">Saved!</p>
+                <button id="saveBtn2" class="saveBtn">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+/* Edit this block to change the caller, voicemail audio and transcript. */
+const callData = {
+    name: "Taylor Clark",
+    initials: "TC",
+    sub: "Missed call · 3:15 pm",
+    audioUrl: "https://s3.ap-southeast-2.amazonaws.com/learn.aim.com.au/Guided+Pathways/Change+Leadership/Module+5/taylor_v1.mp3",                 // <-- voicemail audio file URL (mp3, m4a, wav)
+    transcript: [
+        "Hey, I really need to speak to you. I just realised I posted something on Sweet Home’s account that was meant for my personal profile. I deleted it as soon as I noticed, but someone already took a screenshot and reposted it online.",
+        "I’m freaking out. It was about the new platform, and I know it wasn’t appropriate to put something like that on the official account. But… I’m also super frustrated. I had a tenant tell me yesterday how worried they were about the platform introducing new fees when they’re already struggling with rent. It’s like nobody’s listening!",
+        "I didn’t mean for anyone to see it, and I definitely didn’t mean for it to get Sweet Home any negative attention. I’m worried that everyone already knows it was me. Should I tell them I was hacked? Or maybe contact communications and see if it disappears on its own?",
+        "Can you please call me? I really don’t know what to do."
+    ]
+};
+
+
+var questionBox = document.getElementById("questionBox");
+
+document.getElementById("callerName").textContent = callData.name;
+document.getElementById("tName").textContent = callData.name;
+document.getElementById("callerInitials").textContent = callData.initials;
+document.getElementById("callerSub").textContent = callData.sub;
+document.getElementById("transcriptBody").innerHTML =
+    callData.transcript.map(t => `<p>${t}</p>`).join("");
+
+/* Voicemail playback */
+const playBtn = document.getElementById("playVoicemail");
+const audio = document.getElementById("voicemailAudio");
+audio.src = callData.audioUrl;
+playBtn.addEventListener("click", () => {
+    playBtn.hidden = true;
+    audio.hidden = false;
+    audio.play().catch(() => {});
+    // questionBox.classList.toggle('unlistened');
+    // questionBox.classList.toggle('listened');
+});
+
+const main = document.getElementById("panelMain");
+const trans = document.getElementById("panelTranscript");
+document.getElementById("openTranscript").addEventListener("click", () => {
+    main.hidden = true; trans.hidden = false;
+    // questionBox.classList.toggle('unlistened');
+    // questionBox.classList.toggle('listened');
+});
+document.getElementById("closeTranscript").addEventListener("click", () => {
+    trans.hidden = true; main.hidden = false;
+});
+
+
+/* Notes boxes (localStorage) */
+function initNotesBox(inputId, btnId, msgId, storageKey) {
+    const textArea = document.getElementById(inputId);
+    const saveBtn = document.getElementById(btnId);
+    const statusMsg = document.getElementById(msgId);
+
+    try {
+        const savedNote = localStorage.getItem(storageKey);
+        if (savedNote) textArea.value = savedNote;
+    } catch (e) {}
+
+    saveBtn.addEventListener("click", () => {
+        try { localStorage.setItem(storageKey, textArea.value.trim()); } catch (e) {}
+        statusMsg.style.opacity = "1";
+        setTimeout(() => statusMsg.style.opacity = "0", 1500);
+    });
+
+    textArea.addEventListener("input", () => {
+        try { localStorage.setItem(storageKey, textArea.value.trim()); } catch (e) {}
+    });
+}
+
+initNotesBox("notesInput1", "saveBtn1", "statusMsg1", "mod5scenarioTaylorQ1");
+initNotesBox("notesInput2", "saveBtn2", "statusMsg2", "mod5scenarioTaylorQ2");
+</script>
+</body>
+</html>

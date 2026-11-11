@@ -1,0 +1,180 @@
+<style>
+
+  :root {
+  --AIMblue: #4353A3;
+  --darkBlue: #38416D;
+  --teal: #5DC8B9;
+  --cream: #F1EEDE;
+  --grey: #e7e9ec;
+  --rust: #AF4510;
+  --navy: #12195C;
+  --white: #ffffff;
+  --lightBlue: #AEBAE4;
+  }
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+.notesBox {
+ max-width: 700px; 
+ margin: 30px auto; 
+ padding: 1rem; 
+ background: #f8f9fa; 
+ border-radius: 12px; 
+ box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+textarea {
+width: 95%;
+padding: 0.75rem;
+border-radius: 8px;
+border: 1px solid #ccc;
+resize: vertical;
+font-size: 1rem; 
+font-family: 'Inter', sans-serif;
+}
+ .saved {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
+    margin-top: 0.5rem;
+ }
+
+ .savedMsg {
+ font-size: 0.9rem;
+color: var(--lightBlue);
+ opacity: 0;
+ transition: opacity 0.4s ease;
+ margin: 0;
+ min-width: 60px;   
+ }
+
+ .saveBtn {
+background-color: var(--navy); 
+color: white; 
+border: none; 
+border-radius: 6px;
+      padding: 0.5rem 1.25rem; 
+      font-size: 1rem; 
+      cursor: pointer;
+ }
+
+.questionText {
+margin-bottom: 0.5rem;
+font-size: 1rem;
+padding: 5px;
+}
+
+.modelAnswer {
+  display: none;
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--cream);
+  border-left: 4px solid var(--teal);
+  border-radius: 6px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--navy);
+}
+
+.modelAnswer.visible {
+  display: block;
+}
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+<div class="notesBox">
+    <h3>Question 1</h3>
+  <p class="questionText">How should leaders respond when a change initiative produces outcomes that are significantly different from anticipated? Would you continue with the original campaign strategy, modify it or withdraw from the partnership?</p>
+
+  <textarea id="notesInput1" rows="8"
+    ></textarea>
+
+  <!-- Flexbox row: Saved! stays left, Save button stays right -->
+  <div class="saved" >
+    <p id="statusMsg1" class="savedMsg">Saved!</p>
+    <button id="saveBtn1" class="saveBtn">Save</button>
+  </div>
+
+  <div id="modelAnswer1" class="modelAnswer">
+	Organisational adaptability does not require completely abandoning established practices or continually restructuring an organisation. Leaders need to critically evaluate which processes continue to create value and which may be limiting future performance. Balancing respect for organisational history while remaining prepared to recognise that past success does not guarantee future relevance is crucial for navigating changing markets and customer expectations.
+  </div>
+</div>
+
+
+<div class="notesBox">
+    <h3>Question 2</h3>
+  <p class="questionText">How might the intersecting challenges of reputational damage, customer dissatisfaction and existing financial pressures interact and intensify one another?</p>
+
+  <textarea id="notesInput2" rows="8"
+    ></textarea>
+
+  <div class="saved" >
+    <p id="statusMsg2" class="savedMsg">Saved!</p>
+    <button id="saveBtn2" class="saveBtn">Save</button>
+  </div>
+
+  <div id="modelAnswer2" class="modelAnswer">
+Although the leadership team is responsible for establishing strategic direction, organisational adaptability is strengthened when staff are actively involved in identifying challenges and developing solutions. Team members often have direct knowledge about operational processes, customer expectations and workplace culture that may not be visible at an executive level. Meaningful consultation can therefore improve the practical implementation of change initiatives while building trust and commitment in an organisation.
+
+  </div>
+</div>
+
+<div class="notesBox">
+    <h3>Question 3</h3>
+  <p class="questionText">How can leaders demonstrate organisational adaptability without appearing reactive, inconsistent or lacking direction? What might be the long-term consequences of their approach?</p>
+
+  <textarea id="notesInput3" rows="8"
+    ></textarea>
+
+  <div class="saved" >
+    <p id="statusMsg3" class="savedMsg">Saved!</p>
+    <button id="saveBtn3" class="saveBtn">Save</button>
+  </div>
+
+  <div id="modelAnswer3" class="modelAnswer">
+	Organisational adaptability is most sustainable when it becomes part of the organisation’s everyday culture rather than an activity reserved for periods of significant change. LEGO’s emphasis on bravery, curiosity and focus illustrates how shared principles can guide behaviours without prescribing rigid processes or limiting individual contribution.
+  </div>
+</div>
+
+<script>
+function initNotesBox(inputId, btnId, msgId, storageKey, answerId) {
+  const textArea = document.getElementById(inputId);
+  const saveBtn = document.getElementById(btnId);
+  const statusMsg = document.getElementById(msgId);
+  const answerBox = document.getElementById(answerId);
+
+  const STORAGE_KEY = storageKey;
+  const ANSWER_SHOWN_KEY_NIXIE = storageKey + '_answerShown';
+
+  // Load existing note (if any)
+  const savedNote = localStorage.getItem(STORAGE_KEY);
+  if (savedNote) textArea.value = savedNote;
+
+  // If the answer was already revealed in a previous visit, keep it visible
+  if (localStorage.getItem(ANSWER_SHOWN_KEY_NIXIE) === 'true') {
+    answerBox.classList.add('visible');
+  }
+
+  // Save on button click
+  saveBtn.addEventListener('click', () => {
+    const value = textArea.value.trim();
+    localStorage.setItem(STORAGE_KEY, value);
+
+    // Fade in "Saved!"
+    statusMsg.style.opacity = '1';
+    setTimeout(() => statusMsg.style.opacity = '0', 1500);
+
+  });
+
+  // Optional: auto-save while typing
+  textArea.addEventListener('input', () => {
+    localStorage.setItem(STORAGE_KEY, textArea.value.trim());
+  });
+}
+
+initNotesBox('notesInput1', 'saveBtn1', 'statusMsg1', 'nixieQ1', 'modelAnswer1');
+initNotesBox('notesInput2', 'saveBtn2', 'statusMsg2', 'nixieQ2', 'modelAnswer2');
+initNotesBox('notesInput3', 'saveBtn3', 'statusMsg3', 'nixieQ3', 'modelAnswer3');
+</script>
