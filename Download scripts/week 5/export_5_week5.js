@@ -61,11 +61,11 @@ window.InitUserScripts = function() {
             day: "2-digit", month: "long", year: "numeric"
           });
 
-          page.drawText("Change Leadership - Leading your team through change", {
+          page.drawText("Building organisational adaptability", {
             x: margin, y: y, size: 21, font: fontBold, color: NAVY
           });
           y -= 22;
-          page.drawText("Change Leadership  ·  Session 5  · Leading your team through change " + dateStr, {
+          page.drawText("Change Leadership  ·  Session 5  · Building organisational adaptability " + dateStr, {
             x: margin, y: y, size: 11, font: font, color: MUTED_GRAY
           });
           y -= 14;
@@ -216,19 +216,34 @@ window.InitUserScripts = function() {
           // ✏️ Update titles, intro text, and reflection prompt to match your exercises
           var exercises = [ 
             {
-              title: "Question 1",
+              title: "Question 1 - LEGO",
               intro: "How can leaders help teams adapt to changing organisational priorities while maintaining a shared sense of purpose, values and identity?",
               response: t1
             },
             {
-              title: "Question 2",
+              title: "Question 2 - LEGO",
               intro: "How can leaders respond when changes to an organisation’s products, services, pricing or brand positioning create resistance among existing customers?",
               response: t2
             },
             {
-              title: "Question 3",
+              title: "Question 3 - LEGO",
               intro: "How can leaders balance the immediate demands of team performance with the longer-term priorities of organisational change?",
               response: t3
+            },
+            {
+              title: "Question 1 - NIXIE & Co.",
+              intro: "How can leaders respond when changes to an organisation’s products, services, pricing or brand positioning create resistance among existing customers?",
+              response: t4
+            },
+            {
+              title: "Question 2 - NIXIE & Co.",
+              intro: "How can leaders balance the immediate demands of team performance with the longer-term priorities of organisational change?",
+              response: t5
+            },
+            {
+              title: "Question 3 - NIXIE & Co.",
+              intro: "How can leaders respond when changes to an organisation’s products, services, pricing or brand positioning create resistance among existing customers?",
+              response: t6
             }
           ];
 // ✏️ Intro section: appears before the question sections.
@@ -236,8 +251,8 @@ window.InitUserScripts = function() {
 var introSection = {
   title: "Introduction",
   paragraphs: [
-    "In this lesson, you looked at how to lead a team through a period of change.",
-    "You also read through a case study about RM Williams, and how the brand has evolved over the decades and into the present day. Your responses are stored below."
+    "In this lesson, you looked at building organisational adaptability. You read about the LEGO company and how they approached improving their internal culture. Your responses are stored below.",
+    "You also read through a case study about NIXIE & Co. and their struggles in navigating a complex marketing issue. Your responses are stored below."
     
   ],
   // Label shown above the fillable box under the intro
@@ -330,7 +345,7 @@ y -= 14;
               font: font,
               color: MUTED_GRAY
             });
-            pg.drawText("Change Leadership Session 5 Leading your team through change ", {
+            pg.drawText("Change Leadership Session 5 Building organisational adaptability ", {
               x: margin,
               y: 32,
               size: labelSize,
@@ -345,7 +360,7 @@ y -= 14;
             var url  = URL.createObjectURL(blob);
             var a    = document.createElement("a");
             a.href     = url;
-            a.download = "Change Leadership Session 5 Leading your team through change AIM.pdf";
+            a.download = "Change Leadership Session 5 Building organisational adaptability AIM.pdf";
             a.style.display = "none";
             document.body.appendChild(a);
             a.click();

@@ -59,11 +59,11 @@ window.InitUserScripts = function() {
             day: "2-digit", month: "long", year: "numeric"
           });
 
-          page.drawText("Change Leadership - Leading your team through change", {
+          page.drawText("Influence and negotiation", {
             x: margin, y: y, size: 21, font: fontBold, color: NAVY
           });
           y -= 22;
-          page.drawText("Change Leadership  ·  Session 5  · Leading your team through change " + dateStr, {
+          page.drawText("Change Leadership  ·  Session 5  · Influence and negotiation " + dateStr, {
             x: margin, y: y, size: 11, font: font, color: MUTED_GRAY
           });
           y -= 14;
@@ -214,19 +214,24 @@ window.InitUserScripts = function() {
           // ✏️ Update titles, intro text, and reflection prompt to match your exercises
           var exercises = [ 
             {
-              title: "Question 1",
-              intro: "How can leaders help teams adapt to changing organisational priorities while maintaining a shared sense of purpose, values and identity?",
+              title: "Response to Michael",
+              intro: "In this interaction, you recieved a message from Michael. You selected the below response.",
               response: t1
             },
             {
-              title: "Question 2",
-              intro: "How can leaders respond when changes to an organisation’s products, services, pricing or brand positioning create resistance among existing customers?",
+              title: "Michael's reaction",
+              intro: "Michael replied to your message with the response below.",
               response: t2
             },
             {
-              title: "Question 3",
-              intro: "How can leaders balance the immediate demands of team performance with the longer-term priorities of organisational change?",
+              title: "Reflection Question 1",
+              intro: "After choosing your response to Michael's refusal, how might you decide whether negotiation or influence is more appropriate when someone resists change?",
               response: t3
+            },
+            {
+              title: "Reflection Question 2",
+              intro: "If negotiation or influence is unsuccessful, how would you navigate the relationship while maintaining a professional relationship and continuing to support the change?",
+              response: t4
             }
           ];
 // ✏️ Intro section: appears before the question sections.
@@ -234,8 +239,8 @@ window.InitUserScripts = function() {
 var introSection = {
   title: "Introduction",
   paragraphs: [
-    "In this lesson, you looked at how to lead a team through a period of change.",
-    "You also read through a case study about RM Williams, and how the brand has evolved over the decades and into the present day. Your responses are stored below."
+    "In this lesson, you looked at the role of influence and negotiation in leadership. You examined the difference between these skills, and when each is best applied.",
+    "You also responded to a scenario where you had to navigate communicating with a peer unhappy about a new work initiative. Your responses to him and the reflective questions are stored below."
     
   ],
   // Label shown above the fillable box under the intro
@@ -328,7 +333,7 @@ y -= 14;
               font: font,
               color: MUTED_GRAY
             });
-            pg.drawText("Change Leadership Session 5 Leading your team through change ", {
+            pg.drawText("Change Leadership Session 5 Influence and negotiation ", {
               x: margin,
               y: 32,
               size: labelSize,
@@ -343,7 +348,7 @@ y -= 14;
             var url  = URL.createObjectURL(blob);
             var a    = document.createElement("a");
             a.href     = url;
-            a.download = "Change Leadership Session 5 Leading your team through change AIM.pdf";
+            a.download = "Change Leadership Session 5 Influence and negotiation AIM.pdf";
             a.style.display = "none";
             document.body.appendChild(a);
             a.click();

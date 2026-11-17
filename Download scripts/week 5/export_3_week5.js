@@ -60,11 +60,11 @@ window.InitUserScripts = function() {
             day: "2-digit", month: "long", year: "numeric"
           });
 
-          page.drawText("Change Leadership - Leading your team through change", {
+          page.drawText("Risks of poor organisational change", {
             x: margin, y: y, size: 21, font: fontBold, color: NAVY
           });
           y -= 22;
-          page.drawText("Change Leadership  ·  Session 5  · Leading your team through change " + dateStr, {
+          page.drawText("Change Leadership  ·  Session 5  · Risks of poor organisational change " + dateStr, {
             x: margin, y: y, size: 11, font: font, color: MUTED_GRAY
           });
           y -= 14;
@@ -215,18 +215,28 @@ window.InitUserScripts = function() {
           // ✏️ Update titles, intro text, and reflection prompt to match your exercises
           var exercises = [ 
             {
-              title: "Question 1",
-              intro: "How can leaders help teams adapt to changing organisational priorities while maintaining a shared sense of purpose, values and identity?",
+              title: "Question 1 - Harbourside Manufacturing",
+              intro: "How can both proactive and reactive approaches to organisational change contribute to organisational risk when taken to an extreme?",
               response: t1
             },
             {
-              title: "Question 2",
-              intro: "How can leaders respond when changes to an organisation’s products, services, pricing or brand positioning create resistance among existing customers?",
+              title: "Question 2 - Harbourside Manufacturing",
+              intro: "Considering Harbourside’s previous experiences, how might you balance anticipating future challenges while managing immediate financial and operational responsibilities?",
               response: t2
             },
             {
-              title: "Question 3",
-              intro: "How can leaders balance the immediate demands of team performance with the longer-term priorities of organisational change?",
+              title: "Question 1 - Borders",
+              intro: "How can leaders recognise when an organisation is becoming vulnerable to changing circumstances, and what risks might emerge when existing practices or successes are no longer appropriate?",
+              response: t3
+            },
+            {
+              title: "Question 2 - Borders",
+              intro: "What should leaders consider when making strategic decisions that may provide immediate benefits but create longer-term organisational risks?",
+              response: t3
+            },
+            {
+              title: "Question 3 - Borders",
+              intro: "What responsibility do leaders have for preparing their organisations to manage unexpected challenges or significant change?",
               response: t3
             }
           ];
@@ -235,8 +245,9 @@ window.InitUserScripts = function() {
 var introSection = {
   title: "Introduction",
   paragraphs: [
-    "In this lesson, you looked at how to lead a team through a period of change.",
-    "You also read through a case study about RM Williams, and how the brand has evolved over the decades and into the present day. Your responses are stored below."
+    "In this lesson, you looked at the risks of poor organisational change. You read about how leaders need to distinguish between good and bad friction, allowing the organisation to encourage useful change and eliminate needless complexity. You learnt about how organisational resistance can manifest as a result of poor organisational change.",
+    "You responded to a scenario regarding the manufacturing company Harbourside Manufacturing having trouble implementing changes successfully. Your responses are stored below.",
+    "You also responded to a case study about Borders, and its eventual decline and closure. Your reponses are stored below."
     
   ],
   // Label shown above the fillable box under the intro
@@ -329,7 +340,7 @@ y -= 14;
               font: font,
               color: MUTED_GRAY
             });
-            pg.drawText("Change Leadership Session 5 Leading your team through change ", {
+            pg.drawText("Change Leadership Session 5 Risks of poor organisational change ", {
               x: margin,
               y: 32,
               size: labelSize,
@@ -344,7 +355,7 @@ y -= 14;
             var url  = URL.createObjectURL(blob);
             var a    = document.createElement("a");
             a.href     = url;
-            a.download = "Change Leadership Session 5 Leading your team through change AIM.pdf";
+            a.download = "Change Leadership Session 5 Risks of poor organisational change AIM.pdf";
             a.style.display = "none";
             document.body.appendChild(a);
             a.click();

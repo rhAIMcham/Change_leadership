@@ -58,11 +58,11 @@ window.InitUserScripts = function() {
             day: "2-digit", month: "long", year: "numeric"
           });
 
-          page.drawText("Change Leadership - Leading your team through change", {
+          page.drawText("Leading across an organisation", {
             x: margin, y: y, size: 21, font: fontBold, color: NAVY
           });
           y -= 22;
-          page.drawText("Change Leadership  ·  Session 5  · Leading your team through change " + dateStr, {
+          page.drawText("Change Leadership  ·  Session 5  · Leading across an organisation " + dateStr, {
             x: margin, y: y, size: 11, font: font, color: MUTED_GRAY
           });
           y -= 14;
@@ -214,17 +214,17 @@ window.InitUserScripts = function() {
           var exercises = [ 
             {
               title: "Question 1",
-              intro: "How can leaders help teams adapt to changing organisational priorities while maintaining a shared sense of purpose, values and identity?",
+              intro: "How can leaders balance the need to anticipate future change with the need to respond effectively to unexpected challenges and changing circumstances?",
               response: t1
             },
             {
               title: "Question 2",
-              intro: "How can leaders respond when changes to an organisation’s products, services, pricing or brand positioning create resistance among existing customers?",
+              intro: "When an organisation is experiencing significant change, how can leaders balance immediate operation demands with long-term goals?",
               response: t2
             },
             {
               title: "Question 3",
-              intro: "How can leaders balance the immediate demands of team performance with the longer-term priorities of organisational change?",
+              intro: "What makes an organisation capable of adapting and remaining successful in an environment of ongoing change?",
               response: t3
             }
           ];
@@ -233,8 +233,8 @@ window.InitUserScripts = function() {
 var introSection = {
   title: "Introduction",
   paragraphs: [
-    "In this lesson, you looked at how to lead a team through a period of change.",
-    "You also read through a case study about RM Williams, and how the brand has evolved over the decades and into the present day. Your responses are stored below."
+    "In this lesson, you looked at the role of leadership as an organisation goes through a large change. You looked ay transformational and adaptive change, and how different types of change require different approaches from leaders. You also looked at the change cycle.",
+    "You also read through a case study about The New York Times, and how the brand has evolved over its long history. Your responses are stored below."
     
   ],
   // Label shown above the fillable box under the intro
@@ -327,7 +327,7 @@ y -= 14;
               font: font,
               color: MUTED_GRAY
             });
-            pg.drawText("Change Leadership Session 5 Leading your team through change ", {
+            pg.drawText("Change Leadership Session 5 Leading across an organisation ", {
               x: margin,
               y: 32,
               size: labelSize,
@@ -342,7 +342,7 @@ y -= 14;
             var url  = URL.createObjectURL(blob);
             var a    = document.createElement("a");
             a.href     = url;
-            a.download = "Change Leadership Session 5 Leading your team through change AIM.pdf";
+            a.download = "Change Leadership Session 5 Leading across an organisation AIM.pdf";
             a.style.display = "none";
             document.body.appendChild(a);
             a.click();

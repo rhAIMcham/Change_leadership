@@ -57,11 +57,11 @@ window.InitUserScripts = function() {
             day: "2-digit", month: "long", year: "numeric"
           });
 
-          page.drawText("Change Leadership - Leading your team through change", {
+          page.drawText("Leading through a polycrisis", {
             x: margin, y: y, size: 21, font: fontBold, color: NAVY
           });
           y -= 22;
-          page.drawText("Change Leadership  ·  Session 5  · Leading your team through change " + dateStr, {
+          page.drawText("Change Leadership  ·  Session 5  · Leading through a polycrisis " + dateStr, {
             x: margin, y: y, size: 11, font: font, color: MUTED_GRAY
           });
           y -= 14;
@@ -213,18 +213,13 @@ window.InitUserScripts = function() {
           var exercises = [ 
             {
               title: "Question 1",
-              intro: "How can leaders help teams adapt to changing organisational priorities while maintaining a shared sense of purpose, values and identity?",
+              intro: "How would you respond to Taylor while considering the wider organisational implications of the incident?",
               response: t1
             },
             {
               title: "Question 2",
-              intro: "How can leaders respond when changes to an organisation’s products, services, pricing or brand positioning create resistance among existing customers?",
+              intro: "When multiple challenges emerge simultaneously, how can leaders distinguish between the immediate issue requiring action and the underlying organisational problems that may have contributed to it?",
               response: t2
-            },
-            {
-              title: "Question 3",
-              intro: "How can leaders balance the immediate demands of team performance with the longer-term priorities of organisational change?",
-              response: t3
             }
           ];
 // ✏️ Intro section: appears before the question sections.
@@ -232,8 +227,8 @@ window.InitUserScripts = function() {
 var introSection = {
   title: "Introduction",
   paragraphs: [
-    "In this lesson, you looked at how to lead a team through a period of change.",
-    "You also read through a case study about RM Williams, and how the brand has evolved over the decades and into the present day. Your responses are stored below."
+    "In this lesson, you looked at leading through a polycrisis. These complex interconnected problems are challenging to lead through and are often endemic to the company, requiring a deep understanding of company systems and connection points.",
+    "You responded to a scenario about Sweet Home real estate agency, where you listened to a voicemail from Taylor and answered reflective questions. Your responses are stored below."
     
   ],
   // Label shown above the fillable box under the intro
@@ -326,7 +321,7 @@ y -= 14;
               font: font,
               color: MUTED_GRAY
             });
-            pg.drawText("Change Leadership Session 5 Leading your team through change ", {
+            pg.drawText("Change Leadership Session 5 Leading through a polycrisis ", {
               x: margin,
               y: 32,
               size: labelSize,
@@ -341,7 +336,7 @@ y -= 14;
             var url  = URL.createObjectURL(blob);
             var a    = document.createElement("a");
             a.href     = url;
-            a.download = "Change Leadership Session 5 Leading your team through change AIM.pdf";
+            a.download = "Change Leadership Session 5 Leading through a polycrisis AIM.pdf";
             a.style.display = "none";
             document.body.appendChild(a);
             a.click();
