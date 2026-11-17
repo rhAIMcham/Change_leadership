@@ -65,7 +65,7 @@ window.InitUserScripts = function() {
             day: "2-digit", month: "long", year: "numeric"
           });
 
-          page.drawText("Change Leadership - Leadership through uncertainty", {
+          page.drawText("Leadership through uncertainty", {
             x: margin, y: y, size: 21, font: fontBold, color: NAVY
           });
           y -= 22;

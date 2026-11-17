@@ -56,7 +56,7 @@ window.InitUserScripts = function() {
             day: "2-digit", month: "long", year: "numeric"
           });
 
-          page.drawText("Change Leadership - Resistance in your team", {
+          page.drawText("Resistance in your team", {
             x: margin, y: y, size: 21, font: fontBold, color: NAVY
           });
           y -= 22;
