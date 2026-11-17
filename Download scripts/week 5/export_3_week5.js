@@ -232,12 +232,12 @@ window.InitUserScripts = function() {
             {
               title: "Question 2 - Borders",
               intro: "What should leaders consider when making strategic decisions that may provide immediate benefits but create longer-term organisational risks?",
-              response: t3
+              response: t4
             },
             {
               title: "Question 3 - Borders",
               intro: "What responsibility do leaders have for preparing their organisations to manage unexpected challenges or significant change?",
-              response: t3
+              response: t5
             }
           ];
 // ✏️ Intro section: appears before the question sections.
