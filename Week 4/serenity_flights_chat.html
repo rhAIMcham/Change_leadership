@@ -514,7 +514,7 @@ svg:hover { fill: var(--teal); }
    LEARNER (name comes from the LMS, as in the reference file)
    ========================================================= */
 function titleCase(s) { return s.replace(/\b\w/g, c => c.toUpperCase()); }
-let storedName = 'nl test', storedInitial = 'a';
+let storedName = 'Leader', storedInitial = '';
 try {
   storedName = localStorage.getItem('riseUserName') || storedName;
   storedInitial = localStorage.getItem('lastInitialToken') || storedInitial;
@@ -530,7 +530,7 @@ const userIcon = storedName.trim().slice(0, 1).toUpperCase() + storedInitial.toU
 const people = {
   antoine: {
     id: 'antoine', name: 'Antoine', initials: 'A', av: 'av-blue', status: 'online',
-    desc: 'Online · Pronouns · Join date: placeholder',
+    desc: 'Online · she/her · Join date: 2 years ago',
     unread: 1,
     messages: [
       { time: '10:58 AM', text: [
@@ -565,7 +565,7 @@ const people = {
 
   kelly: {
     id: 'kelly', name: 'Kelly', initials: 'K', av: 'av-coral', status: 'away',
-    desc: 'Away · Pronouns · Join date: placeholder',
+    desc: 'Away · she/her · Join date: 3 years ago',
     unread: 1,
     messages: [
       { time: '10:37 AM', text: [
@@ -592,7 +592,7 @@ const people = {
 
   robert: {
     id: 'robert', name: 'Robert', initials: 'R', av: 'av-purple', status: 'busy',
-    desc: 'Busy · Pronouns · Join date: placeholder',
+    desc: 'Busy · he/him · Join date: 18 months ago',
     unread: 1,
     messages: [
       { time: '9:29 AM', text: [
@@ -698,6 +698,7 @@ function renderDMs() {
 }
 
 function loadDM(id) {
+  currentId = id;
   people[id].unread = 0;
   renderDMs();
   setChat(id);
@@ -814,82 +815,36 @@ document.querySelectorAll('.activity-icon, #phoneSection .dm-item').forEach(el =
 });
 
 /* =========================================================
-   REFLECTION — save answers (plus the learner's chat choices) as a PDF
+   REFLECTION — answers are stored in localStorage
+   (keys: serenityReflectionAnswer1, serenityReflectionAnswer2, serenityReflectionAnswer3)
    ========================================================= */
-const QUESTIONS = {
-  1: 'How did your chosen responses influence each team member’s willingness to engage with you? What might each person’s response reveal about the underlying reasons for their resistance?',
-  2: 'How can you distinguish between resistance that requires a supportive conversation and resistance that requires further action? Consider how you would balance empathy with accountability, particularly when resistance affects team collaboration or compliance.',
-  3: 'What additional information might you seek before deciding your next steps?'
-};
-
-function flashStatus(text, isError) {
+function flashStatus(text) {
   const el = document.getElementById('reflectStatus');
   el.textContent = text;
-  el.classList.toggle('error', !!isError);
   el.style.opacity = 1;
   clearTimeout(flashStatus.t);
   flashStatus.t = setTimeout(() => { el.style.opacity = 0; }, 3000);
 }
 
-function saveReflectionPdf() {
-  const answers = [1, 2, 3].map(n => document.getElementById('reflect' + n).value.trim());
-  if (!answers.some(Boolean)) { flashStatus('Write at least one answer before saving.', true); return; }
-  if (!window.jspdf) { flashStatus('The PDF tool did not load. Check your connection and try again.', true); return; }
-
-  const doc = new window.jspdf.jsPDF({ unit: 'pt', format: 'a4' });
-  const M = 48, W = doc.internal.pageSize.getWidth() - M * 2, BOTTOM = doc.internal.pageSize.getHeight() - M;
-  let y = M;
-  function write(text, size, bold, gap, colour) {
-    doc.setFont('helvetica', bold ? 'bold' : 'normal');
-    doc.setFontSize(size);
-    doc.setTextColor(colour || '#1a1a1a');
-    doc.splitTextToSize(text, W).forEach(line => {
-      if (y > BOTTOM) { doc.addPage(); y = M; }
-      doc.text(line, M, y);
-      y += size * 1.45;
-    });
-    y += gap || 0;
-  }
-
-  write('Reflection: managing resistance during change', 16, true, 4, '#12195C');
-  write(username, 10, false, 14, '#666660');
-
-  Object.values(people).forEach(p => {
-    const s = state[p.id];
-    write('Your chat with ' + p.name, 11, true, 2, '#4353A3');
-    if (s.chosen === null) {
-      write('No response selected.', 10, false, 10, '#666660');
-    } else {
-      const o = p.options[s.chosen];
-      write('You: ' + plain(o.learner), 10, false, 4);
-      write(p.name + ': ' + plain(o.reply), 10, false, 12, '#444444');
-    }
-  });
-
-  y += 6;
-  [1, 2, 3].forEach((n, i) => {
-    write(n + '. ' + QUESTIONS[n], 11, true, 3, '#12195C');
-    write(answers[i] || '(No answer)', 10.5, false, 14);
-  });
-
-  doc.save('Reflection - ' + firstName + '.pdf');
-  flashStatus('Saved!');
+function saveAnswer(box) {
+  const key = 'serenityReflectionAnswer' + box.dataset.q;
+  const text = box.value.trim();
+  try {
+    if (text) localStorage.setItem(key, text);
+    else localStorage.removeItem(key);   // nothing typed, nothing stored
+  } catch (err) { /* storage unavailable */ }
 }
-document.getElementById('reflectSave').addEventListener('click', saveReflectionPdf);
 
-/* AUTO-SAVE — each answer is kept in localStorage as plain text while the learner types
-   (keys: reflectionAnswer1, reflectionAnswer2, reflectionAnswer3) */
+// Auto-save while typing
 document.querySelectorAll('.question textarea').forEach(box => {
-  box.addEventListener('input', () => {
-    const key = 'serenitySeflectionAnswer' + box.dataset.q;
-    const text = box.value.trim();
-    try {
-      if (text) localStorage.setItem(key, text);
-      else localStorage.removeItem(key);          // nothing typed, nothing stored
-    } catch (err) { /* storage unavailable */ }
-  });
+  box.addEventListener('input', () => saveAnswer(box));
 });
 
+// Save button: store all answers again and show "Saved!" on the left
+document.getElementById('reflectSave').addEventListener('click', () => {
+  document.querySelectorAll('.question textarea').forEach(saveAnswer);
+  flashStatus('Saved!');
+});
 /* =========================================================
    BOOT
    ========================================================= */

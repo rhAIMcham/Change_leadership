@@ -1,0 +1,317 @@
+<head>
+<style>
+    /* 1. VARIABLES */
+    :root {
+      --AIMblue: #4353A3;
+      --navy: #12195C;
+      --lightBlue: #AEBAE4;
+      --grey: #e7e9ec;
+      --cream: #F1EEDE;
+      --text-body: #768390;
+      --text-heading: #3D4351;
+      --text-secondary: #666660;
+      --line-colour: #CCD5DB;
+      --page-margin: 170px;
+      --base-font-size: 19px;
+      --image-height: 220px;
+      --radius-lg: 12px;
+    }
+
+    /* 2. PAGE & TYPOGRAPHY */
+    body {
+      margin: 0 var(--page-margin);
+      padding: 0;
+      background: #FFF;
+      color: var(--text-body);
+      font-family: "Effra", Helvetica, sans-serif;
+      font-size: var(--base-font-size);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1, h2, h3, h4, h5, h6 { color: var(--text-heading); margin-top: 0; }
+    h2.timeline-title { font-size: 2em; }
+    h3.timeline-title { font-size: 1.5em; }
+    .timeline-content p { font-size: 1em; }
+    .timeline-info span { font-size: 1.05em; }
+    a { color: var(--AIMblue); }
+    a:hover { color: var(--lightBlue); text-decoration: none; }
+    .container-fluid .row { padding: 4rem 0; }
+
+    /* 3. TIMELINE STRUCTURE */
+    .timeline {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      line-height: 1.4em;
+    }
+    .timeline h1, .timeline h2, .timeline h3 { line-height: inherit; }
+    .timeline-item { position: relative; padding-left: 40px; }
+    .timeline-item:last-child { padding-bottom: 0; }
+    .timeline-info {
+      margin: 0 0 .5em;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .timeline-content { padding-bottom: 40px; }
+    .timeline-content p:last-child { margin-bottom: 0; }
+    .timeline-content > table { width: 100%; }
+
+    /* 4. TIMELINE MARKER */
+    .timeline-marker { position: absolute; top: 0; bottom: 0; left: 0; width: 15px; }
+    .timeline-marker:before {
+      content: "";
+      display: block;
+      position: absolute;
+      top: 4px;
+      left: 0;
+      width: 15px;
+      height: 15px;
+      background: var(--AIMblue);
+      border: 3px solid transparent;
+      border-radius: 100%;
+      transition: background .3s, border .3s;
+    }
+    .timeline-marker:after {
+      content: "";
+      display: block;
+      position: absolute;
+      top: 24px;
+      bottom: 0;
+      left: 6px;
+      width: 3px;
+      background: var(--line-colour);
+    }
+    .timeline-item:last-child .timeline-marker:after { content: none; }
+    .timeline-item:not(.period):hover .timeline-marker:before {
+      background: transparent;
+      border: 3px solid var(--lightBlue);
+    }
+
+    /* 5. PERIOD HEADERS (centuries) */
+    .period { padding: 0; }
+    .period .timeline-info { display: none; }
+    .period .timeline-marker:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 30px;
+      width: 15px;
+      height: auto;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      border-top: 3px solid var(--line-colour);
+      border-bottom: 3px solid var(--line-colour);
+    }
+    .period .timeline-marker:after { content: ""; top: auto; height: 32px; }
+    .period .timeline-content { padding: 40px 0 70px; }
+    .period .timeline-title { margin: 0; }
+
+    /* 6. DESKTOP LAYOUT */
+    @media (min-width: 768px) {
+      .timeline-split .timeline,
+      .timeline-centered .timeline { display: table; }
+      .timeline-split .timeline-item,
+      .timeline-centered .timeline-item { display: table-row; padding: 0; }
+      .timeline-split .timeline-info,
+      .timeline-centered .timeline-info,
+      .timeline-split .timeline-marker,
+      .timeline-centered .timeline-marker,
+      .timeline-split .timeline-content,
+      .timeline-centered .timeline-content,
+      .timeline-split .period .timeline-info { display: table-cell; vertical-align: top; }
+      .timeline-split .timeline-marker,
+      .timeline-centered .timeline-marker { position: relative; }
+      .timeline-split .timeline-content,
+      .timeline-centered .timeline-content { padding-left: 30px; }
+      .timeline-split .timeline-info,
+      .timeline-centered .timeline-info { padding-right: 30px; }
+      .timeline-split .period .timeline-title,
+      .timeline-centered .period .timeline-title { position: relative; left: -45px; }
+    }
+
+    /* 7. IMAGES & CAPTIONS */
+    .single-image-panel {
+      margin: 0;
+      overflow: hidden;
+      background: var(--grey);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .08);
+    }
+    .single-image-panel.period-image { max-width: 100%; margin-top: 16px; }
+    .single-image-panel img {
+      display: block;
+      width: 100%;
+      height: var(--image-height);
+      object-fit: cover;
+      object-position: left center;
+    }
+    .gallery-caption {
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      border-top: 3px solid var(--AIMblue);
+    }
+
+    /* 8. QUOTES */
+    .timeline-quote {
+      margin: 18px 0;
+      padding: 14px 20px;
+      background: var(--cream);
+      border-left: 4px solid var(--AIMblue);
+      border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+      color: var(--navy);
+      font-style: italic;
+    }
+    .timeline-quote cite {
+      display: block;
+      margin-top: 8px;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--text-secondary);
+    }
+</style>
+</head>
+<body>
+<div class="container-fluid"><div class="row example-basic"><div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+
+<ul class="timeline">
+
+<!-- ============ 19TH CENTURY ============ -->
+<!-- TODO: replace the placeholder image URLs below with your banner images -->
+<li class="timeline-item period"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<h2 class="timeline-title">19th century</h2>
+<div class="single-image-panel period-image"><img src="https://s3.ap-southeast-2.amazonaws.com/learn.aim.com.au/Guided+Pathways/Change+Leadership/Module+5/NYT/nyt_19thcentury.png" alt="A banner reading 'Founding Principles' showing an early New York Times front page."><div class="gallery-caption">Building a reputation for accurate, timely reporting</div></div>
+</div></li>
+
+<li class="timeline-item"><div class="timeline-info"><span>1851</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>Founded in 1851 by journalist Henry Jarvis Raymond, The New York Times established itself through its straightforward, accurate and timely reporting. At a time when many American newspapers relied on sensationalism and exaggerated headlines, Raymond’s factual approach drew from his experience as a celebrated war reporter during the American Civil War and distinguished him from his competitors.<br><br>
+The Times’ reporting was so fast and reliable that even Abraham Lincoln’s Secretary of War reportedly received more up-to-date information from the newspaper than through official military channels.</p>
+</div></li>
+
+<li class="timeline-item"><div class="timeline-info"><span>1871</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>In an early example of investigative journalism, The New York Times exposed the corruption of William ‘Boss’ Tweed, who had stolen public funds through inflated government payments. The theft, initially estimated at $6 million, is now believed to have amounted to between $30 and $200 million. In an attempt to suppress the investigation, Tweed offered New York City comptroller George Jones a $5 million bribe to stop the newspaper from publishing its report. Jones refused, and the story went ahead.</p>
+</div></li>
+
+<li class="timeline-item"><div class="timeline-info"><span>1896</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>Despite its reputation for quality journalism, The New York Times was struggling financially in a competitive market until Tennessee-born publisher Adolph Ochs, who had successfully acquired and operated the Chattanooga Times, stepped in as its new owner.<br><br>
+He announced his purchase in April 1896 with the following statement:</p>
+<blockquote class="timeline-quote">“It will be my earnest aim that the New-York Times give the news, all the news, in concise and attractive form, in language that is parliamentary in good society, and give it as early, if not earlier, than it can be learned through any other reliable medium; to give the news impartially, without fear or favour, regardless of party, sect, or interests involved; to make the columns of The New-York Times a forum for the consideration of all questions of public importance, and to that end to invite intelligent discussion from all shades of opinion.”<cite>Adolph Ochs, 1896</cite></blockquote>
+<p>Ochs was also responsible for the famous “All the news that’s fit to print” slogan that remains on the front page of The New York Times to this day. His descendants also retain a controlling stake in the newspaper.</p>
+</div></li>
+
+<!-- ============ 20TH CENTURY ============ -->
+<li class="timeline-item period"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<h2 class="timeline-title">20th century</h2>
+<div class="single-image-panel period-image"><img src="https://s3.ap-southeast-2.amazonaws.com/learn.aim.com.au/Guided+Pathways/Change+Leadership/Module+5/NYT/nyt_20thcentury.png" alt="A banner reading 'Defining Moments' showing historic New York Times headlines."><div class="gallery-caption">Covering the defining events of the century</div></div>
+</div></li>
+
+<li class="timeline-item"><div class="timeline-info"><span>1904</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>Ochs moved the newspaper’s headquarters to Midtown, with Longacre Square subsequently renamed Times Square in its honour. He strengthened the paper’s appeal by reducing costs, removing the fiction section and introducing the Sunday magazine and The New York Times Book Review.</p>
+</div></li>
+
+<li class="timeline-item"><div class="timeline-info"><span>1912</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>Under Ochs, The New York Times expanded its coverage of major events, including the 1912 Titanic disaster. Managing editor Carr Van Anda recognised the severity of the unfolding tragedy when other newspapers continued reporting that the ship was unsinkable, and the Times’ headline, “NEW LINER TITANIC HITS ICEBERG; SINKING BY THE BOW AT MIDNIGHT; WOMEN PUT OFF IN LIFEBOATS; LAST WIRELESS AT 12:27 A.M. BLURRED”, was an outlier amidst other discussion of the disaster.<br><br>
+Van Anda mobilised reporters to meet survivors arriving aboard the Carpathia, establishing a nearby newsroom to rapidly publish their firsthand accounts. The following edition devoted 15 of its 24 pages to the disaster, demonstrating the newspaper’s commitment to timely, extensive and factual reporting.</p>
+</div></li>
+
+<li class="timeline-item"><div class="timeline-info"><span>1918</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>The New York Times received its first Pulitzer Prize for coverage of World War I, further establishing its reputation for frontline journalism.</p>
+</div></li>
+
+<li class="timeline-item"><div class="timeline-info"><span>1930s</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>The newspaper supported polar explorers and aviation pioneers, publishing stories and exclusive interviews with figures such as Charles Lindbergh, Amelia Earhart, Richard Byrd and Roald Amundsen. In 1930, the Times also reported on a military coup in Argentina using wireless telephone technology, which had not yet been subject to government censorship.</p>
+</div></li>
+
+<li class="timeline-item"><div class="timeline-info"><span>1940s</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>During World War II, The New York Times reduced advertising space to accommodate more news despite widespread wartime rationing. In 1942, it introduced the Sunday Crossword and bestseller list to offer readers some relief from grim war coverage.</p>
+</div></li>
+
+<li class="timeline-item"><div class="timeline-info"><span>1964</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>In the landmark New York Times v. Sullivan (1964) case, the US Supreme Court unanimously ruled in favour of the newspaper after it was sued for factual errors in its coverage of police treatment of civil rights protestors in Alabama. The Times’ coverage of the Civil Rights movement had drawn significant political opposition from conservative voices, particularly from the police department in Montgomery, Alabama. The ruling established that public officials must prove ‘actual malice’ to succeed in defamation claims, significantly affecting American libel law.<br><br>
+In 1968, a Times reporter was the sole journalist on the scene when the Rev. Dr. Martin Luther King Jr. was killed in Memphis, Tennessee.</p>
+</div></li>
+
+<li class="timeline-item"><div class="timeline-info"><span>1970</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>During the post-war period, as civil rights and anti-war movements challenged established American ideals, the newspaper sought to balance journalistic objectivity with diverse perspectives. It introduced its Op-Ed page, giving politicians, community leaders and others a platform to share opinions and bring broader social experiences and viewpoints to the issues covered in its reporting.</p>
+</div></li>
+
+<li class="timeline-item"><div class="timeline-info"><span>1976</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>Experiencing financial difficulties, the Times introduced new sections of the paper focusing on sports, culture, science and home life to broaden its appeal.</p>
+</div></li>
+
+<li class="timeline-item"><div class="timeline-info"><span>1984</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>In 1984, The Killing Fields was released, depicting the Khmer Rouge regime in Cambodia through the real-life experiences of journalists Dith Pran and Sydney Schanberg. The critically acclaimed film marked the first time the newspaper’s journalism was adapted for cinema, reaching an international audience.</p>
+</div></li>
+
+<li class="timeline-item"><div class="timeline-info"><span>1996</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>The New York Times launched its first website, nytimes.com, bringing the traditional newspaper experience to the developing world of online publishing.</p>
+</div></li>
+
+<!-- ============ 21ST CENTURY ============ -->
+<li class="timeline-item period"><div class="timeline-info"></div><div class="timeline-marker"></div><div class="timeline-content">
+<h2 class="timeline-title">21st century</h2>
+<div class="single-image-panel period-image"><img src="https://s3.ap-southeast-2.amazonaws.com/learn.aim.com.au/Guided+Pathways/Change+Leadership/Module+5/NYT/nyt_21stcentury.png" alt="A banner reading 'Digital First' showing the New York Times on phones and laptops."><div class="gallery-caption">Reinventing the newsroom for a digital audience</div></div>
+</div></li>
+
+<li class="timeline-item"><div class="timeline-info"><span>2001</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>Despite maintaining its reputation for outstanding investigative journalism, The New York Times faced a rapidly changing media landscape. Its coverage of 9/11 earned seven Pulitzer Prizes and reinforced its position as a trusted source of news. However, the growing popularity of the internet presented a new challenge.<br><br>
+Readers began moving from print to free online content, while digital advertising generated significantly less revenue than traditional print advertising. The newspaper now faced a critical question: how could it monetise its digital readership and sustain its journalism in an increasingly digital world?</p>
+</div></li>
+
+<li class="timeline-item"><div class="timeline-info"><span>2006</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>In 2006, The New York Times introduced its first paywall, TimesSelect, placing premium opinion pieces behind a subscription while keeping general news free. The model attracted only 250,000 subscribers and was discontinued in 2008.</p>
+</div></li>
+
+<li class="timeline-item"><div class="timeline-info"><span>2011</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>After retiring TimesSelect, The New York Times introduced a metered paywall in 2011, allowing readers a limited number of free articles before requiring a subscription. This came as digital-first competitors such as BuzzFeed and The Wall Street Journal were influencing online journalism. Following the 2008 Global Financial Crisis, the newspaper had also sold assets and reduced costs, making finding sustainable digital revenue increasingly urgent.</p>
+</div></li>
+
+<li class="timeline-item"><div class="timeline-info"><span>2012</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>Although the metered paywall was successful, it did not generate sufficient growth. In 2012, Mark Thompson was made CEO, bringing a stronger digital focus that helped grow subscriptions. For the first time, The New York Times earned more revenue from subscriptions than advertising.<br><br>
+With an established reputation for quality journalism, the challenge was now identifying a sustainable way to make readers pay for online news.</p>
+</div></li>
+
+<li class="timeline-item"><div class="timeline-info"><span>2014</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>In early 2014, an internal document from The New York Times was leaked online. The Innovation Lab report revealed the scale of the newspaper’s challenge in adapting to the digital age, and was met with intense scrutiny at the time. It called for a shift away from print advertising towards subscriptions, with a stronger focus on readers, audience development and digital journalism.<br><br>
+This required breaking down internal silos and changing journalists’ expectations: rather than assuming readers would find their work, they needed to actively reach and engage with their audiences.</p>
+<blockquote class="timeline-quote">“The hardest part for me has been the realisation that you don’t automatically get an audience. For someone with a print background, you’re accustomed to the fact that if it makes the editor’s cut – gets into the paper – you’re going to find an audience. It’s entirely the other way around as a digital journalist. The realisation you have to go find your audience – they’re not going to just come and read it – has been transformative.”<cite>Janine Gibson, former U.S. Guardian editor</cite></blockquote>
+<p>The focus on the reader, on their preferences and habits, was a challenge to receive for professional journalists. However, strong leadership, organisational restructuring and the appointment of former Huffington Post editor Alexandra MacCallum helped turn these recommendations into a clearer digital strategy.</p>
+</div></li>
+
+<li class="timeline-item"><div class="timeline-info"><span>2015</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>Unlike newer digital publications, The New York Times already had an established reputation but needed to reach readers more effectively. Under Alexandra MacCallum, the newspaper began using audience data, search engine optimisation and publishing multimedia stories to connect its journalism with online readers, while maintaining its distinctive focus on credible, high-quality reporting rather than social media popularity.</p>
+<blockquote class="timeline-quote">“The whole mission of BuzzFeed is to get people to share. That is not the mission of the New York Times. The mission of The New York Times is about the best journalism in the world and giving people accurate, timely information. I don’t think that BuzzFeed is competing in that space. I wouldn’t discount them as competition at all. But the Times should be there when people search for a big news event.”<cite>Alexandra MacCallum</cite></blockquote>
+<p>In 2015, the Times also launched specialised digital products, including NYT Cooking, NYT Opinion and NYT Now, expanding its subscription options so users could pay just for the specific content that matched their interests.</p>
+</div></li>
+
+<li class="timeline-item"><div class="timeline-info"><span>2016–2017</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>The New York Times expanded its digital offerings by introducing a $5 monthly subscription for NYT Cooking, acquiring product review site Wirecutter and launching The Daily, a 15-minute news podcast. These initiatives created new ways to engage with modern audiences, a strategy the newspaper has continued through its growing range of podcasts and audio products.</p>
+</div></li>
+
+<li class="timeline-item"><div class="timeline-info"><span>2020</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>During the COVID-19 pandemic, The New York Times used its digital capabilities and trusted reputation to provide free, continuous coverage of the crisis. Growing demand for reliable information helped digital subscription revenue more than double, from $460 million USD to $979 million USD by 2022.<br><br>
+The newspaper also acquired Wordle in 2022, integrating it into its NYT Games platform and expanding its subscription model through popular games, including crosswords and Connections.</p>
+</div></li>
+
+<li class="timeline-item"><div class="timeline-info"><span>2022</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>In 2022, The New York Times expanded into sports journalism by acquiring The Athletic, a specialist sports publication. Under its ownership, The Athletic won its first Pulitzer Prize in 2026.</p>
+</div></li>
+
+<li class="timeline-item"><div class="timeline-info"><span>2023</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>The New York Times newsroom grew to a record 2,000 journalists, supported by international bureaus in cities such as London and Seoul, enabling around-the-clock global news coverage.</p>
+</div></li>
+
+<li class="timeline-item"><div class="timeline-info"><span>2026</span></div><div class="timeline-marker"></div><div class="timeline-content">
+<p>By 2026, The New York Times had more than 13 million subscribers, the largest paid subscriber base of any news organisation worldwide. Subscriptions generated 48% of total revenue, while print and digital advertising each contributed 20%. The organisation was also on track to reach its target of 15 million subscribers by 2027, adding 280,000 digital subscribers in the second quarter of 2026 alone.<br><br>
+Embracing a digital-first newsroom transformed how The New York Times delivered news. No longer constrained by morning or afternoon print deadlines, journalists could publish stories as events unfolded, providing audiences with timely and continuous coverage.</p>
+</div></li>
+
+</ul></div></div></div>
+</body>
