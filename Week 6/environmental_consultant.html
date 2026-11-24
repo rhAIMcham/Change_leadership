@@ -13,40 +13,27 @@
 <style>
 /* ==========================================================
    OurSphere Consulting: STYLES
-   Sections in this file:
-     1. Colours, fonts and sizes  (change the look here first)
-     2. Base styles
-     3. The hand-drawn line on the left
-     4. Header
-     5. Hero (opening section)
-     6. Services
-     7. Contact and footer
-     8. Mobile layout
+   1. Colours, fonts and sizes   5. Hero
+   2. Base styles                6. Articles (image + text)
+   3. Hand-drawn line            7. Contact and footer
+   4. Header                     8. Mobile layout
    ========================================================== */
 
-
-/* ----------------------------------------------------------
-   1. COLOURS, FONTS AND SIZES
-   Change a value here and it updates everywhere on the page.
-   ---------------------------------------------------------- */
+/* 1. COLOURS, FONTS AND SIZES */
 :root {
-  /* Brand colours (also used by the line and the logo-matching accents) */
-  --leaf:  #2f7d4f;   /* green */
-  --water: #2a6f97;   /* blue */
+  --leaf:  #2f7d4f;
+  --water: #2a6f97;
 
-  /* Page colours */
-  --bg:     #f3f6f2;  /* pale page background */
-  --fg:     #1d2a24;  /* main text */
-  --muted:  #58665e;  /* grey-green secondary text */
-  --rule:   #d5ded6;  /* thin lines */
-  --pencil: #c9d6cc;  /* faint guide line behind the drawn line */
+  --bg:     #f3f6f2;
+  --fg:     #1d2a24;
+  --muted:  #58665e;
+  --rule:   #d5ded6;
+  --pencil: #c9d6cc;
 
-  /* Fonts */
   --font-heading: "Fraunces", Georgia, serif;
   --font-body:    "Figtree", system-ui, sans-serif;
 
-  /* Layout */
-  --gutter: 96px;     /* width of the empty strip on the left that holds the line */
+  --gutter: 96px;     /* empty strip on the left that holds the line */
 
   /* Phone safe-area handling: leave as is */
   box-sizing: border-box;
@@ -54,62 +41,41 @@
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-/* ----------------------------------------------------------
-   2. BASE STYLES
-   ---------------------------------------------------------- */
-*, *::before, *::after {
-  box-sizing: inherit;
-}
+/* 2. BASE STYLES */
+*, *::before, *::after { box-sizing: inherit; }
 
-html {
-  scroll-padding-top: env(safe-area-inset-top, 0px);
-}
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
 
 body {
   margin: 0;
   background: var(--bg);
   color: var(--fg);
   font-family: var(--font-body);
-  font-size: 1.0625rem;   /* about 17px */
+  font-size: 1.0625rem;
   line-height: 1.65;
 }
 
-a {
-  color: inherit;
-}
+a { color: inherit; }
+a:focus-visible { outline: 2px solid var(--water); outline-offset: 3px; }
 
-/* Visible outline when tabbing with the keyboard */
-a:focus-visible {
-  outline: 2px solid var(--water);
-  outline-offset: 3px;
-}
+main, header, footer { margin-left: var(--gutter); }
 
-/* Header, main content and footer all sit to the right of the line */
-main,
-header,
-footer {
-  margin-left: var(--gutter);
-}
-
-/* Centres content and sets the side margins */
 .wrap {
-  /* max-width: 1040px; */
+  max-width: 1120px;
   padding-left: clamp(1.25rem, 4vw, 3rem);
   padding-right: clamp(1.25rem, 4vw, 3rem);
 }
 
-/* Headings */
-h1,
-h2 {
+h1, h2 {
   margin: 0;
   font-family: var(--font-heading);
-  font-weight: 300;            /* 300 = light, 400 = regular */
+  font-weight: 300;
   letter-spacing: -0.015em;
 }
 
 h1 {
-  max-width: 14ch;             /* keeps the headline to a few short lines */
-  font-size: clamp(2.6rem, 6.5vw, 5rem);   /* min, scales with screen, max */
+  max-width: 16ch;
+  font-size: clamp(2.6rem, 6.5vw, 5rem);
   line-height: 1.03;
 }
 
@@ -118,21 +84,13 @@ h2 {
   line-height: 1.15;
 }
 
-/* Grey intro line under the headline */
 .sub {
   max-width: 44ch;
   margin: 1.5rem 0 0;
   color: var(--muted);
 }
 
-
-/* ----------------------------------------------------------
-   3. THE HAND-DRAWN LINE
-   Fixed to the left of the screen. The drawing effect is
-   controlled by the small script at the bottom of the page.
-   To change the line's shape, edit the "d" values of the two
-   <path> tags in the HTML (they must match each other).
-   ---------------------------------------------------------- */
+/* 3. THE HAND-DRAWN LINE */
 .line {
   position: fixed;
   top: 0;
@@ -141,41 +99,24 @@ h2 {
   width: var(--gutter);
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
-  pointer-events: none;        /* clicks pass through the line */
+  pointer-events: none;
   z-index: 2;
 }
 
-.line svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
+.line svg { display: block; width: 100%; height: 100%; overflow: visible; }
 
-.line path {
-  fill: none;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
+.line path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
 
-/* Faint pencil outline that is always visible */
-.pencil {
-  stroke: var(--pencil);
-  stroke-width: 1.5;
-}
+.pencil { stroke: var(--pencil); stroke-width: 1.5; }
 
-/* The coloured ink line that draws as you scroll */
 .ink {
-  stroke: url(#grad);          /* green to blue gradient */
-  stroke-width: 3.5;           /* line thickness */
+  stroke: url(#grad);
+  stroke-width: 3.5;
   stroke-dasharray: 1;
-  stroke-dashoffset: 1;        /* 1 = hidden, 0 = fully drawn (script changes this) */
+  stroke-dashoffset: 1;
 }
 
-
-/* ----------------------------------------------------------
-   4. HEADER
-   ---------------------------------------------------------- */
+/* 4. HEADER */
 header .wrap {
   display: flex;
   align-items: center;
@@ -185,7 +126,6 @@ header .wrap {
   padding-bottom: 1.75rem;
 }
 
-/* Logo + company name, top left */
 .brand {
   display: flex;
   align-items: center;
@@ -197,63 +137,73 @@ header .wrap {
   line-height: 1;
 }
 
-.brand svg {
-  display: block;
-  width: 42px;                 /* logo size */
-  height: 42px;
-}
+.brand svg { display: block; width: 42px; height: 42px; }
 
-/* "Get in touch" link, top right */
 header a.contact {
   padding-bottom: 2px;
-  border-bottom: 2px solid var(--leaf);   /* underline colour */
+  border-bottom: 2px solid var(--leaf);
   text-decoration: none;
   font-weight: 500;
 }
 
-
-/* ----------------------------------------------------------
-   5. HERO (headline)
-   ---------------------------------------------------------- */
+/* 5. HERO */
 .hero {
   padding-top: clamp(1.5rem, 5vw, 3.5rem);
   padding-bottom: clamp(2rem, 5vw, 4rem);
 }
 
+.hero > p:not(.sub) { max-width: 62ch; }
 
-/* ----------------------------------------------------------
-   6. SERVICES (three text columns)
-   ---------------------------------------------------------- */
+/* 6. ARTICLES
+   Every article is a two-column row: text + image.
+   Even-numbered articles flip so the image alternates sides.
+   To add an article, copy one <article class="svc"> block. */
 .services {
-  display: grid;
-  /* As many columns as fit, each at least 240px wide */
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.75rem;
-  padding-top: clamp(2rem, 5vw, 4rem);
+  padding-top: clamp(1rem, 3vw, 2rem);
   padding-bottom: clamp(2rem, 5vw, 4rem);
 }
 
-.svc h2 {
-  margin-bottom: 0.35rem;
-  font-size: 1.5rem;
+.svc {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 5vw, 4rem);
+  align-items: start;
+  padding: clamp(2rem, 5vw, 3.5rem) 0;
+  border-top: 1px solid var(--rule);
 }
 
-.svc p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.98rem;
+.svc:nth-child(even) .imgCont { order: -1; }
+
+.svc h2 { margin-bottom: 1rem; font-size: clamp(1.5rem, 2.6vw, 1.9rem); }
+
+.svc p { margin: 0 0 1rem; color: var(--muted); font-size: 0.98rem; }
+.svc p:last-child { margin-bottom: 0; }
+
+.svc .tagline { color: var(--fg); font-weight: 500; }
+
+.imgCont {
+  position: sticky;
+  top: calc(1.5rem + env(safe-area-inset-top, 0px));
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--pencil);
 }
 
+.imgCont img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
-/* ----------------------------------------------------------
-   7. CONTACT AND FOOTER
-   ---------------------------------------------------------- */
+/* 7. CONTACT AND FOOTER */
 .cta {
   padding-top: clamp(2rem, 5vw, 4rem);
   padding-bottom: clamp(3rem, 7vw, 6rem);
+  border-top: 1px solid var(--rule);
 }
 
-/* The big email link */
 .cta a {
   display: inline-block;
   margin-top: 1rem;
@@ -261,7 +211,8 @@ header a.contact {
   font-weight: 300;
   font-size: clamp(1.4rem, 3.2vw, 2.2rem);
   line-height: 1.2;
-  text-decoration-color: var(--water);   /* underline colour */
+  overflow-wrap: anywhere;
+  text-decoration-color: var(--water);
   text-decoration-thickness: 2px;
   text-underline-offset: 7px;
 }
@@ -274,34 +225,27 @@ footer .wrap {
   font-size: 0.9rem;
 }
 
+/* 8. MOBILE LAYOUT */
+@media (max-width: 760px) {
+  :root { --gutter: 36px; }
 
-/* ----------------------------------------------------------
-   8. MOBILE LAYOUT (screens 700px wide or narrower)
-   ---------------------------------------------------------- */
-@media (max-width: 700px) {
-  :root {
-    --gutter: 36px;            /* narrower strip for the line on phones */
-  }
+  .brand span { font-size: 1.15rem; }
 
-  .brand span {
-    font-size: 1.15rem;
-  }
+  /* Stack: image first, then text, for every article */
+  .svc { grid-template-columns: 1fr; }
+  .svc .imgCont,
+  .svc:nth-child(even) .imgCont { order: -1; position: static; }
 }
 
-/* Shows the line fully drawn for people who prefer less motion */
 @media (prefers-reduced-motion: reduce) {
-  .ink {
-    stroke-dashoffset: 0;
-  }
+  .ink { stroke-dashoffset: 0; }
 }
 </style>
 </head>
 
 <body>
 
-<!-- ============ HAND-DRAWN LINE ============
-     The ink path draws as you scroll (script at bottom of page).
-     The gradient runs from --leaf (top) to --water (bottom). -->
+<!-- ============ HAND-DRAWN LINE ============ -->
 <div class="line" aria-hidden="true">
   <svg viewBox="0 0 80 800" preserveAspectRatio="none">
     <defs>
@@ -310,22 +254,15 @@ footer .wrap {
         <stop offset="1" stop-color="var(--water)"/>
       </linearGradient>
     </defs>
-    <!-- Faint pencil outline -->
     <path class="pencil" d="M44 0 C30 60 62 100 44 150 S20 230 46 280 C66 330 24 360 38 420 C50 470 70 480 50 520 C30 560 20 540 34 510 C48 480 60 560 42 620 S22 700 44 740 C54 770 40 790 44 800"/>
-    <!-- Coloured ink line (same shape; keep the two "d" values identical) -->
     <path id="ink" class="ink" pathLength="1" d="M44 0 C30 60 62 100 44 150 S20 230 46 280 C66 330 24 360 38 420 C50 470 70 480 50 520 C30 560 20 540 34 510 C48 480 60 560 42 620 S22 700 44 740 C54 770 40 790 44 800"/>
   </svg>
 </div>
 
 
-<!-- ============================================================
-     LOGO (hidden, referenced in the header)
-
+<!-- ============ LOGO (hidden, referenced in the header) ============
      To swap the logo: replace everything inside <symbol id="logo">
-     with your own SVG artwork and set viewBox to match it.
-     Do not paste a full <svg> file in here (no <?xml ...?> line,
-     no outer <svg> tag): only the shapes and the <style>.
-     ============================================================ -->
+     with your own SVG shapes and set viewBox to match. -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <symbol id="logo" viewBox="0 0 674.76 738.72">
@@ -380,43 +317,67 @@ footer .wrap {
     <section class="hero">
       <h1>Land and water, looked after.</h1>
       <p class="sub">Environmental consulting for projects that need to work with the places they are built in.</p>
-      <p>OurSphere Consulting is an environmental consultancy specialising in environmental assessment, sustainability, rehabilitation planning and regulatory advice. Our work is driven by a commitment to protecting our natural world and supporting more responsible approaches to development in Australia. </p>
+      <p>OurSphere Consulting is an environmental consultancy specialising in environmental assessment, sustainability, rehabilitation planning and regulatory advice. Our work is driven by a commitment to protecting our natural world and supporting more responsible approaches to development in Australia.</p>
     </section>
 
-    <!-- ============ SERVICES ============
-         Copy one <article class="svc"> block to add another service. -->
+    <!-- ============ ARTICLES ============
+         Each article = text + .imgCont image. Swap each image's src and alt.
+         Images alternate left/right automatically. -->
     <section class="services">
-      <article class="svc">
-        <h2>Water and catchments</h2>
-        <p>Monitoring, modelling and restoration plans.</p>
+  <article class="svc">
+        <div>
+          <h2>A New Chapter for OurSphere and You: Creating Positive Change Through Collaboration</h2>
+          <p class="tagline">Bringing environmental sustainability and industry experience together to build a better future.</p>
+          <p>At OurSphere, we’ve always believed that protecting our planet requires more than just good intentions – it takes collaboration, inspiration and the preparation to challenge the way things have always been done.</p>
+          <p>That’s why we’re proud to announce our acquisition with Black Swan Minerals, marking an important new chapter for our organisation and the work we can achieve together.</p>
+          <p>Since our founding, OurSphere has worked alongside businesses and communities to support better environmental outcomes. From environmental assessments and rehabilitation planning to sustainability initiatives, our focus has always been on finding practical ways to protect the natural world and create lasting change.</p>
+          <p>Now, we’re bringing our expertise directly into a major Australian mining organisation. We see an opportunity to help influence decisions earlier and encourage a more integrated approach to responsible resource development.</p>
+          <p>We know that meaningful change doesn’t happen overnight. Bringing together two organisations with different backgrounds, experiences and ways of working will present challenges, but it also creates opportunities to learn from one another and rethink what is possible to achieve.</p>
+          <p>Our people and values that have shaped OurSphere remain an important part of this next chapter. The challenges facing our environment are complex, and no single organisation can address them alone. By combining our capabilities, we hope to contribute to a future where industry progress and environmental responsibility work more closely together.</p>
+          <p class="tagline">Different experiences. A shared, sustainable future.</p>
+          <p>We’re excited about what comes next.</p>
+        </div>
+        <div class="imgCont"><img src="https://images.pexels.com/photos/8112301/pexels-photo-8112301.jpeg?_gl=1*e7ko04*_ga*MTQ2NTY0Nzk1OC4xNzk0Mjg3NDcw*_ga_8JE65Q40S6*czE3OTU0ODQ4MTckbzE0JGcxJHQxNzk1NDg2NTgyJGozNyRsMCRoMA.." alt="Australian native wildlife"></div>
       </article>
       <article class="svc">
-        <h2>Ecology and habitat</h2>
-        <p>Surveys, impact assessments and biodiversity offsets.</p>
+        <div>
+          <h2>Did You Know? Australia’s Endangered Species</h2>
+          <p>Australia has the highest mammal extinction rate in the world.</p>
+          <p>From the numbat to the greater bilby to the orange-bellied parrot, many other unique Australian animals face ongoing threats from habitat destruction, introduced predators and environmental change.</p>
+          <p>Protecting biodiversity starts with understanding the environments we share and making informed decisions about how we manage and protect them.</p>
+          <p class="tagline">Every habitat matters!</p>
+        </div>
+        <div class="imgCont"><img src="https://images.pexels.com/photos/8112301/pexels-photo-8112301.jpeg?_gl=1*e7ko04*_ga*MTQ2NTY0Nzk1OC4xNzk0Mjg3NDcw*_ga_8JE65Q40S6*czE3OTU0ODQ4MTckbzE0JGcxJHQxNzk1NDg2NTgyJGozNyRsMCRoMA.." alt="Australian native wildlife"></div>
       </article>
-      <article class="svc">
-        <h2>Approvals and planning</h2>
-        <p>Clear advice through every stage of approval.</p>
-      </article>
-    </section>
 
-    <section>
-     <h2>A New Chapter for OurSphere and You: Creating Positive Change Through Collaboration</h2>
-     <p>Bringing environmental sustainability and industry experience together to build a better future.</p>
-     <p>At OurSphere, we’ve always believed that protecting our planet requires more than just good intentions – it takes collaboration, inspiration and the preparation to challenge the way things have always been done. </p>
-     <p>That’s why we’re proud to announce our acquisition with Black Swan Minerals, marking an important new chapter for our organisation and the work we can achieve together.</p>
-     <p>Since our founding, OurSphere has worked alongside businesses and communities to support better environmental outcomes. From environmental assessments and rehabilitation planning to sustainability initiatives, our focus has always been on finding practical ways to protect the natural world and create lasting change.</p>
-     <p>Now, we’re bringing our expertise directly into a major Australian mining organisation. We see an opportunity to help influence decisions earlier and encourage a more integrated approach to responsible resource development. </p>
-     <p>We know that meaningful change doesn’t happen overnight. Bringing together two organisations with different backgrounds, experiences and ways of working will present challenges, but it also creates opportunities to learn from one another and rethink what is possible to achieve.</p>
-     <p>Our people and values that have shaped OurSphere remain an important part of this next chapter. The challenges facing our environment are complex, and no single organisation can address them alone. By combining our capabilities, we hope to contribute to a future where industry progress and environmental responsibility work more closely together.</p>
-     <p>Different experiences. A shared, sustainable future.</p>
-     <p>We’re excited about what comes next. </p>
+      <article class="svc">
+        <div>
+          <h2>On the Ground: Supporting Mine Rehabilitation</h2>
+          <p>Our team recently completed a site assessment as part of a mine rehabilitation project in Western Australia.</p>
+          <p>The work involved assessing vegetation recovery, monitoring soil conditions and identifying opportunities to improve habitat restoration.</p>
+          <p>Rehabilitation is a long-term process, and successful outcomes need ongoing monitoring and careful planning.</p>
+          <p class="tagline">It’s great to see environmental improvement becoming more important for responsible resource management.</p>
+        </div>
+        <div class="imgCont"><img src="https://images.pexels.com/photos/8112301/pexels-photo-8112301.jpeg?_gl=1*e7ko04*_ga*MTQ2NTY0Nzk1OC4xNzk0Mjg3NDcw*_ga_8JE65Q40S6*czE3OTU0ODQ4MTckbzE0JGcxJHQxNzk1NDg2NTgyJGozNyRsMCRoMA.." alt="Australian native wildlife"></div>
+      </article>
+
+      <article class="svc">
+        <div>
+          <h2>Small changes, big environmental impact</h2>
+          <p>Environmental responsibility doesn’t always require major projects or significant investment.</p>
+          <p>Reducing unnecessary waste, improving water efficiency, protecting native vegetation and considering environmental impacts during everyday planning can all contribute to better outcomes.</p>
+          <p>At OurSphere, we believe sustainable practices are built through consistent decisions and a willingness to improve.</p>
+          <p class="tagline">What small changes could your workplace make today?</p>
+        </div>
+        <div class="imgCont"><img src="https://images.pexels.com/photos/8112301/pexels-photo-8112301.jpeg?_gl=1*e7ko04*_ga*MTQ2NTY0Nzk1OC4xNzk0Mjg3NDcw*_ga_8JE65Q40S6*czE3OTU0ODQ4MTckbzE0JGcxJHQxNzk1NDg2NTgyJGozNyRsMCRoMA.." alt="Australian native wildlife"></div>
+      </article>
+
     </section>
 
     <!-- ============ CONTACT ============ -->
     <section class="cta" id="contact">
       <h2>Have a project in mind?</h2>
-      <a href="mailto:hello@yourdomain.com.au">hello@yourdomain.com.au</a>
+      <a href="mailto:hello@oursphere.consulting.com.au">hello@oursphere.consulting.com.au</a>
     </section>
 
   </div>
@@ -428,8 +389,7 @@ footer .wrap {
 </footer>
 
 
-<!-- ============ SCROLL SCRIPT ============
-     Draws the ink line as the page scrolls. No need to edit this. -->
+<!-- ============ SCROLL SCRIPT ============ -->
 <script>
 (function () {
   var ink = document.getElementById('ink');
