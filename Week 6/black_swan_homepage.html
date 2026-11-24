@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Black Swan Minerals</title>
+
+<!-- Fonts (Google Fonts). Delete these three lines to use only system fonts. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ==========================================================
+   BLACK SWAN MINERALS: STYLES
+   Sections in this file:
+     1. Colours, fonts and sizes  (change the look here first)
+     2. Base styles
+     3. Header
+     4. Hero
+     5. Content sections
+     6. Rare earth grid
+     7. Projects
+     8. Contact and footer
+     9. Mobile layout
+   ========================================================== */
+
+
+/* ----------------------------------------------------------
+   1. COLOURS, FONTS AND SIZES
+   Change a value here and it updates everywhere on the page.
+   ---------------------------------------------------------- */
+:root {
+  /* Brand colours */
+  --ink:   #16191c;   /* near-black used for header, hero, footer */
+  --bone:  #f1efea;   /* off-white page background (light mode) */
+  --bill:  #d10d0d;   /* red accent (buttons, element symbols) */
+  --slate: #5d666d;   /* grey used for secondary text */
+  --line:  #d8d5ce;   /* thin dividing lines */
+  --panel: #e8e5de;   /* background of the alternate (shaded) section */
+
+  /* Colours the page actually uses (these switch in dark mode) */
+  --bg:    var(--bone);
+  --fg:    var(--ink);
+  --muted: var(--slate);
+  --rule:  var(--line);
+
+  /* Fonts */
+  --font-heading: "Newsreader", Georgia, serif;
+  --font-body:    "Instrument Sans", system-ui, sans-serif;
+
+  /* Layout */
+  --page-width:   1120px;   /* maximum width of page content */
+  --header-height: 68px;
+  --radius:        2px;     /* roundness of buttons (0 = square) */
+
+  /* Phone safe-area handling: leave as is */
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Dark mode colours (applies when the visitor's device is set to dark) */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="light"]) {
+    --bg:    #101315;
+    --fg:    #ecebe6;
+    --muted: #9aa3a9;
+    --rule:  #2b3135;
+    --panel: #181c1f;
+    color-scheme: dark;
+  }
+}
+
+
+/* ----------------------------------------------------------
+   2. BASE STYLES
+   ---------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;   /* about 17px */
+  line-height: 1.6;
+}
+
+a {
+  color: inherit;
+}
+
+/* Visible outline when tabbing with the keyboard */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--bill);
+  outline-offset: 3px;
+}
+
+/* Centres content and sets the side margins */
+.wrap {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding-left: clamp(1.25rem, 4vw, 2.5rem);
+  padding-right: clamp(1.25rem, 4vw, 2.5rem);
+}
+
+/* Every copy of the swan logo */
+.logo {
+  display: block;
+  color: currentColor;   /* logo takes the text colour around it */
+}
+
+/* Section headings */
+h2 {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(1.9rem, 4vw, 2.75rem);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  margin: 0 0 1rem;
+}
+
+/* Grey intro paragraph under a heading */
+.lede {
+  color: var(--muted);
+  max-width: 60ch;
+  margin: 0 0 2.5rem;
+}
+
+/* Vertical spacing for every content section */
+section {
+  padding-top: clamp(3.5rem, 8vw, 6rem);
+  padding-bottom: clamp(3.5rem, 8vw, 6rem);
+}
+
+
+/* ----------------------------------------------------------
+   3. HEADER
+   ---------------------------------------------------------- */
+.top {
+  position: sticky;                          /* stays at top while scrolling */
+  top: env(safe-area-inset-top, 0px);
+  z-index: 5;
+  background: var(--ink);
+  color: #ecebe6;
+}
+
+.top .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  height: var(--header-height);
+}
+
+/* Logo + company name, top left */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: 1.25rem;
+  line-height: 1;
+  letter-spacing: 0.01em;
+}
+
+.brand .logo {
+  width: 38px;      /* header logo size */
+  height: 38px;
+}
+
+/* Navigation links, top right */
+nav {
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+  font-size: 0.95rem;
+}
+
+nav a {
+  text-decoration: none;
+  opacity: 0.85;
+}
+
+nav a:hover {
+  opacity: 1;
+}
+
+/* The red "Contact us" button in the nav */
+nav .cta {
+  background: var(--bill);
+  color: #fff;
+  padding: 0.5rem 1.05rem;
+  border-radius: var(--radius);
+  font-weight: 500;
+  opacity: 1;
+}
+
+/* Fills the notch area on phones with the header colour: leave as is */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  background: var(--ink);
+  z-index: 10;
+}
+
+
+/* ----------------------------------------------------------
+   4. HERO (the big opening section)
+   ---------------------------------------------------------- */
+.hero {
+  background: linear-gradient(0deg,rgba(22, 25, 28, 0) 0%, rgba(22, 25, 28, 1) 95%), url("https://images.pexels.com/photos/32594486/pexels-photo-32594486.jpeg?_gl=1*1n6l2bk*_ga*MTQ2NTY0Nzk1OC4xNzk0Mjg3NDcw*_ga_8JE65Q40S6*czE3OTU0NzQzMDkkbzEzJGcxJHQxNzk1NDc0MzQ5JGoyMCRsMCRoMA..");
+  color: #ecebe6;
+  padding-top: clamp(3.5rem, 9vw, 7rem);
+  padding-bottom: clamp(3.5rem, 9vw, 7rem);
+}
+
+/* Two columns: text on the left, logo on the right */
+.hero .wrap {
+  /* display: grid; */
+  grid-template-columns: 1.25fr 1fr;   /* left column is slightly wider */
+  gap: clamp(2rem, 6vw, 5rem);
+  align-items: center;
+}
+
+.hero h1 {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);   /* min, scales with screen, max */
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  margin: 0 0 1.5rem;
+}
+
+.hero p {
+  max-width: 46ch;
+margin: 0 0 2rem;
+  background: var(--bone);
+  padding: 10px;
+  color: black;
+}
+
+/* Row holding the two hero buttons */
+.btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.8rem 1.4rem;
+  border: 1px solid #4a5258;
+  border-radius: var(--radius);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+/* The solid red button */
+.btn.primary {
+  background: var(--bill);
+  border-color: var(--bill);
+  color: #fff;
+}
+
+/* Big logo panel on the right of the hero */
+.hero-logo {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 1 / 1;                 /* keeps the panel square */
+  justify-self: center;
+  border: 1px dashed #4a5258;          /* delete this line to remove the dashed box */
+  color: #ecebe6;
+}
+
+.hero-logo .logo {
+  width: 72%;      /* logo size inside the panel */
+  height: 72%;
+}
+
+/* "Hero logo slot" caption: delete this rule and the <small> in the HTML when done */
+.hero-logo small {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #7d868c;
+  font-size: 0.8rem;
+}
+
+
+/* ----------------------------------------------------------
+   5. CONTENT SECTIONS
+   ---------------------------------------------------------- */
+
+/* About section: heading on the left, text on the right */
+.two {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: clamp(2rem, 6vw, 5rem);
+}
+
+.two p {
+  max-width: 62ch;
+  margin: 0 0 1rem;
+}
+
+/* Shaded background section (rare earths) */
+.alt {
+  background: var(--panel);
+}
+
+
+/* ----------------------------------------------------------
+   6. RARE EARTH GRID
+   ---------------------------------------------------------- */
+.elements {
+  display: grid;
+  /* As many columns as fit, each at least 210px wide */
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  border-top: 1px solid var(--rule);
+  border-left: 1px solid var(--rule);
+}
+
+.el {
+  padding: 1.5rem;
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+
+/* Element name, e.g. "Neodymium" */
+.el b {
+display: flex;
+    flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: 2.25rem;
+  line-height: 1;
+}
+
+/* Red chemical symbol, e.g. "Nd" */
+.el em {
+  margin-right: 0.35rem;
+  color: var(--bill);
+  font-style: normal;
+  font-weight: 600;
+}
+
+/* Description under the name */
+.el span {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+
+/* ----------------------------------------------------------
+   7. PROJECTS
+   ---------------------------------------------------------- */
+.projects {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Grey photo placeholder: replace with an <img> when you have photos */
+.proj .ph {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  margin-bottom: 1rem;
+  background: var(--rule);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.proj h3 {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: 1.35rem;
+  line-height: 1.2;
+}
+
+.proj p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.97rem;
+}
+
+
+/* ----------------------------------------------------------
+   8. CONTACT AND FOOTER
+   ---------------------------------------------------------- */
+.contact {
+  background: var(--ink);
+  color: #ecebe6;
+}
+
+.contact .lede {
+  color: #b4bbc0;
+}
+
+/* The big email link */
+.contact a.mail {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  line-height: 1.2;
+  text-decoration-color: var(--bill);
+  text-underline-offset: 6px;
+}
+
+footer {
+  background: var(--ink);
+  color: #8c959b;
+  border-top: 1px solid #2b3135;
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+  font-size: 0.9rem;
+}
+
+footer .wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+/* Logo + name on the left of the footer */
+footer .fl {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #ecebe6;
+}
+
+footer .logo {
+  width: 32px;      /* footer logo size */
+  height: 32px;
+}
+
+
+/* ----------------------------------------------------------
+   9. MOBILE LAYOUT (screens 820px wide or narrower)
+   ---------------------------------------------------------- */
+@media (max-width: 820px) {
+  /* Stack two-column layouts into one column */
+  .hero .wrap,
+  .two {
+    grid-template-columns: 1fr;
+  }
+
+  /* Show the logo panel first, smaller */
+  .hero-logo {
+    max-width: 280px;
+    order: -1;
+  }
+
+  /* Hide text links in the nav, keep the red button */
+  nav a:not(.cta) {
+    display: none;
+  }
+}
+
+/* Turn off smooth scrolling for people who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Black Swan Minerals home">
+      <?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1687.83 1686.94" style="width: 45px;">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-2 {
+        fill: #d10d0d;
+      }
+
+      .cls-3 {
+        clip-path: url(#clippath);
+      }
+
+      .cls-4 {
+        fill: #841212;
+      }
+    </style>
+    <clipPath id="clippath">
+      <path class="cls-1" d="M807.53,503.18l-347.66,696.44v-62.29c0-91.63,21-182.05,61.38-264.31L828.69,246.77h0c26.14,85.01,18.57,176.83-21.16,256.4Z"/>
+    </clipPath>
+  </defs>
+  <g id="Layer_6" data-name="Layer 6">
+    <g>
+      <path class="cls-4" d="M667.65,1086.05c.04-.42.09-.84.13-1.26,7.82-76.9,56.06-143.79,126.56-175.48,199.69-89.76,399.38-179.52,599.07-269.28-5.28,36.54-17.67,87.67-48.59,141.03-70.32,121.37-186.13,167.38-224.69,180.81"/>
+      <path class="cls-2" d="M861.4,1220.5h-387.42c34.39-64.54,69.03-129.06,103.68-193.58,66.99-124.75,190.13-209.44,330.59-227.35,40.57-5.17,81.18-10.34,121.91-15.5,144.55-18.3,289.11-36.61,433.66-54.91l-140.25,263.2c-19.9,37.35-47.38,70.14-80.67,96.28h0c-108.82,85.42-243.16,131.86-381.5,131.86Z"/>
+      <path class="cls-2" d="M807.53,503.18l-347.66,696.44v-62.29c0-91.63,21-182.05,61.38-264.31L828.69,246.77h0c26.14,85.01,18.57,176.83-21.16,256.4Z"/>
+      <path class="cls-4" d="M810.63,238.52c-.85.07-1.71.13-2.56.2-66.17,5.08-126.27,40.51-162.76,95.95l-35.4,53.77c32.81-8.82,65.62-17.65,98.43-26.47,7.24-5.52,14.48-11.04,21.71-16.56,5.38,6.58,10.76,13.15,16.14,19.73,21.48-42.2,42.95-84.4,64.43-126.61Z"/>
+      <path class="cls-2" d="M665.32,308.8c-53.5,60.78-102.85,117.22-102.1,117.84,0,0,0,0,0,0,.67.09,24.1-10.02,145.11-64.67-19.73.02-39.45.04-59.18.06,5.39-17.74,10.77-35.49,16.16-53.23Z"/>
+      <path class="cls-4" d="M737.14,1009.13c274.1-87.97,539.48-173.15,796.17-255.53-25.19,37.81-73.28,99.13-153.32,148.79-58.8,36.48-114.31,53.93-153.32,62.78"/>
+      <path class="cls-2" d="M727.02,1011.07c281.06-62.23,553.19-122.47,816.41-180.75-28.58,35.31-82.14,91.92-166.43,133.96-61.93,30.89-118.81,43.12-158.47,48.33"/>
+    </g>
+    <g class="cls-3">
+      <rect class="cls-4" x="216.67" y="500.91" width="901.95" height="157.84" transform="translate(-192.81 783.73) rotate(-54.3)"/>
+    </g>
+    <path class="cls-2" d="M843.98.01c594.96.6,1002.66,601.67,784.02,1155.07-113.8,289.97-389.78,498.4-700.12,527.39-371.47,38.95-731.51-179.74-868.07-527.34C-158.85,601.71,249.03.57,843.98.01h0ZM843.98.01c-245.47-1.31-485.85,114.13-638.39,306.42-382.52,480.37-119.98,1193.17,481.37,1313.06,635.59,121.2,1152.41-501.27,917.13-1104.01C1482.57,206.25,1176.39-1.69,843.98.01h0Z"/>
+  </g>
+</svg>
+      Black Swan Minerals
+    </a>
+    <nav aria-label="Main">
+      <a href="#about">About</a>
+      <a href="#updates">Updates</a>
+      <a href="#elements">Rare earths</a>
+      <a href="#projects">Projects</a>
+      <a class="cta" href="#contact">Contact us</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============ HERO ============ -->
+  <div class="hero">
+    <div class="wrap">
+      <div>
+        <h1>Rare earths for the technology the world is building.</h1>
+        <p>Black Swan Minerals explores and develops rare earth deposits across Australia, supplying the elements behind magnets, batteries and clean energy.</p>
+        <div class="btns">
+          <a class="btn primary" href="#projects">See our projects</a>
+          <a class="btn" href="#about">About the company</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ABOUT ============ -->
+  <section id="about">
+    <div class="wrap two">
+      <h2>An Australian rare earths company.</h2>
+      <div>
+        <p>Black Swan Minerals is an Australian mining company with a proud history of operational delivery and industry experience.</p>
+        <p>Black Swan remains committed to maintaining its position as an industry leader within the Australian mining sector through continued investment and strategic development.</p>
+      </div>
+    </div>
+  </section>
+
+    <!-- ============ UPDATES ============ -->
+  <section id="updates" class="alt">
+    <div class="wrap">
+      <h2>Black Swan Minerals Announces Acquisition of OurSphere Consulting </h2>
+      <p class="lede">Strengthening operational capability and positioning the business for long-term growth.</p>
+      <div>
+     <p>Black Swan Minerals is pleased to announce the successful acquisition with OurSphere Consulting, a respected environmental consultancy specialising in environmental assessment, sustainability and regulatory compliance.</p>
+     <p>The acquisition represents a significant milestone in the continued development of Black Swan Minerals and supports the organisation’s long-term business strategy. By uniting extensive mining industry experience with specialist environmental expertise, the new combined organisation aims to strengthen its operational capabilities, improve project delivery and support the growth of Australia’s resource sector.</p>
+     <p>As the Australian mining industry continues to evolve, this acquisition provides an opportunity to strengthen local industry capability, meet new environmental regulations and build a more resilient and competitive business.</p>
+     <p>Black Swan recognises the importance of maintaining business continuity throughout the transition. Existing projects, client commitments and operation requirements will remain a priority while these changes are progressively implemented.</p>
+     <p>We will continue to focus on delivering operational outcomes, maintaining industry standards and creating sustainable value for our stakeholders. </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RARE EARTHS ============ -->
+  <section id="elements">
+    <div class="wrap">
+      <h2>The elements we target</h2>
+      <p class="lede">These minerals are used to fuel the clean energy transition, maunfacture cutting edge electronics and so much more.</p>
+      <div class="elements">
+        <!-- Copy one <div class="el"> block to add another element -->
+        <div class="el"><b><em>Nd</em>Neodymium</b><span>Permanent magnets for wind turbines and electric motors.</span></div>
+        <div class="el"><b><em>Pr</em>Praseodymium</b><span>Alloyed with neodymium to strengthen magnets.</span></div>
+        <div class="el"><b><em>Dy</em>Dysprosium</b><span>Keeps magnets stable at high temperatures.</span></div>
+        <div class="el"><b><em>Tb</em>Terbium</b><span>Magnets, displays and lighting.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROJECTS ============ -->
+  <section id="projects" class="alt">
+    <div class="wrap">
+      <h2>Projects</h2>
+      <p class="lede">Placeholder projects. Swap in your tenements, locations and status.</p>
+      <div class="projects">
+        <!-- Replace <div class="ph">...</div> with <img src="your-photo.jpg" alt="..."> -->
+        <article class="proj"><div class="ph">Photo or map</div><h3>Project one</h3><p>Location, state and current stage.</p></article>
+        <article class="proj"><div class="ph">Photo or map</div><h3>Project two</h3><p>Location, state and current stage.</p></article>
+        <article class="proj"><div class="ph">Photo or map</div><h3>Project three</h3><p>Location, state and current stage.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section id="contact" class="contact">
+    <div class="wrap">
+      <h2>Talk to us</h2>
+      <p class="lede">For investor, offtake and partnership enquiries.</p>
+      <a class="mail" href="mailto:info@blackswanminerals.com.au">info@blackswanminerals.com.au</a>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="fl">
+      <?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1687.83 1686.94">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-2 {
+        fill: #d10d0d;
+      }
+
+      .cls-3 {
+        clip-path: url(#clippath);
+      }
+
+      .cls-4 {
+        fill: #841212;
+      }
+    </style>
+    <clipPath id="clippath">
+      <path class="cls-1" d="M807.53,503.18l-347.66,696.44v-62.29c0-91.63,21-182.05,61.38-264.31L828.69,246.77h0c26.14,85.01,18.57,176.83-21.16,256.4Z"/>
+    </clipPath>
+  </defs>
+  <g id="Layer_6" data-name="Layer 6">
+    <g>
+      <path class="cls-4" d="M667.65,1086.05c.04-.42.09-.84.13-1.26,7.82-76.9,56.06-143.79,126.56-175.48,199.69-89.76,399.38-179.52,599.07-269.28-5.28,36.54-17.67,87.67-48.59,141.03-70.32,121.37-186.13,167.38-224.69,180.81"/>
+      <path class="cls-2" d="M861.4,1220.5h-387.42c34.39-64.54,69.03-129.06,103.68-193.58,66.99-124.75,190.13-209.44,330.59-227.35,40.57-5.17,81.18-10.34,121.91-15.5,144.55-18.3,289.11-36.61,433.66-54.91l-140.25,263.2c-19.9,37.35-47.38,70.14-80.67,96.28h0c-108.82,85.42-243.16,131.86-381.5,131.86Z"/>
+      <path class="cls-2" d="M807.53,503.18l-347.66,696.44v-62.29c0-91.63,21-182.05,61.38-264.31L828.69,246.77h0c26.14,85.01,18.57,176.83-21.16,256.4Z"/>
+      <path class="cls-4" d="M810.63,238.52c-.85.07-1.71.13-2.56.2-66.17,5.08-126.27,40.51-162.76,95.95l-35.4,53.77c32.81-8.82,65.62-17.65,98.43-26.47,7.24-5.52,14.48-11.04,21.71-16.56,5.38,6.58,10.76,13.15,16.14,19.73,21.48-42.2,42.95-84.4,64.43-126.61Z"/>
+      <path class="cls-2" d="M665.32,308.8c-53.5,60.78-102.85,117.22-102.1,117.84,0,0,0,0,0,0,.67.09,24.1-10.02,145.11-64.67-19.73.02-39.45.04-59.18.06,5.39-17.74,10.77-35.49,16.16-53.23Z"/>
+      <path class="cls-4" d="M737.14,1009.13c274.1-87.97,539.48-173.15,796.17-255.53-25.19,37.81-73.28,99.13-153.32,148.79-58.8,36.48-114.31,53.93-153.32,62.78"/>
+      <path class="cls-2" d="M727.02,1011.07c281.06-62.23,553.19-122.47,816.41-180.75-28.58,35.31-82.14,91.92-166.43,133.96-61.93,30.89-118.81,43.12-158.47,48.33"/>
+    </g>
+    <g class="cls-3">
+      <rect class="cls-4" x="216.67" y="500.91" width="901.95" height="157.84" transform="translate(-192.81 783.73) rotate(-54.3)"/>
+    </g>
+    <path class="cls-2" d="M843.98.01c594.96.6,1002.66,601.67,784.02,1155.07-113.8,289.97-389.78,498.4-700.12,527.39-371.47,38.95-731.51-179.74-868.07-527.34C-158.85,601.71,249.03.57,843.98.01h0ZM843.98.01c-245.47-1.31-485.85,114.13-638.39,306.42-382.52,480.37-119.98,1193.17,481.37,1313.06,635.59,121.2,1152.41-501.27,917.13-1104.01C1482.57,206.25,1176.39-1.69,843.98.01h0Z"/>
+  </g>
+</svg>
+      Black Swan Minerals
+    </div>
+    <span>© 2026 Black Swan Minerals Pty Ltd. Australia.</span>
+  </div>
+</footer>
+
+</body>
+</html>

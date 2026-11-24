@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OurSphere Consulting</title>
+
+<!-- Fonts (Google Fonts). Delete these three lines to use only system fonts. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ==========================================================
+   OurSphere Consulting: STYLES
+   Sections in this file:
+     1. Colours, fonts and sizes  (change the look here first)
+     2. Base styles
+     3. The hand-drawn line on the left
+     4. Header
+     5. Hero (opening section)
+     6. Services
+     7. Wide image band
+     8. Contact and footer
+     9. Mobile layout
+   ========================================================== */
+
+
+/* ----------------------------------------------------------
+   1. COLOURS, FONTS AND SIZES
+   Change a value here and it updates everywhere on the page.
+   ---------------------------------------------------------- */
+:root {
+  /* Brand colours (also used by the line and the logo-matching accents) */
+  --leaf:  #2f7d4f;   /* green */
+  --water: #2a6f97;   /* blue */
+
+  /* Page colours */
+  --bg:     #f3f6f2;  /* pale page background */
+  --fg:     #1d2a24;  /* main text */
+  --muted:  #58665e;  /* grey-green secondary text */
+  --rule:   #d5ded6;  /* thin lines and image backgrounds */
+  --pencil: #c9d6cc;  /* faint guide line behind the drawn line */
+
+  /* Fonts */
+  --font-heading: "Fraunces", Georgia, serif;
+  --font-body:    "Figtree", system-ui, sans-serif;
+
+  /* Layout */
+  --gutter: 96px;     /* width of the empty strip on the left that holds the line */
+
+  /* Phone safe-area handling: leave as is */
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ----------------------------------------------------------
+   2. BASE STYLES
+   ---------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+html {
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;   /* about 17px */
+  line-height: 1.65;
+}
+
+a {
+  color: inherit;
+}
+
+/* Visible outline when tabbing with the keyboard */
+a:focus-visible {
+  outline: 2px solid var(--water);
+  outline-offset: 3px;
+}
+
+/* Header, main content and footer all sit to the right of the line */
+main,
+header,
+footer {
+  margin-left: var(--gutter);
+}
+
+/* Centres content and sets the side margins */
+.wrap {
+  max-width: 1040px;
+  padding-left: clamp(1.25rem, 4vw, 3rem);
+  padding-right: clamp(1.25rem, 4vw, 3rem);
+}
+
+/* Headings */
+h1,
+h2 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 300;            /* 300 = light, 400 = regular */
+  letter-spacing: -0.015em;
+}
+
+h1 {
+  max-width: 14ch;             /* keeps the headline to a few short lines */
+  font-size: clamp(2.6rem, 6.5vw, 5rem);   /* min, scales with screen, max */
+  line-height: 1.03;
+}
+
+h2 {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  line-height: 1.15;
+}
+
+/* Grey intro line under the headline */
+.sub {
+  max-width: 44ch;
+  margin: 1.5rem 0 0;
+  color: var(--muted);
+}
+
+/* Every image frame on the page (photo or placeholder illustration) */
+.photo {
+  margin: 0;
+  overflow: hidden;
+  border-radius: 3px;          /* 0 = square corners */
+  background: var(--rule);     /* shows while a photo loads */
+}
+
+.photo svg,
+.photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;           /* crops the photo to fill the frame */
+}
+
+
+/* ----------------------------------------------------------
+   3. THE HAND-DRAWN LINE
+   Fixed to the left of the screen. The drawing effect is
+   controlled by the small script at the bottom of the page.
+   To change the line's shape, edit the "d" values of the two
+   <path> tags in the HTML (they must match each other).
+   ---------------------------------------------------------- */
+.line {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--gutter);
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  pointer-events: none;        /* clicks pass through the line */
+  z-index: 2;
+}
+
+.line svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.line path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Faint pencil outline that is always visible */
+.pencil {
+  stroke: var(--pencil);
+  stroke-width: 1.5;
+}
+
+/* The coloured ink line that draws as you scroll */
+.ink {
+  stroke: url(#grad);          /* green to blue gradient */
+  stroke-width: 3.5;           /* line thickness */
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;        /* 1 = hidden, 0 = fully drawn (script changes this) */
+}
+
+
+/* ----------------------------------------------------------
+   4. HEADER
+   ---------------------------------------------------------- */
+header .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 1.75rem;
+  padding-bottom: 1.75rem;
+}
+
+/* Logo + company name, top left */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  text-decoration: none;
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.brand svg {
+  display: block;
+  width: 42px;                 /* logo size */
+  height: 42px;
+}
+
+/* "Get in touch" link, top right */
+header a.contact {
+  padding-bottom: 2px;
+  border-bottom: 2px solid var(--leaf);   /* underline colour */
+  text-decoration: none;
+  font-weight: 500;
+}
+
+
+/* ----------------------------------------------------------
+   5. HERO (headline and big image)
+   ---------------------------------------------------------- */
+.hero {
+  padding-top: clamp(1.5rem, 5vw, 3.5rem);
+  padding-bottom: clamp(2rem, 5vw, 4rem);
+}
+
+.hero .photo {
+  aspect-ratio: 16 / 8;        /* width : height of the big image */
+  margin-top: clamp(2rem, 5vw, 3.5rem);
+}
+
+
+/* ----------------------------------------------------------
+   6. SERVICES (three columns with images)
+   ---------------------------------------------------------- */
+.services {
+  display: grid;
+  /* As many columns as fit, each at least 240px wide */
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.75rem;
+  padding-top: clamp(2rem, 5vw, 4rem);
+  padding-bottom: clamp(2rem, 5vw, 4rem);
+}
+
+.svc .photo {
+  aspect-ratio: 4 / 5;         /* portrait images; use 4 / 3 for landscape */
+  margin-bottom: 1.1rem;
+}
+
+.svc h2 {
+  margin-bottom: 0.35rem;
+  font-size: 1.5rem;
+}
+
+.svc p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.98rem;
+}
+
+
+/* ----------------------------------------------------------
+   7. WIDE IMAGE BAND
+   ---------------------------------------------------------- */
+.band {
+  padding-top: clamp(1rem, 3vw, 2rem);
+  padding-bottom: clamp(2.5rem, 6vw, 5rem);
+}
+
+.band .photo {
+  aspect-ratio: 21 / 8;        /* very wide panorama shape */
+}
+
+
+/* ----------------------------------------------------------
+   8. CONTACT AND FOOTER
+   ---------------------------------------------------------- */
+.cta {
+  padding-top: clamp(2rem, 5vw, 4rem);
+  padding-bottom: clamp(3rem, 7vw, 6rem);
+}
+
+/* The big email link */
+.cta a {
+  display: inline-block;
+  margin-top: 1rem;
+  font-family: var(--font-heading);
+  font-weight: 300;
+  font-size: clamp(1.4rem, 3.2vw, 2.2rem);
+  line-height: 1.2;
+  text-decoration-color: var(--water);   /* underline colour */
+  text-decoration-thickness: 2px;
+  text-underline-offset: 7px;
+}
+
+footer .wrap {
+  padding-top: 1.5rem;
+  padding-bottom: 2rem;
+  border-top: 1px solid var(--rule);
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+
+/* ----------------------------------------------------------
+   9. MOBILE LAYOUT (screens 700px wide or narrower)
+   ---------------------------------------------------------- */
+@media (max-width: 700px) {
+  :root {
+    --gutter: 36px;            /* narrower strip for the line on phones */
+  }
+
+  .hero .photo { aspect-ratio: 4 / 3; }
+  .band .photo { aspect-ratio: 16 / 9; }
+  .svc .photo  { aspect-ratio: 4 / 3; }
+
+  .brand span {
+    font-size: 1.15rem;
+  }
+}
+
+/* Shows the line fully drawn for people who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+  .ink {
+    stroke-dashoffset: 0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ============ HAND-DRAWN LINE ============
+     The ink path draws as you scroll (script at bottom of page).
+     The gradient runs from --leaf (top) to --water (bottom). -->
+<div class="line" aria-hidden="true">
+  <svg viewBox="0 0 80 800" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="grad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="800">
+        <stop offset="0" stop-color="var(--leaf)"/>
+        <stop offset="1" stop-color="var(--water)"/>
+      </linearGradient>
+    </defs>
+    <!-- Faint pencil outline -->
+    <path class="pencil" d="M44 0 C30 60 62 100 44 150 S20 230 46 280 C66 330 24 360 38 420 C50 470 70 480 50 520 C30 560 20 540 34 510 C48 480 60 560 42 620 S22 700 44 740 C54 770 40 790 44 800"/>
+    <!-- Coloured ink line (same shape; keep the two "d" values identical) -->
+    <path id="ink" class="ink" pathLength="1" d="M44 0 C30 60 62 100 44 150 S20 230 46 280 C66 330 24 360 38 420 C50 470 70 480 50 520 C30 560 20 540 34 510 C48 480 60 560 42 620 S22 700 44 740 C54 770 40 790 44 800"/>
+  </svg>
+</div>
+
+
+<!-- ============================================================
+     LOGO AND IMAGE LIBRARY (hidden, referenced further down)
+
+     LOGO: replace everything inside <symbol id="logo"> with your
+     own SVG logo. Set viewBox to match your artwork.
+
+     IMAGES: the nature scenes (sceneA to sceneD) are placeholder
+     illustrations. To use a real photo, find a <figure class="photo">
+     below and replace its <svg>...</svg> with:
+       <img src="your-photo.jpg" alt="Describe the photo">
+     ============================================================ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+
+    <!-- Logo: leaf over a wave -->
+    <symbol id="logo" viewBox="0 0 48 48">
+      <circle cx="24" cy="24" r="21" fill="none" stroke="#2a6f97" stroke-width="2.5"/>
+      <path d="M13 29 C12 17 22 9 35 10 C35 24 27 32 13 29 Z" fill="#2f7d4f"/>
+      <path d="M15 28 C21 22 27 17 32 13" stroke="#f3f6f2" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+      <path d="M9 36 q3.75-4 7.5 0 t7.5 0 t7.5 0 t7.5 0" stroke="#2a6f97" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    </symbol>
+
+    <!-- Scene A: forested hills -->
+    <g id="sceneA">
+      <rect width="400" height="300" fill="#dcebe3"/>
+      <path d="M0 150 Q90 90 180 140 T400 120 V300 H0Z" fill="#a9cdb8"/>
+      <path d="M0 190 Q120 140 230 185 T400 170 V300 H0Z" fill="#6fa88a"/>
+      <path d="M0 240 Q100 205 210 235 T400 225 V300 H0Z" fill="#3f7d5c"/>
+      <g fill="#2a5e43">
+        <path d="M40 250 l14-60 14 60z"/>
+        <path d="M80 258 l12-48 12 48z"/>
+        <path d="M300 245 l16-66 16 66z"/>
+        <path d="M340 255 l12-46 12 46z"/>
+        <path d="M150 262 l10-36 10 36z"/>
+      </g>
+    </g>
+
+    <!-- Scene B: still water and reeds -->
+    <g id="sceneB">
+      <rect width="400" height="300" fill="#e3eff4"/>
+      <circle cx="280" cy="100" r="34" fill="#f6efd8"/>
+      <path d="M0 170 L90 140 L170 165 L260 130 L400 170 V190 H0Z" fill="#b5cfd9"/>
+      <rect y="185" width="400" height="115" fill="#7fb0c8"/>
+      <path d="M0 215 h400 M20 240 h360 M50 265 h300" stroke="#a6cbdc" stroke-width="3" stroke-linecap="round"/>
+      <g stroke="#2f6f55" stroke-width="3" stroke-linecap="round" fill="none">
+        <path d="M30 300 Q34 240 44 200"/>
+        <path d="M46 300 Q48 250 62 212"/>
+        <path d="M360 300 Q356 250 346 205"/>
+        <path d="M376 300 Q374 255 388 220"/>
+      </g>
+    </g>
+
+    <!-- Scene C: mountains and mist -->
+    <g id="sceneC">
+      <rect width="400" height="300" fill="#e8f0ea"/>
+      <path d="M0 200 L90 90 L150 160 L220 60 L320 180 L400 120 V300 H0Z" fill="#9bbbb0"/>
+      <path d="M0 240 L70 160 L140 220 L230 140 L330 230 L400 190 V300 H0Z" fill="#5f9a86"/>
+      <path d="M0 270 Q100 240 200 262 T400 255 V300 H0Z" fill="#2f6b55"/>
+      <rect y="180" width="400" height="28" fill="#fff" opacity=".35"/>
+    </g>
+
+    <!-- Scene D: coast -->
+    <g id="sceneD">
+      <rect width="400" height="300" fill="#eaf2ee"/>
+      <rect y="120" width="400" height="120" fill="#6aa6c4"/>
+      <path d="M0 135 h400" stroke="#8fc0d8" stroke-width="3"/>
+      <path d="M0 170 q25-8 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0" stroke="#a9d1e3" stroke-width="3" fill="none"/>
+      <path d="M200 120 Q260 60 330 95 T400 90 V135 H200Z" fill="#4f8a68"/>
+      <path d="M0 235 Q120 205 240 232 T400 225 V300 H0Z" fill="#e9dfc2"/>
+      <path d="M0 262 Q150 245 400 270 V300 H0Z" fill="#d9ccaa"/>
+    </g>
+
+  </defs>
+</svg>
+
+
+<!-- ============ HEADER ============ -->
+<header>
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="OurSphere Consulting home">
+      <svg role="img" aria-label="Fernwater logo"><use href="#logo"/></svg>
+      <span>OurSphere Consulting</span>
+    </a>
+    <a class="contact" href="#contact">Get in touch</a>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap">
+
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+      <h1>Land and water, looked after.</h1>
+      <p class="sub">Environmental consulting for projects that need to work with the places they are built in.</p>
+      <figure class="photo">
+        <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Forested hills"><use href="#sceneA"/></svg>
+      </figure>
+    </section>
+
+    <!-- ============ SERVICES ============
+         Copy one <article class="svc"> block to add another service. -->
+    <section class="services">
+      <article class="svc">
+        <figure class="photo"><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Still water"><use href="#sceneB"/></svg></figure>
+        <h2>Water and catchments</h2>
+        <p>Monitoring, modelling and restoration plans.</p>
+      </article>
+      <article class="svc">
+        <figure class="photo"><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Mountains"><use href="#sceneC"/></svg></figure>
+        <h2>Ecology and habitat</h2>
+        <p>Surveys, impact assessments and biodiversity offsets.</p>
+      </article>
+      <article class="svc">
+        <figure class="photo"><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Coastline"><use href="#sceneD"/></svg></figure>
+        <h2>Approvals and planning</h2>
+        <p>Clear advice through every stage of approval.</p>
+      </article>
+    </section>
+
+    <!-- ============ WIDE IMAGE BAND ============ -->
+    <section class="band">
+      <figure class="photo"><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Wide landscape"><use href="#sceneB"/></svg></figure>
+    </section>
+
+    <!-- ============ CONTACT ============ -->
+    <section class="cta" id="contact">
+      <h2>Have a project in mind?</h2>
+      <a href="mailto:hello@yourdomain.com.au">hello@yourdomain.com.au</a>
+    </section>
+
+  </div>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">© 2026 OurSphere Consulting.</div>
+</footer>
+
+
+<!-- ============ SCROLL SCRIPT ============
+     Draws the ink line as the page scrolls. No need to edit this. -->
+<script>
+(function () {
+  var ink = document.getElementById('ink');
+  var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function update() {
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    var progress = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 1;
+    ink.style.strokeDashoffset = still ? 0 : 1 - progress;
+  }
+
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();
+</script>
+
+</body>
+</html>
