@@ -465,7 +465,7 @@ svg:hover { fill: var(--teal); }
     <div class="question">
       <div class="question-head">
         <span class="question-num" aria-hidden="true">1</span>
-        <label class="question-text" for="reflect1">How did your chosen responses influence each team member’s willingness to engage with you? What might each person’s response reveal about the underlying reasons for their resistance?</label>
+        <label class="question-text" for="reflect1">Do you feel you have successfully supported your team members and addressed their concerns about the restructure, or has the conversation highlighted areas where you could have provided other support?</label>
       </div>
       <textarea id="reflect1" data-q="1"></textarea>
     </div>
@@ -473,18 +473,9 @@ svg:hover { fill: var(--teal); }
     <div class="question">
       <div class="question-head">
         <span class="question-num" aria-hidden="true">2</span>
-        <label class="question-text" for="reflect2">How can you distinguish between resistance that requires a supportive conversation and resistance that requires further action?
-          <span>Consider how you would balance empathy with accountability, particularly when resistance affects team collaboration or compliance.</span></label>
+        <label class="question-text" for="reflect2">How confident do you now feel about integrating the two new team members and building a cohesive work environment when some current staff may still be uncertain or resistant to the changes? </span></label>
       </div>
       <textarea id="reflect2" data-q="2"></textarea>
-    </div>
-
-    <div class="question">
-      <div class="question-head">
-        <span class="question-num" aria-hidden="true">3</span>
-        <label class="question-text" for="reflect3">What additional information might you seek before deciding your next steps?</label>
-      </div>
-      <textarea id="reflect3" data-q="3"></textarea>
     </div>
 
     <div class="reflection-footer">
@@ -516,63 +507,11 @@ const userIcon = storedName.trim().slice(0, 1).toUpperCase() + storedInitial.toU
    fixed: false = the learner chooses between the options.
    ========================================================= */
 const people = {
-  margot: {
-    id: 'margot', name: 'Margot J.', initials: 'MJ', av: 'av-coral', status: 'online',
-    desc: 'Online · she/her · Join date: [add]',
-    unread: 1, fixed: true, replyTime: '9:42 AM',
-    messages: [
-      { time: '9:15 AM', text: [
-        `Hi [NAME],`,
-        `I just wanted to say thank you for everything over the time we’ve worked together. I’ve really appreciated your leadership, especially when things have been busy or challenging. You’ve always made an effort to support us, and I won’t forget that.`,
-        `I’m still getting my head around the changes, to be honest. I suppose these decisions have been made for a reason, even if it hasn’t always felt like we got much consideration. It’s a little disappointing after putting so much into this team over the years.`,
-        `Hopefully things will settle down eventually. I just need a bit of time to work out where I fit into everything now.`,
-        `It’s been great working with you, and I hope things go well for the team.`
-      ] }
-    ],
-    options: [
-      { learner: [
-          `Hi Margot,`,
-          `Thank you for the message. I’ve really valued your work over the years, and the experience and support you’ve brought to the team has made a real difference.`,
-          `I hope your new role provides exciting new opportunities, even if it takes a little while to find your feet. If there’s anything you’d like to talk through, I’m happy to make time.`,
-          `Thank you again for everything you’ve done.`
-        ],
-        reply: [
-          `Thanks, I really appreciate you saying that. It’s been a strange few weeks, and I think I’m still processing it all.`,
-          `I know you’ve had a lot to deal with yourself, so I don’t want to make things harder for you. I’ll definitely miss the team though. Please let everyone know I’m thinking of them ❤️`
-        ] }
-    ]
-  },
 
-  dinesh: {
-    id: 'dinesh', name: 'Dinesh O.', initials: 'DO', av: 'av-blue', status: 'away',
-    desc: 'Away · he/him · Join date: [add]',
-    unread: 1, fixed: true, replyTime: '10:05 AM',
-    messages: [
-      { time: '9:50 AM', text: [
-        `Hey [NAME],`,
-        `Just wanted to send you a quick message before I move across to the new team. Thanks for being a good leader and backing me over the years. I’ve enjoyed working with you, and I appreciate the trust you’ve placed in me.`,
-        `It’s disappointing to think we won’t be working together every day anymore, especially when we’ve built up such a good way of working over the years. I’ll be honest, some of the people here are more than just colleagues to me.`,
-        `Anyway, thanks again. Don’t let them run you into the ground trying to make this all work!`
-      ] }
-    ],
-    options: [
-      { learner: [
-          `Thanks for reaching out. I’ve really appreciated working with you, and I know your absence will be felt in the team.`,
-          `I understand why this is disappointing, particularly given the relationships we’ve built in the team. I hope the move gives you an opportunity to use your experience and continue developing in your role. And I promise to try my best to not take on too much.`,
-          `Thanks again for everything, Dinesh. I wish you all the best.`
-        ],
-        reply: [
-          `Thanks for saying that, really.`,
-          `I know you’ve got a lot on your plate with new people coming in and trying to get everyone working together. I hope they give you the support you need, because it won’t be easy balancing everything.`,
-          `I’ll still be around of course, so it’s not as though we’re disappearing completely. Always here if you need a chat or open ear.`,
-          `All the best with it.`
-        ] }
-    ]
-  },
 
   noel: {
     id: 'noel', name: 'Noel G.', initials: 'NG', av: 'av-purple', status: 'busy',
-    desc: 'Busy · he/him · Join date: [add]',
+    desc: 'Busy · he/him · Operations Coordinator · 15 years experience at Black Swan',
     unread: 1, fixed: false, replyTime: '11:15 AM',
     messages: [
       { time: '10:30 AM', text: [
@@ -616,6 +555,59 @@ const people = {
           `Leave it with me. I’ll have some chats and see if I can get a better understanding of what’s happening. I can raise some of the operational concerns without putting you in an awkward position.`,
           `You’ve got enough to deal with trying to bring new people into the team. I don’t want you caught up in the politics of it all. I’ll see what I can find out and let you know.`,
           `Noel`
+        ] }
+    ]
+  },
+  margot: {
+    id: 'margot', name: 'Margot J.', initials: 'MJ', av: 'av-coral', status: 'online',
+    desc: 'Online · she/her · Senior Site Coordinator · 4 years experience at Black Swan',
+    unread: 1, fixed: true, replyTime: '9:42 AM',
+    messages: [
+      { time: '9:15 AM', text: [
+        `Hi [NAME],`,
+        `I just wanted to say thank you for everything over the time we’ve worked together. I’ve really appreciated your leadership, especially when things have been busy or challenging. You’ve always made an effort to support us, and I won’t forget that.`,
+        `I’m still getting my head around the changes, to be honest. I suppose these decisions have been made for a reason, even if it hasn’t always felt like we got much consideration. It’s a little disappointing after putting so much into this team over the years.`,
+        `Hopefully things will settle down eventually. I just need a bit of time to work out where I fit into everything now.`,
+        `It’s been great working with you, and I hope things go well for the team.`
+      ] }
+    ],
+    options: [
+      { learner: [
+          `Hi Margot,`,
+          `Thank you for the message. I’ve really valued your work over the years, and the experience and support you’ve brought to the team has made a real difference.`,
+          `I hope your new role provides exciting new opportunities, even if it takes a little while to find your feet. If there’s anything you’d like to talk through, I’m happy to make time.`,
+          `Thank you again for everything you’ve done.`
+        ],
+        reply: [
+          `Thanks, I really appreciate you saying that. It’s been a strange few weeks, and I think I’m still processing it all.`,
+          `I know you’ve had a lot to deal with yourself, so I don’t want to make things harder for you. I’ll definitely miss the team though. Please let everyone know I’m thinking of them ❤️`
+        ] }
+    ]
+  },
+
+  dinesh: {
+    id: 'dinesh', name: 'Dinesh O.', initials: 'DO', av: 'av-blue', status: 'away',
+    desc: 'Away · he/him · Operations Administrator · 5 years experience at Black Swan',
+    unread: 1, fixed: true, replyTime: '10:05 AM',
+    messages: [
+      { time: '9:50 AM', text: [
+        `Hey [NAME],`,
+        `Just wanted to send you a quick message before I move across to the new team. Thanks for being a good leader and backing me over the years. I’ve enjoyed working with you, and I appreciate the trust you’ve placed in me.`,
+        `It’s disappointing to think we won’t be working together every day anymore, especially when we’ve built up such a good way of working over the years. I’ll be honest, some of the people here are more than just colleagues to me.`,
+        `Anyway, thanks again. Don’t let them run you into the ground trying to make this all work!`
+      ] }
+    ],
+    options: [
+      { learner: [
+          `Thanks for reaching out. I’ve really appreciated working with you, and I know your absence will be felt in the team.`,
+          `I understand why this is disappointing, particularly given the relationships we’ve built in the team. I hope the move gives you an opportunity to use your experience and continue developing in your role. And I promise to try my best to not take on too much.`,
+          `Thanks again for everything, Dinesh. I wish you all the best.`
+        ],
+        reply: [
+          `Thanks for saying that, really.`,
+          `I know you’ve got a lot on your plate with new people coming in and trying to get everyone working together. I hope they give you the support you need, because it won’t be easy balancing everything.`,
+          `I’ll still be around of course, so it’s not as though we’re disappearing completely. Always here if you need a chat or open ear.`,
+          `All the best with it.`
         ] }
     ]
   }
