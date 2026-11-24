@@ -822,7 +822,7 @@ function flashStatus(text) {
 }
 
 function saveAnswer(box) {
-  const key = 'serenityReflectionAnswer' + box.dataset.q;
+  const key = 'BSOS_noel_chat_' + box.dataset.q;
   const text = box.value.trim();
   try {
     if (text) localStorage.setItem(key, text);
@@ -837,7 +837,7 @@ document.querySelectorAll('.question textarea').forEach(box => {
 document.getElementById('reflectSave').addEventListener('click', () => {
   document.querySelectorAll('.question textarea').forEach(saveAnswer);
   flashStatus('Saved!');
-});
+}); 
 
 /* =========================================================
    BOOT

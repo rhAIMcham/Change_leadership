@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Draft a new email to your team</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* =====================
+    COLOUR TOKENS
+===================== */
+:root {
+  --AIMblue: #4353A3;
+  --darkBlue: #38416D;
+  --rust: #AF4510;
+  --white: #ffffff;
+  --bg-message-head: #f5f3f0;
+  --bg-selected-row: #e6f1fb;
+  --text-primary:    #1a1a1a;
+  --text-secondary:  #666660;
+  --text-muted:      #999994;
+  --border-subtle:   #dedad3;
+  --border-medium:   #ccc8c0;
+  --radius-md:  8px;
+  --radius-pill:99px;
+}
+
+body { font-family: 'Inter', sans-serif; }
+
+/* =====================
+    TASK SECTION
+===================== */
+.container {
+  width: 940px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 20px 20px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.instructions {
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid var(--AIMblue);
+  padding: 18px 22px;
+  line-height: 1.6;
+}
+.instructions p + p { margin-top: 10px; }
+.instructions ul { margin: 6px 0 0 20px; }
+.instructions li + li { margin-top: 4px; }
+.instructions .lead { font-weight: 600; }
+
+.taskPrompt { line-height: 1.5; }
+.taskPrompt h2 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+.taskPrompt p { color: var(--text-secondary); }
+
+/* ── Compose window ── */
+.compose {
+  background: var(--white);
+  border: 1px solid var(--border-medium);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+.compose-bar {
+  display: flex; align-items: center;
+  padding: 10px 16px;
+  background: var(--bg-message-head);
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 13px; font-weight: 600;
+}
+.compose-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 16px;
+  min-height: 44px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.compose-label { width: 52px; flex-shrink: 0; font-size: 12px; color: var(--text-muted); }
+.compose-value { flex: 1; min-width: 0; font-size: 13px; color: var(--text-secondary); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  font-family: inherit; font-size: 12px;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-medium);
+  background: var(--white);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.chip[aria-pressed="true"] { background: var(--bg-selected-row); border-color: var(--AIMblue); color: var(--darkBlue); font-weight: 600; }
+.chip:focus-visible, .saveBtn:focus-visible { outline: 2px solid var(--AIMblue); outline-offset: 2px; }
+
+.compose input[type="text"] {
+  flex: 1; min-width: 0;
+  border: none; background: transparent;
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  color: var(--text-primary);
+  padding: 4px 0;
+}
+.compose input[type="text"]:focus { outline: none; }
+.compose-row:focus-within { background: #fbfaf8; }
+
+.compose textarea {
+  display: block;
+  width: 100%;
+  min-height: 260px;
+  padding: 16px;
+  border: none;
+  font-family: inherit; font-size: 14px; line-height: 1.65;
+  color: var(--text-primary);
+  background: var(--white);
+  resize: vertical;
+}
+.compose textarea:focus { outline: none; background: #fbfaf8; }
+
+.saved {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 16px;
+  background: var(--bg-message-head);
+  border-top: 1px solid var(--border-subtle);
+}
+.savedMsg { font-size: 13px; color: var(--AIMblue); opacity: 0; transition: opacity 0.4s ease; min-width: 60px; }
+.savedMsg.error { color: var(--rust); }
+.saveBtn {
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  color: var(--white); background-color: var(--AIMblue);
+  border: none; border-radius: var(--radius-pill);
+  padding: 7px 20px; cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+.saveBtn:hover { background-color: var(--darkBlue); }
+.saveBtn:active { transform: scale(0.95); }
+.saveBtn.just-saved { animation: savePop 0.45s ease; }
+@keyframes savePop {
+  0%   { box-shadow: 0 0 0 0 #4353A380; }
+  100% { box-shadow: 0 0 0 12px #4353A300; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .saveBtn, .savedMsg { transition: none; }
+  .saveBtn.just-saved { animation: none; }
+}
+
+@media only screen and (max-width: 767px) {
+  .container { padding: 12px 12px 24px; }
+  .compose-row { flex-wrap: wrap; gap: 6px; }
+  .compose-label { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="instructions">
+    <p class="lead">Your original team was comprised of four people – you are now losing two experienced team members, who are being replaced by two staff from OurSphere. This risks significant disruption, particularly as Margot and Dinesh both have established relationships, specialist knowledge and important roles in the team’s day-to-day operations. </p>
+    <p>For you as their leader, the change may also have a personal impact, particularly if you have worked closely with these individuals and are no longer directly involved in their development or routine tasks. Recognising both the operational and emotional consequences of these changes is important when considering how to maintain team stability and support people through transition. </p>
+    <p>Reflecting on how you would manage a changing team and rapidly evolving workplace, craft an email reply to Nicole that answers the question below. Then, click the Send button to download your answers as a PDF. </p>
+   
+  </div>
+
+  <div class="taskPrompt">
+    <h2>Draft a new email to your team</h2>
+    <p>Knowing that two of your team members are about to be replaced, how would you prepare yourself and your remaining team for this transition. Consider how you might anticipate and manage uncertainty or resistance among existing staff while preparing to welcome and integrate two new staff members.</p>
+  </div>
+
+  <div class="compose" id="questionBox">
+    <div class="compose-bar">New message</div>
+    <div class="compose-row">
+      <span class="compose-label">To</span>
+      <div class="compose-value chips" role="group" aria-label="Recipients">
+        <button type="button" class="chip" aria-pressed="true">Nicole</button>
+      </div>
+    </div>
+    <div class="compose-row">
+      <label class="compose-label" for="subjectInput1">Subject</label>
+      <input type="text" id="subjectInput1" value="Staff movements" />
+    </div>
+    <label for="notesInput1" style="position:absolute;left:-9999px;">Email body</label>
+    <textarea id="notesInput1" placeholder="Hi Nicole,&#10;&#10;"></textarea>
+    <div class="saved">
+      <p id="statusMsg1" class="savedMsg" role="status">Saved!</p>
+      <button id="saveBtn1" class="saveBtn" type="button">Save draft</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* Recipient chips toggle on/off */
+document.querySelectorAll('.chip').forEach(function (chip) {
+  chip.addEventListener('click', function () {
+    chip.setAttribute('aria-pressed', chip.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+  });
+});
+
+/* Save draft: pulse the button and fade the status message in and out */
+var BODY_STORAGE_KEY = 'BSOSQ3';
+var saveTimer;
+document.getElementById('saveBtn1').addEventListener('click', function () {
+  var btn = document.getElementById('saveBtn1');
+  var msg = document.getElementById('statusMsg1');
+  var body = document.getElementById('notesInput1').value.trim();
+
+  clearTimeout(saveTimer);
+  if (!body) {
+    msg.textContent = 'Write your email before saving.';
+    msg.classList.add('error');
+  } else {
+    msg.textContent = 'Saved!';
+    msg.classList.remove('error');
+    try { localStorage.setItem(BODY_STORAGE_KEY, body); } catch (e) { /* storage unavailable */ }
+    btn.classList.remove('just-saved');
+    void btn.offsetWidth;            // restart the animation on repeat clicks
+    btn.classList.add('just-saved');
+  }
+  msg.style.opacity = 1;
+  saveTimer = setTimeout(function () { msg.style.opacity = 0; }, 2500);
+});
+
+/* Auto-save: keep the message body in localStorage as the learner types */
+document.getElementById('notesInput1').addEventListener('input', function (e) {
+  var text = e.target.value.trim();
+  try {
+    if (text) localStorage.setItem(BODY_STORAGE_KEY, text);
+    else localStorage.removeItem(BODY_STORAGE_KEY);
+  } catch (err) { /* storage unavailable */ }
+});
+</script>
+</body>
+</html>
