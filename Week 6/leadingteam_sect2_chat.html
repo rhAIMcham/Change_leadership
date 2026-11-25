@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Chat simulation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --AIMblue: #4353A3;
+  --darkBlue: #38416D;
+  --teal: #5DC8B9;
+  --cream: #F1EEDE;
+  --grey: #e7e9ec;
+  --rust: #AF4510;
+  --navy: #12195C;
+  --white: #ffffff;
+  --lightBlue: #AEBAE4;
+  --bg-app:          #f0ede8;
+  --bg-sidebar:      #e8e4de;
+  --bg-activity-pane:#454545;
+  --bg-panel:        #ffffff;
+  --bg-message-head: #f5f3f0;
+  --bg-unread-dot:   #378add;
+  --bg-selected-row: #e6f1fb;
+  --bg-input:        #f5f3f0;
+
+  --text-primary:    #1a1a1a;
+  --text-secondary:  #555;
+  --text-muted:      #999;
+
+  --border-subtle:   #dedad3;
+  --border-medium:   #ccc8c0;
+  --border:          rgba(0,0,0,0.1);
+
+  --purple-mid:  #6264A7;
+  --purple-light:#9EA2D4;
+  --channel-bg:  #252538;
+  --chat-bg:     #ffffff;
+  --bg-secondary:#f5f5f5;
+  --bg-primary:  #ffffff;
+  --online:      #6EBB8A;
+  --away:        #F4A540;
+  --busy:        #E04D4D;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+}
+
+body { font-family: 'Inter', sans-serif; }
+
+svg { fill: white; cursor: pointer; transition: 300ms ease; width: 30px; margin: 5px; }
+svg:hover { fill: var(--teal); }
+
+.workArea3 {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.teams-app {
+  display: flex;
+  width: 960px;
+  height: 600px;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  background: var(--bg-panel);
+}
+
+.activity-bar {
+  width: 65px;
+  flex-shrink: 0;
+  background: var(--bg-activity-pane);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0;
+  gap: 2px;
+}
+.activity-bar-top { display: flex; flex-direction: column; align-items: center; gap: 15px; flex: 1; margin-top: 15px; }
+.activity-icon {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px; cursor: pointer;
+  color: rgba(255,255,255,0.55); font-size: 18px;
+  position: relative; transition: background 0.15s, color 0.15s;
+}
+.activity-icon:hover, .activity-icon.active { background: rgba(255,255,255,0.13); color: #fff; }
+
+.left-sidebar {
+  color: black;
+  width: 210px;
+  flex-shrink: 0;
+  background: var(--bg-app);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-right: 1px solid rgba(255,255,255,0.05);
+}
+.sidebar-header { padding: 14px 12px 8px; display: flex; align-items: center; gap: 8px; }
+.sidebar-header-title { font-size: 1.4rem; font-weight: 600; flex: 1; }
+
+.dm-unread-count {
+  background: var(--busy);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 10px;
+  margin-left: auto;
+}
+
+.dm-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; cursor: pointer;
+  border-radius: 5px; margin: 1px 5px;
+  transition: background 0.1s;
+}
+.dm-item:hover { color: var(--AIMblue); }
+.dm-item.active { background: white; }
+
+.dm-avatar {
+  width: 24px; height: 24px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700; flex-shrink: 0; position: relative;
+}
+.status-dot {
+  position: absolute; bottom: -1px; right: -1px;
+  width: 7px; height: 7px; border-radius: 50%;
+  border: 1.5px solid var(--channel-bg);
+}
+.status-online { background: var(--online); }
+.status-away   { background: var(--away); }
+.status-busy   { background: var(--busy); }
+
+.dm-name { font-size: 12px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dm-item.active .dm-name { color: var(--navy); }
+.dm-item:hover .dm-name { color: var(--AIMblue); }
+
+.chat-pane { flex: 1; display: flex; flex-direction: column; background: var(--chat-bg); min-width: 0; }
+
+.chat-header {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bg-message-head);
+}
+.chat-header-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+.chat-header-icon { font-size: 17px; color: var(--purple-mid); }
+.chat-header-name { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+.chat-header-desc { font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.chat-body { flex: 1; overflow-y: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 2px; }
+
+.date-divider { display: flex; align-items: center; gap: 8px; margin: 10px 0; font-size: 11px; color: var(--text-muted); }
+.date-divider::before, .date-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.chat-group { display: flex; gap: 10px; padding: 3px; align-items: flex-start; border-radius: 6px; margin-top: 7px; }
+.chat-group:hover { background: var(--bg-secondary); }
+
+.chat-avatar {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  margin-top: 2px; display: flex; align-items: center;
+  justify-content: center; font-size: 11px; font-weight: 700;
+}
+.chat-content { flex: 1; min-width: 0; }
+.chat-meta { display: flex; align-items: baseline; gap: 8px; margin-bottom: 2px; }
+.chat-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.chat-time { font-size: 11px; color: var(--text-muted); }
+.chat-text { font-size: 13px; color: var(--text-primary); line-height: 1.55; }
+
+.learner { border: solid grey 0px; }
+
+.learnerOption {
+  border: solid 1px var(--border-medium);
+  padding: 10px;
+  border-radius: 8px;
+  margin: 5px;
+  cursor: pointer;
+  transition: 300ms ease;
+  background-color: var(--bg-selected-row);
+  color: var(--text-muted);
+}
+.learnerOption:hover, .learnerOption:focus-visible {
+  background: white;
+  margin-left: 7px;
+  color: black;
+  outline: none;
+}
+
+.chat-answers-box { border-radius: 8px; display: flex; }
+.explainerP { font-size: 12px; display: flex; justify-content: center; margin: 10px; }
+
+.av-blue   { background: #B5D4F4; color: #0C447C; }
+.av-teal   { background: #9FE1CB; color: #085041; }
+.av-coral  { background: #F5C4B3; color: #712B13; }
+.av-purple { background: #9EA2D4; color: #3C3489; }
+.av-gold { background: #F7DDA0; color: #6B4A08; }
+
+.system-msg {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 8px 0;
+}
+
+.search-bar { padding: 10px 16px; border-bottom: 1px solid var(--border-subtle); }
+.search-input {
+  width: 100%; background: #f0ede8; border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 6px; padding: 6px 10px; font-size: 13px; outline: none;
+  font-family: inherit; color: var(--text-primary);
+}
+.search-input::placeholder { color: var(--text-muted); }
+.contact-group-label {
+  padding: 8px 16px 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+  text-transform: uppercase; color: var(--text-muted); background: #faf9f7;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+.contact-item {
+  display: flex; align-items: center; gap: 12px; padding: 9px 16px;
+  border-bottom: 1px solid rgba(0,0,0,0.04); cursor: pointer;
+}
+.contact-item:hover { background: #f5f3f0; }
+.contact-avatar {
+  width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; position: relative;
+}
+.contact-info { flex: 1; min-width: 0; }
+.contact-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+
+.pane-header {
+  padding: 10px 16px; border-bottom: 1px solid var(--border-subtle);
+  display: flex; align-items: center; gap: 10px; background: var(--bg-message-head);
+}
+.pane-header-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.pane-header-desc { font-size: 12px; color: var(--text-muted); }
+.pane-body { flex: 1; overflow-y: auto; }
+.no-calls { display: flex; justify-content: space-around; margin: 20px; color: var(--text-muted); font-size: 12px; }
+
+.missed-teams-dot {
+  position: absolute;
+  width: 15px; height: 15px;
+  border-radius: 50%;
+  border: 1.5px solid white;
+  font-size: 11px; color: white; text-align: center;
+}
+.messages-waiting { display: flex; }
+
+.dm-avatar > svg { fill: black; }
+
+#chatSection { display: flex; width: 895px; }
+#phoneSection { display: none; width: 895px; }
+
+.new-message { opacity: 0; transform: translateY(6px); transition: opacity 0.25s ease, transform 0.25s ease; }
+.new-message.visible { opacity: 1; transform: translateY(0); }
+
+.typing-dots span {
+  display: inline-block; width: 6px; height: 6px; margin-right: 3px;
+  border-radius: 50%; background: var(--text-muted);
+  animation: typingBounce 1s infinite ease-in-out;
+}
+.typing-dots span:nth-child(2) { animation-delay: 0.15s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes typingBounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+  40% { transform: translateY(-3px); opacity: 1; }
+}
+
+@media only screen and (max-width: 767px) {
+  .chat-header-desc { text-wrap: wrap; }
+  .teams-app { flex-direction: column; height: auto; width: 100%; max-width: 100%; }
+  .activity-bar { width: auto; flex-direction: row; }
+  .activity-bar-top { flex-direction: row; justify-content: space-around; margin: 0; }
+  #chatSection, #phoneSection { width: 100%; }
+  .left-sidebar { width: 80px; flex-direction: column; }
+  .dm-item { flex-direction: column; }
+  .chat-pane { width: auto; overflow: auto; }
+  .chat-body { flex: 1; overflow-y: scroll; max-height: 300px; overflow-x: hidden; }
+  .chat-answers-box { flex-direction: column; }
+}
+
+.container {
+  width: 1000px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 20px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.instructions {
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid var(--AIMblue);
+  padding: 18px 22px;
+  line-height: 1.6;
+}
+.instructions h2 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+
+.reflection {
+  background: var(--white);
+  border: 1px solid var(--border-medium);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+.reflection-bar {
+  padding: 10px 20px;
+  background: var(--bg-message-head);
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 13px; font-weight: 600;
+}
+.question { padding: 20px; border-bottom: 1px solid var(--border-subtle); }
+.question-head { display: flex; gap: 12px; margin-bottom: 10px; }
+.question-num {
+  flex-shrink: 0;
+  width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg-selected-row); color: var(--darkBlue);
+  font-size: 12px; font-weight: 700;
+}
+.question-text { max-width: 75ch; font-size: 14px; font-weight: 600; line-height: 1.5; padding-top: 2px; }
+.question-text span { display: block; margin-top: 6px; font-weight: 400; color: var(--text-secondary); }
+
+.question textarea {
+  display: block;
+  width: 100%;
+  min-height: 140px;
+  padding: 12px 14px;
+  font-family: inherit; font-size: 14px; line-height: 1.6;
+  color: var(--text-primary);
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  resize: vertical;
+}
+.question textarea:focus { outline: none; border-color: var(--AIMblue); background: var(--white); }
+
+.reflection-footer {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  padding: 12px 20px;
+  background: var(--bg-message-head);
+}
+.savedMsg { font-size: 13px; color: var(--AIMblue); opacity: 0; transition: opacity 0.4s ease; }
+.savedMsg.error { color: var(--rust); }
+.saveBtn {
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  color: var(--white); background-color: var(--AIMblue);
+  border: none; border-radius: 99px;
+  padding: 8px 22px; cursor: pointer;
+}
+.saveBtn:hover { background-color: var(--darkBlue); }
+.saveBtn:focus-visible { outline: 2px solid var(--AIMblue); outline-offset: 2px; }
+
+@media only screen and (max-width: 767px) {
+  .container { padding: 0 12px 24px; }
+  .question { padding: 16px 14px; }
+}
+</style>
+</head>
+<body>
+
+<div class="workArea3" id="work3">
+<div class="teams-app">
+
+  <!-- ACTIVITY BAR -->
+  <div class="activity-bar">
+    <div class="activity-bar-top">
+      <div class="messages-waiting">
+        <div class="activity-icon active" title="Chat" onclick="setActive(this)" tabindex="0" role="button" aria-label="Chat">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><style>.fa-secondary{opacity:.4}</style></defs><path d="M256 32C114.6 32 0 125.1 0 240c0 49.6 21.4 95 57 130.7C44.5 421.1 2.7 466 2.2 466.5a8 8 0 0 0-1.5 8.7A7.83 7.83 0 0 0 8 480c66.3 0 116-31.8 140.6-51.4A305 305 0 0 0 256 448c141.4 0 256-93.1 256-208S397.4 32 256 32zM128 272a32 32 0 1 1 32-32 32 32 0 0 1-32 32zm128 0a32 32 0 1 1 32-32 32 32 0 0 1-32 32zm128 0a32 32 0 1 1 32-32 32 32 0 0 1-32 32z" class="fa-secondary"/><path d="M128 208a32 32 0 1 0 32 32 32 32 0 0 0-32-32zm128 0a32 32 0 1 0 32 32 32 32 0 0 0-32-32zm128 0a32 32 0 1 0 32 32 32 32 0 0 0-32-32z" class="fa-primary"/></svg>
+        </div>
+        <span class="missed-teams-dot status-busy" id="totalUnread">3</span>
+      </div>
+      <div class="activity-icon" title="Calls" onclick="setActive(this)" tabindex="0" role="button" aria-label="Calls">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><style>.fa-secondary{opacity:.4}</style></defs><path d="M336.23 167.12L406 4.43 389.41.61a24.16 24.16 0 0 0-27.5 13.9l-48 112a23.9 23.9 0 0 0 6.91 28zM154.6 320.71a24 24 0 0 0-28-6.91l-112 48a24.3 24.3 0 0 0-14 27.61l3.8 16.49 162.81-69.77zm338.81-296.1l-55.75-12.87L362 188.23l19.39 15.87A370.59 370.59 0 0 1 204.2 381.3l-15.88-19.4-176.6 75.69 12.89 55.82A24 24 0 0 0 48 512c256.1 0 464-207.49 464-464a24 24 0 0 0-18.59-23.39z" class="fa-secondary"/><path d="M406 4.43l-69.77 162.69L362 188.23l75.66-176.49zM4.41 405.9l7.31 31.69 176.6-75.69-21.1-25.77z" class="fa-primary"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAT SECTION -->
+  <div id="chatSection">
+    <div class="left-sidebar">
+      <div class="sidebar-header">
+        <span class="sidebar-header-title">Chats</span>
+      </div>
+      <div id="dmList"><!-- built by renderDMs() --></div>
+    </div>
+
+    <div class="chat-pane">
+      <div class="chat-header">
+        <div class="chat-header-left">
+          <i class="chat-header-icon" id="header-icon"></i>
+          <div>
+            <div class="chat-header-name" id="chat-title"></div>
+            <div class="chat-header-desc" id="chat-desc"></div>
+          </div>
+        </div>
+      </div>
+      <div class="chat-body" id="chat-body"></div>
+    </div>
+  </div>
+
+  <!-- PHONE SECTION -->
+  <div id="phoneSection">
+    <div class="left-sidebar">
+      <div class="sidebar-header">
+        <span class="sidebar-header-title">Calls</span>
+      </div>
+      <div class="dm-item active" id="tab-calls" onclick="switchPhoneTab('calls', this)" tabindex="0" role="button">
+        <div class="dm-avatar av-blue">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><style>.fa-secondary{opacity:.4}</style></defs><path d="M256 240a72 72 0 1 0 72 72 72 72 0 0 0-72-72zm250.18-117C436.76 65 347.38 32 256 32S75.24 65 5.82 123A16.45 16.45 0 0 0 0 135.64V192a16 16 0 0 0 16 16h70.11a16 16 0 0 0 14.31-8.85L128 128c39.9-17.28 83.2-24 128-24 44.77 0 88.07 6.72 128 24l27.58 71.15a16 16 0 0 0 14.31 8.85H496a16 16 0 0 0 16-16v-56.36a16.45 16.45 0 0 0-5.82-12.64z" class="fa-secondary"/><path d="M475.78 376.62L370.43 192.25A64 64 0 0 0 314.86 160H197.14a64 64 0 0 0-55.57 32.25L36.22 376.62A32 32 0 0 0 32 392.5V448a32 32 0 0 0 32 32h384a32 32 0 0 0 32-32v-55.5a32 32 0 0 0-4.22-15.88zM256 384a72 72 0 1 1 72-72 72 72 0 0 1-72 72z" class="fa-primary"/></svg>
+        </div>
+        <span class="dm-name">Recent calls</span>
+      </div>
+      <div class="dm-item" id="tab-contacts" onclick="switchPhoneTab('contacts', this)" tabindex="0" role="button">
+        <div class="dm-avatar av-teal">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><defs><style>.fa-secondary{opacity:.4}</style></defs><path d="M96 224a64 64 0 1 0-64-64 64.06 64.06 0 0 0 64 64zm480 32h-64a63.81 63.81 0 0 0-45.1 18.6A146.27 146.27 0 0 1 542 384h66a32 32 0 0 0 32-32v-32a64.06 64.06 0 0 0-64-64zm-512 0a64.06 64.06 0 0 0-64 64v32a32 32 0 0 0 32 32h65.9a146.64 146.64 0 0 1 75.2-109.4A63.81 63.81 0 0 0 128 256zm480-32a64 64 0 1 0-64-64 64.06 64.06 0 0 0 64 64z" class="fa-secondary"/><path d="M396.8 288h-8.3a157.53 157.53 0 0 1-68.5 16c-24.6 0-47.6-6-68.5-16h-8.3A115.23 115.23 0 0 0 128 403.2V432a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48v-28.8A115.23 115.23 0 0 0 396.8 288zM320 256a112 112 0 1 0-112-112 111.94 111.94 0 0 0 112 112z" class="fa-primary"/></svg>
+        </div>
+        <span class="dm-name">Contacts</span>
+      </div>
+    </div>
+
+    <div class="chat-pane">
+      <div id="calls-pane">
+        <div class="pane-header">
+          <div>
+            <div class="pane-header-name">Recent calls</div>
+            <div class="pane-header-desc">All calls — today and earlier</div>
+          </div>
+        </div>
+        <div class="pane-body">
+          <div class="no-calls"><p>No calls to display</p></div>
+        </div>
+      </div>
+
+      <div id="contacts-pane" style="display: none; flex-direction: column; height: 100%;">
+        <div class="pane-header">
+          <div>
+            <div class="pane-header-name">Contacts</div>
+            <div class="pane-header-desc" id="contactCount"></div>
+          </div>
+        </div>
+        <div class="search-bar">
+          <input class="search-input" type="text" placeholder="Search contacts…" aria-label="Search contacts" oninput="filterContacts(this.value)" />
+        </div>
+        <div class="pane-body" id="contacts-list"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- REFLECTION -->
+<div class="container">
+  <div class="instructions">
+    <h2>Reflection</h2>
+    <p>After reading through the different responses, answer the question below. Then, click the <strong>'Download your activity'</strong> button below the questions to save your answers as a PDF.</p>
+  </div>
+
+  <div class="reflection" id="questionBox">
+    <div class="reflection-bar">Your reflection</div>
+
+    <div class="question">
+      <div class="question-head">
+        <span class="question-num" aria-hidden="true">1</span>
+        <label class="question-text" for="reflect1">How might existing personal relationships and trust within a team influence its ability to remain united during organisational change?</label>
+      </div>
+      <textarea id="reflect1" data-q="1"></textarea>
+    </div>
+
+    <div class="question">
+      <div class="question-head">
+        <span class="question-num" aria-hidden="true">2</span>
+        <label class="question-text" for="reflect2">What forms of resistance can you identify, and how might you distinguish between genuine concerns about operational changes, personal disappointment and a reluctance to accept new ways of working?</span></label>
+      </div>
+      <textarea id="reflect2" data-q="2"></textarea>
+    </div>
+
+    <div class="reflection-footer">
+      <p id="reflectStatus" class="savedMsg" role="status">Saved!</p>
+      <button id="reflectSave" class="saveBtn" type="button">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   LEARNER (name comes from the LMS, as in the reference file)
+   ========================================================= */
+function titleCase(s) { return s.replace(/\b\w/g, c => c.toUpperCase()); }
+let storedName = 'Leader', storedInitial = '';
+try {
+  storedName = localStorage.getItem('riseUserName') || storedName;
+  storedInitial = localStorage.getItem('lastInitialToken') || storedInitial;
+} catch (e) { /* storage unavailable */ }
+const username = titleCase(storedName.trim()) + ' ' + storedInitial.toUpperCase();
+const firstName = titleCase(storedName.trim()).split(' ')[0];
+const userIcon = storedName.trim().slice(0, 1).toUpperCase() + storedInitial.toUpperCase();
+
+/* =========================================================
+   DATA — one entry per chat. Edit text here.
+   [NAME] in a message becomes the learner's first name.
+   fixed: true  = the conversation has already happened (no choice).
+                  It has a single option that is shown as already sent.
+   fixed: false = the learner chooses between the options.
+   ========================================================= */
+const people = {
+    groupchat: {
+        id: 'groupchat', name: 'Group chat', initials: 'GC', av: 'av-teal', status: 'busy',
+    desc: 'Team Group chat · Noel, Khadija, Grey, Sauli, and you · Created 3 years ago',
+    unread: 1, fixed: true, replyTime: '11:15 AM',
+    speakers: {
+    NOEL:    { name: 'Noel G.', initials: 'NG', av: 'av-purple' },
+    SAULI:   { name: 'Sauli',   initials: 'SS', av: 'av-blue'   },
+    KHADIJA: { name: 'Khadija', initials: 'KR', av: 'av-coral'  },
+    GREY:    { name: 'Grey',    initials: 'GL', av: 'av-gold'   }
+  },
+  messages: [
+    { time: '10:30 AM', transcript: `[NAME] has removed Margot G. and Dinesh O. from the chat.
+[NAME]: Morning everyone. I thought it would be a good idea to get this chat going again now that we’ve had a few changes to the team. With Sauli and Grey joining us, it should be a useful space to share updates, ask questions and keep everyone across what’s happening. Feel free to share anything relevant to the team or raise questions as the come up.
+NOEL: Morning. Sounds fine. I suppose we’ll see how it goes.
+SAULI: Thanks for setting us up! I think having a more active team chat could be really useful. At OurSphere, we shared updates and ideas regularly, which really helped plan across multiple projects. It’s way easier to address issues before starting a project rather than once work is already underway.
+NOEL: Yes, I can see how that might be useful. It probably depends on the type of work, though. Some things are easier to work through directly with the people involved, especially if there are deadlines to meet.
+GREY: That’s fair. I’d actually appreciate people sharing a bit more about what’s happening on site, so I have a better understanding of the operational side and where environmental checks fit into the process. I’m keen to get involved, but I don’t want to slow anyone down while I’m getting up to speed!
+SAULI: I think it’s a great opportunity for us to learn from each other. The restructure gives us a chance to bring different perspectives together, and hopefully we can find some better ways to work across different areas.
+NOEL: Definitely some things we can learn from each other. I think it’s also important we don’t lose sight of what already works well.
+There’s a lot of experience in this team, and some of our processes have been developed over years of working in the industry. It’d be good to build on that rather than starting from scratch.
+KHADIJA: Agreed. Probably best to take things one step at a time. There’s already plenty to get through at the moment.
+SAULI: Absolutely. Maybe we could start with a quick update each morning? Nothing too formal, just a chance to flag what we’re working on and whether anyone needs input from another part of the team.
+NOEL: Not sure a daily update is necessary, but we can see how things go. Most of us already have a pretty good idea of what’s happening across the operation.  It might be useful to keep everyone informed when something actually affects them.
+KHADIJA: That would probably work better for me.
+SAULI: That’s fair, I suppose we’ll need to work out what information is useful to everyone. I did want to ask, though, whether we’ll have a chance to go through some of the environmental processes together. There are still a few areas where I think we could get more involved earlier.
+NOEL: Sure, although it’ll be more useful to get a better understanding of how things currently operate first. There are also a few things that aren’t always obvious until you’re actually dealing with them on site.
+GREY: That’s something I’d definitely like to learn more about. I haven’t had much direct mine-site experience, so it’ll be good to understand what affects the day-to-day work. I’m sure there are things I can contribute as well.
+SAULI: Yes, and hopefully we can share some of our experience with environmental assessment as well. I think there’s a lot of value in getting both perspectives involved from the beginning.
+NOEL: I’m sure there is. We’ll just need to make sure we’re being practical about it. We have production targets deadlines and people waiting on decisions. Those things don’t just stop because we had a restructure.
+KHADIJA: Speaking of deadlines, I’ve got a few things to finish before lunch. We can see how things go.
+SAULI: I agree that deadlines and goals are important, I just think that environmental considerations aren’t separate from operations. I hope we can find a way to work together rather than treating these as competing priorities.
+[NAME]: Thanks everyone. I appreciate the different perspectives, and I think it’s useful to start understanding how we might work together. Let’s keep communication open but make sure we’re using everyone’s time effectively. We can share updates when they’re relevant and look at opportunities to work more closely across operational and environmental responsibilities.
+SAULI: Sounds good. I think the more we communicate, the easier it will be to build that understanding. Looking forward to working through it together.
+NOEL: Let’s just make sure we don’t lose sight of the actual work while we’re doing it.
+KHADIJA: Yep. Back to it.
+GREY: Thanks everyone. I’ll keep asking questions as I get settled in. Hopefully I can start contributing more soon!` }
+],
+    // options: [
+    // ]
+    },
+  noel: {
+    id: 'noel', name: 'Noel G.', initials: 'NG', av: 'av-purple', status: 'busy',
+    desc: 'Busy · he/him · Operations Coordinator · 15 years experience at Black Swan',
+    unread: 0, fixed: true, replyTime: '11:15 AM',
+    messages: [
+      { time: '10:30 AM', text: [
+        `[NAME],`,
+        `I just heard about Margot and Dinesh moving across to other teams.`,
+        `I’m going to be honest, because I respect our relationship, but I’m not happy about this. Margot and Dinesh have been part of this team for a long time. They know how things work and are great at solving problems. I’m struggling to understand why they were the ones moved in the first place.`,
+        `What do we know about their replacements? I’m sure they’ve got experience in their own areas, but environmental consulting and running operations aren’t exactly the same thing. How are they expected to fill the gaps left by people who know this business inside and out?`,
+        `I understand that things are changing, but I don’t think we should be making decisions about experienced staff without properly considering what they bring to the team.`,
+        `I’m not trying to make things difficult, but I think someone needs to explain how this is supposed to work. We’ve got a good team here, and I’d rather not see our work be affected because decisions are being made elsewhere without much thought for people on the ground.`,
+        `Noel`
+      ] }
+    ],
+    options: [
+      { learner: [
+          `Hi Noel,`,
+          `I understand your concerns, and I appreciate you being upfront about how you’re feeling. You’re right – Margot and Dinesh made valuable contributions to the team, and I recognise that their experience and knowledge will be missed.`,
+          `The changes are part of the broader restructure following the merger, and I don’t have any further information I can share about the individual decisions. What I can say is that I want to make sure everyone feels supported through the transition.`,
+          `The two new team members from OurSphere bring different experiences and skills, and it’s important that we give them an opportunity to settle in and understand how we work. We’ll need to work together to make sure we’re making the most of everyone’s strengths.`,
+          `I know there are still questions about how everything will work, but I’d like us to keep communicating and raise any practical concerns as they come up. I value your experience and would appreciate your support as we work through the changes.`,
+          `Thanks.`
+        ],
+        reply: [
+          `Thanks for getting back to me.`,
+          `I understand you might not have all the answers, but that’s part of the problem, isn’t it? We’re expected to just get on with things without knowing why decisions are being made or what the longer-term plan actually looks like.`,
+          `I know you’re trying to keep things positive, but I hope you’re also asking some harder questions about what’s happening to this team. Someone needs to make sure our experience isn’t being overlooked while everyone focused on the merger.`,
+          `I’ll have a chat with John B. and see if he can give me a clearer picture of what’s going on. He’s been around long enough to understand what this team needs, and I’m sure he’ll be able to explain things a bit more directly.`,
+          `No offence, but sometimes I think we need someone who’s prepared to push a little harder for the people doing the work.`
+        ] },
+      { learner: [
+          `Hi Noel,`,
+          `I understand why you’re frustrated, and to be honest, I’ve had some of the same concerns myself.`,
+          `Margot and Dinesh weren’t expecting to be moved, and I don’t think either of them was particularly happy with how it happened. From what I’ve been told, there was a push to bring the two orgs together quickly, and I don’t think the impact on existing relationships was fully considered.`,
+          `I agree that Margot and Dinesh won’t be easy to replace, but I want to make this work. There’s been a lot of promises about the benefits of the acquisition, though I’m not sure everyone has thought through what this will mean in practice.`,
+          `I don’t want you to think I’m not supporting the changes, but I think it’s fair to have some questions about where things are heading.`,
+          `Thanks`
+        ],
+        reply: [
+          `I appreciate you being honest with me. It’s good to know I’m not the only one wondering what’s going on.`,
+          `What concerns me is that if Margot and Dinesh can be moved around like that, what’s stopping the same thing from happening to the rest of us? We’ve spent years building experience to get the work done, and now it sounds like we’re all expected to adapt to a structure that hasn’t really been thought through.`,
+          `I’ve heard a few things from people in other parts of the business too. There seems to be a lot of confusion about who’s making the decisions and what the priorities are going to be. I don’t think we should just sit back and wait for things to become a problem.`,
+          `Leave it with me. I’ll have some chats and see if I can get a better understanding of what’s happening. I can raise some of the operational concerns without putting you in an awkward position.`,
+          `You’ve got enough to deal with trying to bring new people into the team. I don’t want you caught up in the politics of it all. I’ll see what I can find out and let you know.`,
+          `Noel`
+        ] }
+    ]
+  },
+  margot: {
+    id: 'margot', name: 'Margot J.', initials: 'MJ', av: 'av-coral', status: 'online',
+    desc: 'Online · she/her · Senior Site Coordinator · 4 years experience at Black Swan',
+    unread: 1, fixed: true, replyTime: '9:42 AM',
+    messages: [
+      { time: '9:15 AM', text: [
+        `Hi [NAME],`,
+        `I just wanted to say thank you for everything over the time we’ve worked together. I’ve really appreciated your leadership, especially when things have been busy or challenging. You’ve always made an effort to support us, and I won’t forget that.`,
+        `I’m still getting my head around the changes, to be honest. I suppose these decisions have been made for a reason, even if it hasn’t always felt like we got much consideration. It’s a little disappointing after putting so much into this team over the years.`,
+        `Hopefully things will settle down eventually. I just need a bit of time to work out where I fit into everything now.`,
+        `It’s been great working with you, and I hope things go well for the team.`
+      ] }
+    ],
+    options: [
+      { learner: [
+          `Hi Margot,`,
+          `Thank you for the message. I’ve really valued your work over the years, and the experience and support you’ve brought to the team has made a real difference.`,
+          `I hope your new role provides exciting new opportunities, even if it takes a little while to find your feet. If there’s anything you’d like to talk through, I’m happy to make time.`,
+          `Thank you again for everything you’ve done.`
+        ],
+        reply: [
+          `Thanks, I really appreciate you saying that. It’s been a strange few weeks, and I think I’m still processing it all.`,
+          `I know you’ve had a lot to deal with yourself, so I don’t want to make things harder for you. I’ll definitely miss the team though. Please let everyone know I’m thinking of them ❤️`
+        ] }
+    ]
+  },
+
+  dinesh: {
+    id: 'dinesh', name: 'Dinesh O.', initials: 'DO', av: 'av-blue', status: 'away',
+    desc: 'Away · he/him · Operations Administrator · 5 years experience at Black Swan',
+    unread: 1, fixed: true, replyTime: '10:05 AM',
+    messages: [
+      { time: '9:50 AM', text: [
+        `Hey [NAME],`,
+        `Just wanted to send you a quick message before I move across to the new team. Thanks for being a good leader and backing me over the years. I’ve enjoyed working with you, and I appreciate the trust you’ve placed in me.`,
+        `It’s disappointing to think we won’t be working together every day anymore, especially when we’ve built up such a good way of working over the years. I’ll be honest, some of the people here are more than just colleagues to me.`,
+        `Anyway, thanks again. Don’t let them run you into the ground trying to make this all work!`
+      ] }
+    ],
+    options: [
+      { learner: [
+          `Thanks for reaching out. I’ve really appreciated working with you, and I know your absence will be felt in the team.`,
+          `I understand why this is disappointing, particularly given the relationships we’ve built in the team. I hope the move gives you an opportunity to use your experience and continue developing in your role. And I promise to try my best to not take on too much.`,
+          `Thanks again for everything, Dinesh. I wish you all the best.`
+        ],
+        reply: [
+          `Thanks for saying that, really.`,
+          `I know you’ve got a lot on your plate with new people coming in and trying to get everyone working together. I hope they give you the support you need, because it won’t be easy balancing everything.`,
+          `I’ll still be around of course, so it’s not as though we’re disappearing completely. Always here if you need a chat or open ear.`,
+          `All the best with it.`
+        ] }
+    ]
+  }
+};
+/* =========================================================
+   STATE
+   ========================================================= */
+const hasOptions = p => Array.isArray(p.options) && p.options.length > 0;
+
+const state = {};
+Object.keys(people).forEach(id => {
+  const p = people[id];
+  state[id] = hasOptions(p) && p.fixed
+    ? { chosen: 0, shown: Infinity }
+    : { chosen: null, shown: 0 };
+});
+let currentId = 'margot';
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function para(arr) {
+  return '<p>' + arr.map(t => esc(t.replace(/\[NAME\]/g, firstName))).join('<br><br>') + '</p>';
+}
+function plain(arr) { return arr.map(t => t.replace(/\[NAME\]/g, firstName)).join(' '); }
+
+function group(avClass, initials, name, time, bodyHtml, extra) {
+  return `
+    <div class="chat-group${extra ? ' ' + extra : ''}">
+      <div class="chat-avatar ${avClass}">${esc(initials)}</div>
+      <div class="chat-content">
+        <div class="chat-meta"><span class="chat-name">${esc(name)}</span><span class="chat-time">${esc(time)}</span></div>
+        <div class="chat-text">${bodyHtml}</div>
+      </div>
+    </div>`;
+}
+
+// "10:30 AM" + 3 minutes -> "10:33 AM"
+function clock(startStr, add) {
+  const m = String(startStr).match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (!m) return startStr;
+  let mins = (Number(m[1]) % 12) * 60 + Number(m[2]) + (m[3].toUpperCase() === 'PM' ? 720 : 0) + add;
+  mins %= 1440;
+  const H = Math.floor(mins / 60), M = mins % 60;
+  return `${H % 12 || 12}:${String(M).padStart(2, '0')} ${H < 12 ? 'AM' : 'PM'}`;
+}
+
+// "SPEAKER: text" lines -> message objects
+function parseTranscript(p, raw, startTime) {
+  const out = [];
+  let cur = null;
+  raw.split('\n').forEach(line => {
+    line = line.trim();
+    if (!line) return;
+    const m = line.match(/^(\[NAME\]|[A-Z]+):\s*(.*)$/);
+    if (m && (m[1] === '[NAME]' || (p.speakers && p.speakers[m[1]]))) {
+      cur = { from: m[1], text: [m[2]] };
+      out.push(cur);
+    } else if (cur) {
+      cur.text.push(line);
+    } else {
+      out.push({ system: true, text: [line] });
+    }
+  });
+  let n = 0;
+  out.forEach(m => { if (!m.system) m.time = clock(startTime, n++); });
+  return out;
+}
+
+function speakerOf(p, m) {
+  if (m.from === '[NAME]') return { av: 'av-teal', initials: userIcon, name: username, extra: 'learner' };
+  if (m.from && p.speakers && p.speakers[m.from]) return p.speakers[m.from];
+  return { av: p.av, initials: p.initials, name: p.name };
+}
+
+function messageHtml(p, m) {
+  if (m.system) {
+    return `<div class="system-msg">${esc(m.text.join(' ').replace(/\[NAME\]/g, firstName))}</div>`;
+  }
+  const who = speakerOf(p, m);
+  return group(who.av, who.initials, who.name, m.time, para(m.text), who.extra);
+}
+
+// reply can be: array of strings | { from, text } | transcript string
+function replyMessages(p, o) {
+  const r = o.reply;
+  if (typeof r === 'string') {
+    return parseTranscript(p, r, clock(p.replyTime, 1)).filter(m => !m.system);
+  }
+  if (Array.isArray(r)) return [{ text: r, time: p.replyTime }];
+  return [{ from: r.from, text: r.text, time: p.replyTime }];
+}
+
+function replyPlain(p, o) {
+  return replyMessages(p, o).map(m => {
+    const who = m.from && p.speakers && p.speakers[m.from] ? p.speakers[m.from].name + ': ' : '';
+    return who + plain(m.text);
+  }).join('\n');
+}
+
+/* =========================================================
+   CHAT RENDERING
+   ========================================================= */
+function threadHtml(id) {
+  const p = people[id], s = state[id];
+  const msgs = p.messages.flatMap(m =>
+    m.transcript ? parseTranscript(p, m.transcript, m.time) : [m]
+  );
+
+  let html = '<div class="date-divider">Today</div>';
+  html += msgs.map(m => messageHtml(p, m)).join('');
+
+  // Read-only chat: the existing messages are the whole conversation
+  if (!hasOptions(p)) return html;
+
+  if (s.chosen === null) {
+    html += `
+      <div>
+        <div class="explainerP"><p>Select the option you would send in this scenario.</p></div>
+        <div class="chat-answers-box">
+          ${p.options.map((o, i) => `
+            <div class="chat-options learnerOption" data-choice="${i}" tabindex="0" role="button">${para(o.learner)}</div>`).join('')}
+        </div>
+      </div>`;
+  } else {
+    const o = p.options[s.chosen];
+    html += group('av-teal', userIcon, username, p.replyTime, para(o.learner), 'learner');
+    html += replyMessages(p, o).slice(0, s.shown).map(m => messageHtml(p, m)).join('');
+  }
+  return html;
+}
+
+function setChat(id) {
+  currentId = id;
+  const p = people[id];
+  document.getElementById('chat-title').textContent = p.name;
+  document.getElementById('chat-desc').textContent = p.desc;
+  document.getElementById('header-icon').innerHTML =
+    `<div class="chat-avatar ${p.av}">${esc(p.initials)}</div>`;
+  document.getElementById('chat-body').innerHTML = threadHtml(id);
+}
+
+function renderDMs() {
+  document.getElementById('dmList').innerHTML = Object.values(people).map(p => `
+    <div class="dm-item${p.id === currentId ? ' active' : ''}" data-dm="${p.id}" tabindex="0" role="button">
+      <div class="dm-avatar ${p.av}">${esc(p.initials)}<span class="status-dot status-${p.status}"></span></div>
+      <span class="dm-name">${esc(p.name)}</span>
+      ${p.unread ? `<span class="dm-unread-count">${p.unread}</span>` : ''}
+    </div>`).join('');
+  const total = Object.values(people).reduce((n, p) => n + p.unread, 0);
+  const dot = document.getElementById('totalUnread');
+  dot.textContent = total;
+  dot.style.display = total ? 'block' : 'none';
+}
+
+function loadDM(id) {
+  currentId = id;
+  people[id].unread = 0;
+  renderDMs();
+  setChat(id);
+}
+
+/* =========================================================
+   CHOOSING A REPLY
+   ========================================================= */
+function chooseOption(index) {
+  const id = currentId, p = people[id], s = state[id];
+  if (!hasOptions(p) || s.chosen !== null) return;
+  s.chosen = index;
+
+  const o = p.options[index];
+  document.getElementById('chat-body').innerHTML = threadHtml(id);
+
+  try {
+    const key = p.name.replace(/[^A-Za-z]/g, '');
+    localStorage.setItem(key + 'Choice', plain(o.learner));
+    localStorage.setItem(key + 'Response', replyPlain(p, o));
+  } catch (e) { /* storage unavailable */ }
+
+  playReplies(id, replyMessages(p, o), 0);
+}
+
+function playReplies(id, msgs, i) {
+  if (i >= msgs.length) return;
+  const p = people[id], s = state[id];
+  const body = document.getElementById('chat-body');
+  const who = speakerOf(p, msgs[i]);
+
+  if (currentId === id) {
+    body.insertAdjacentHTML('beforeend', `
+      <div class="chat-group typing-indicator" id="typing-${id}">
+        <div class="chat-avatar ${who.av}">${esc(who.initials)}</div>
+        <div class="chat-content">
+          <div class="chat-text typing-dots"><span></span><span></span><span></span></div>
+        </div>
+      </div>`);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  setTimeout(() => {
+    s.shown = i + 1;
+    if (currentId === id) {
+      const indicator = document.getElementById('typing-' + id);
+      if (indicator) indicator.remove();
+      const el = document.createElement('div');
+      el.innerHTML = messageHtml(p, msgs[i]);
+      const node = el.firstElementChild;
+      node.classList.add('new-message');
+      body.appendChild(node);
+      requestAnimationFrame(() => node.classList.add('visible'));
+      body.scrollTop = body.scrollHeight;
+    }
+    playReplies(id, msgs, i + 1);
+  }, i === 0 ? 1400 : 1800);
+}
+
+document.getElementById('chat-body').addEventListener('click', e => {
+  const opt = e.target.closest('[data-choice]');
+  if (opt) chooseOption(Number(opt.dataset.choice));
+});
+document.getElementById('chat-body').addEventListener('keydown', e => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const opt = e.target.closest('[data-choice]');
+  if (opt) { e.preventDefault(); chooseOption(Number(opt.dataset.choice)); }
+});
+
+document.getElementById('dmList').addEventListener('click', e => {
+  const item = e.target.closest('[data-dm]');
+  if (item) loadDM(item.dataset.dm);
+});
+document.getElementById('dmList').addEventListener('keydown', e => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const item = e.target.closest('[data-dm]');
+  if (item) { e.preventDefault(); loadDM(item.dataset.dm); }
+});
+
+/* =========================================================
+   CALLS + CONTACTS + ACTIVITY BAR
+   ========================================================= */
+function renderContacts() {
+  const sorted = Object.values(people).sort((a, b) => a.name.localeCompare(b.name));
+  let last = '';
+  document.getElementById('contactCount').textContent = sorted.length + ' contacts';
+  document.getElementById('contacts-list').innerHTML = sorted.map(p => {
+    const letter = p.name.charAt(0).toUpperCase();
+    const label = letter !== last ? `<div class="contact-group-label">${letter}</div>` : '';
+    last = letter;
+    return label + `
+      <div class="contact-item" data-name="${esc(p.name.toLowerCase())}">
+        <div class="contact-avatar ${p.av}">${esc(p.initials)}<span class="status-dot status-${p.status}"></span></div>
+        <div class="contact-info"><div class="contact-name">${esc(p.name)}</div></div>
+      </div>`;
+  }).join('');
+}
+
+function switchPhoneTab(tab, el) {
+  document.querySelectorAll('#phoneSection .dm-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('calls-pane').style.display    = tab === 'calls'    ? 'block' : 'none';
+  document.getElementById('contacts-pane').style.display = tab === 'contacts' ? 'flex'  : 'none';
+}
+
+function filterContacts(val) {
+  const query = val.toLowerCase();
+  document.querySelectorAll('#contacts-list .contact-item').forEach(item => {
+    item.style.display = item.dataset.name.includes(query) ? 'flex' : 'none';
+  });
+  document.querySelectorAll('#contacts-list .contact-group-label').forEach(label => {
+    const next = label.nextElementSibling;
+    label.style.display = (next && next.style.display !== 'none') ? 'block' : 'none';
+  });
+}
+
+function setActive(el) {
+  document.querySelectorAll('.activity-icon').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  const icons = Array.from(document.querySelectorAll('.activity-icon'));
+  const isChat = icons.indexOf(el) === 0;
+  document.getElementById('chatSection').style.display  = isChat ? 'flex' : 'none';
+  document.getElementById('phoneSection').style.display = isChat ? 'none' : 'flex';
+}
+document.querySelectorAll('.activity-icon, #phoneSection .dm-item').forEach(el => {
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
+  });
+});
+
+/* =========================================================
+   REFLECTION — answers are stored in localStorage
+   (keys: serenityReflectionAnswer1, serenityReflectionAnswer2, serenityReflectionAnswer3)
+   ========================================================= */
+function flashStatus(text) {
+  const el = document.getElementById('reflectStatus');
+  el.textContent = text;
+  el.style.opacity = 1;
+  clearTimeout(flashStatus.t);
+  flashStatus.t = setTimeout(() => { el.style.opacity = 0; }, 3000);
+}
+
+function saveAnswer(box) {
+  const key = 'BSOS_noel_chat_' + box.dataset.q;
+  const text = box.value.trim();
+  try {
+    if (text) localStorage.setItem(key, text);
+    else localStorage.removeItem(key);
+  } catch (err) { /* storage unavailable */ }
+}
+
+document.querySelectorAll('.question textarea').forEach(box => {
+  box.addEventListener('input', () => saveAnswer(box));
+});
+
+document.getElementById('reflectSave').addEventListener('click', () => {
+  document.querySelectorAll('.question textarea').forEach(saveAnswer);
+  flashStatus('Saved!');
+}); 
+
+/* =========================================================
+   BOOT
+   ========================================================= */
+renderContacts();
+people.margot.unread = 0;      // the first chat opens automatically
+renderDMs();
+setChat('margot');
+</script>
+</body>
+</html>

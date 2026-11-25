@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Email simulation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* =====================
+    COLOUR TOKENS
+===================== */
+:root {
+  --AIMblue: #4353A3;
+  --darkBlue: #38416D;
+  --teal: #5DC8B9;
+  --cream: #F1EEDE;
+  --grey: #e7e9ec;
+  --rust: #AF4510;
+  --navy: #12195C;
+  --white: #ffffff;
+  --lightBlue: #AEBAE4;
+  --bg-app:          #f0ede8;
+  --bg-sidebar:      #e8e4de;
+  --bg-panel:        #ffffff;
+  --bg-message-head: #f5f3f0;
+  --bg-private-tag:  #fff0ee;
+  --bg-unread-dot:   #378add;
+  --bg-selected-row: #e6f1fb;
+  --bg-badge:        #d85a30;
+  --bg-input:        #f5f3f0;
+
+  --text-primary:    #1a1a1a;
+  --text-secondary:  #666660;
+  --text-muted:      #999994;
+  --text-avatar-blue:#0c447c;
+  --text-avatar-teal:#085041;
+  --text-private:    #993c1d;
+  --text-badge:      #ffffff;
+
+  --border-subtle:   #dedad3;
+  --border-medium:   #ccc8c0;
+
+  --radius-sm:  6px;
+  --radius-md:  8px;
+  --radius-lg:  12px;
+  --radius-pill:99px;
+}
+
+body { font-family: 'Inter', sans-serif; }
+
+.workArea2 {
+  font-size: 14px;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* =====================
+    LAYOUT SHELL
+===================== */
+.mail-app {
+  display: flex;
+  width: 900px;
+  height: 580px;
+  border: 1px solid var(--border-medium);
+  background: var(--bg-panel);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+
+/* =====================
+    SIDEBAR
+===================== */
+.sidebar {
+  width: 100px;
+  flex-shrink: 0;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border-subtle);
+  padding: 16px 0;
+  display: flex;
+  flex-direction: column;
+}
+.sidebar-title { font-size: 16px; font-weight: 600; padding: 0 16px 14px; color: var(--text-primary); }
+.sidebar-item {
+  display: flex; align-items: center; gap: 10px; padding: 7px 16px;
+  font-size: 13px; color: var(--text-secondary); cursor: pointer; user-select: none;
+}
+.sidebar-item.active { background: var(--bg-panel); color: var(--text-primary); font-weight: 600; }
+.sidebar-icon { font-size: 15px; width: 16px; text-align: center; }
+
+.emailInboxThread { display: flex; min-width: 0; flex: 1; }
+
+/* =====================
+    INBOX LIST
+===================== */
+.inbox-list {
+  width: 260px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border-subtle);
+  overflow-y: auto;
+  background: var(--bg-panel);
+}
+.inbox-toolbar {
+  display: flex; align-items: center; padding: 12px 14px;
+  border-bottom: 1px solid var(--border-subtle); gap: 8px;
+}
+.inbox-toolbar-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.inbox-toolbar-count { font-size: 12px; color: var(--text-muted); margin-left: auto; }
+
+.email-row { padding: 11px 14px; border-bottom: 1px solid var(--border-subtle); cursor: pointer;  }
+.email-row.selected { background: var(--bg-selected-row); opacity: 1; }
+.email-row:focus-visible { outline: 2px solid var(--AIMblue); outline-offset: -2px; opacity: 1; }
+.email-row-top { display: flex; align-items: flex-start; gap: 5px; margin-bottom: 3px; }
+.unread-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--bg-unread-dot); flex-shrink: 0; margin-top: 4px; }
+.email-sender { flex: 1; font-size: 13px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.email-time { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+.email-subject { font-size: 12px; color: var(--text-primary); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.email-preview { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* =====================
+    THREAD PANE
+===================== */
+.thread-pane { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg-panel); min-width: 0; }
+.thread-header { padding: 14px 20px 12px; border-bottom: 1px solid var(--border-subtle); }
+.thread-subject { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+.thread-meta { display: flex; align-items: center; gap: 6px; }
+
+.tag { font-size: 11px; padding: 2px 8px; border-radius: var(--radius-pill); }
+.tag-inbox { background: var(--bg-message-head); color: var(--text-secondary); border: 1px solid var(--border-subtle); }
+
+.thread-actions { margin-left: auto; display: flex; gap: 6px; }
+.btn {
+  background: none; border: 1px solid var(--border-medium); border-radius: var(--radius-md);
+  padding: 4px 12px; font-size: 12px; color: var(--text-secondary); cursor: pointer;
+}
+.btn:hover { background: var(--bg-message-head); }
+
+/* =====================
+    MESSAGE CARDS
+===================== */
+.thread-body { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; }
+
+.message-card { border: 1px solid var(--border-subtle); }
+.message-header {
+  display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+  background: var(--bg-message-head); border-bottom: 1px solid var(--border-subtle);
+}
+.avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0;
+}
+.avatar-navy { background: var(--navy); color: white; }
+.av-blue   { background: #B5D4F4; color: #0C447C; }
+.av-coral  { background: #F5C4B3; color: #712B13; }
+.av-purple { background: #9EA2D4; color: #3C3489; }
+
+.message-from { flex: 1; min-width: 0; }
+.message-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.message-name-to { font-size: 11px; font-weight: 400; color: var(--text-muted); }
+.message-address { font-size: 11px; color: var(--text-muted); }
+.message-time { font-size: 11px; color: var(--text-muted); margin-left: 6px; }
+.message-body { padding: 12px 14px; font-size: 13px; color: var(--text-primary); line-height: 1.65; }
+.message-body p + p { margin-top: 8px; }
+
+.username { text-transform: capitalize; }
+
+/* ── NEW EMAIL ALERT (from the reference file) ── */
+svg { fill: white; cursor: pointer; transition: 300ms ease; width: 30px; margin: 5px; }
+svg:hover { fill: var(--teal); }
+
+.alertZone { position: relative; width: 900px; max-width: 100%; height: 0; margin: 60px auto 0; z-index: 999; }
+ul {
+    margin: 15px;
+}
+.hideMe {
+  opacity: 0;
+  position: relative;
+  left: 20px;
+  bottom: 30px;
+  transition: opacity 0.5s ease;
+  z-index: 999;
+  overflow: hidden;
+  pointer-events: none;
+}
+.alertAppear {
+  opacity: 1;
+  position: relative;
+  left: 20px;
+  bottom: 30px;
+  transition: opacity 0.5s ease;
+  z-index: 999;
+}
+.desktopAlert {
+  position: absolute;
+  width: 300px;
+  min-height: 100px;
+  z-index: 999;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 15px;
+  text-align: center;
+  line-height: 2.5;
+  right: 40px;
+}
+.pulse-alert {
+  background-color: var(--navy);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: white;
+  animation: pulse-border 2s infinite;
+}
+.pulse-alert:hover { color: var(--navy); background-color: var(--lightBlue); }
+.pulse-alert:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
+
+@keyframes pulse-border {
+  0%   { box-shadow: 0 0 0 0 #12195C70; }
+  70%  { box-shadow: 0 0 0 15px #12195C00; }
+  100% { box-shadow: 0 0 0 0 #12195C00; }
+}
+
+/* new email sliding into the inbox */
+.email-row.arrive { animation: rowIn 0.6s ease; }
+@keyframes rowIn {
+  from { opacity: 0; transform: translateY(-14px); }
+  to   { transform: translateY(0); }
+}
+
+@media only screen and (max-width: 767px) {
+  .mail-app { margin: auto 40px; height: 90%; flex-direction: column; }
+  .inbox-list { width: auto; max-height: 200px; }
+  .sidebar { width: auto; flex-direction: row; }
+  .emailInboxThread { flex-direction: column; }
+  .sidebar-item.active { display: block !important; }
+  .sidebar-item { display: none; }
+  .thread-pane { max-height: 500px; }
+}
+
+/* =====================
+    TASK SECTION
+    (aligned to the 900px mail window)
+===================== */
+.container {
+  width: 940px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 20px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.instructions {
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid var(--AIMblue);
+  padding: 18px 22px;
+  line-height: 1.6;
+}
+.instructions p { max-width: 70ch; }
+.instructions p + p { margin-top: 10px; }∂
+.instructions ul { margin: 6px 0 0 20px; max-width: 70ch; }
+.instructions li + li { margin-top: 4px; }
+.instructions .lead { font-weight: 600; }
+
+.taskPrompt {  line-height: 1.5; }
+.taskPrompt h2 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+.taskPrompt p { color: var(--text-secondary); }
+
+/* ── Compose window ── */
+.compose {
+  background: var(--white);
+  border: 1px solid var(--border-medium);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+.compose-bar {
+  display: flex; align-items: center;
+  padding: 10px 16px;
+  background: var(--bg-message-head);
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 13px; font-weight: 600;
+}
+.compose-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 16px;
+  min-height: 44px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.compose-label { width: 52px; flex-shrink: 0; font-size: 12px; color: var(--text-muted); }
+.compose-value { flex: 1; min-width: 0; font-size: 13px; color: var(--text-secondary); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  font-family: inherit; font-size: 12px;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-medium);
+  background: var(--white);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.chip[aria-pressed="true"] { background: var(--bg-selected-row); border-color: var(--AIMblue); color: var(--darkBlue); font-weight: 600; }
+.chip:focus-visible, .saveBtn:focus-visible { outline: 2px solid var(--AIMblue); outline-offset: 2px; }
+
+.compose input[type="text"] {
+  flex: 1; min-width: 0;
+  border: none; background: transparent;
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  color: var(--text-primary);
+  padding: 4px 0;
+}
+.compose input[type="text"]:focus { outline: none; }
+.compose-row:focus-within { background: #fbfaf8; }
+
+.compose textarea {
+  display: block;
+  width: 100%;
+  min-height: 260px;
+  padding: 16px;
+  border: none;
+  font-family: inherit; font-size: 14px; line-height: 1.65;
+  color: var(--text-primary);
+  background: var(--white);
+  resize: vertical;
+}
+.compose textarea:focus { outline: none; background: #fbfaf8; }
+
+.saved {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 16px;
+  background: var(--bg-message-head);
+  border-top: 1px solid var(--border-subtle);
+}
+.savedMsg { font-size: 13px; color: var(--AIMblue); opacity: 0; transition: opacity 0.4s ease; min-width: 60px; }
+.saveBtn {
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  color: var(--white); background-color: var(--AIMblue);
+  border: none; border-radius: var(--radius-pill);
+  padding: 7px 20px; cursor: pointer;
+}
+.saveBtn { transition: background-color 0.2s ease, transform 0.15s ease; }
+.saveBtn:hover { background-color: var(--darkBlue); }
+.saveBtn:active { transform: scale(0.95); }
+.saveBtn.just-saved { animation: savePop 0.45s ease; }
+.savedMsg.error { color: var(--rust); }
+@keyframes savePop {
+  0%   { box-shadow: 0 0 0 0 #4353A380; }
+  100% { box-shadow: 0 0 0 12px #4353A300; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .saveBtn, .savedMsg { transition: none; }
+  .saveBtn.just-saved { animation: none; }
+}
+
+@media only screen and (max-width: 767px) {
+  .container { padding: 0 12px 24px; }
+  .compose-row { flex-wrap: wrap; gap: 6px; }
+  .compose-label { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── NEW EMAIL ALERT ── -->
+<div class="alertZone">
+  <div id="emailAlert" class="hideMe" onclick="clickEmailAlert()" tabindex="0" role="button" aria-label="New email. Open inbox">
+    <div class="desktopAlert pulse-alert">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-hidden="true"><defs><style>.fa-secondary{opacity:.4}</style></defs><path d="M256.47 352h-.94c-30.1 0-60.41-23.42-82.54-40.52C169.39 308.7 24.77 202.7 0 183.33V400a48 48 0 0 0 48 48h416a48 48 0 0 0 48-48V183.36c-24.46 19.17-169.4 125.34-173 128.12-22.12 17.1-52.43 40.52-82.53 40.52zM464 64H48a48 48 0 0 0-48 48v19a24.08 24.08 0 0 0 9.2 18.9c30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4 23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7A23.93 23.93 0 0 0 512 131v-19a48 48 0 0 0-48-48z" class="fa-secondary"/><path d="M512 131v52.36c-24.46 19.17-169.4 125.34-173 128.12-22.12 17.1-52.43 40.52-82.53 40.52h-.94c-30.1 0-60.41-23.42-82.54-40.52C169.39 308.7 24.77 202.7 0 183.33V131a24.08 24.08 0 0 0 9.2 18.9c30.6 23.9 40.7 32.4 173.4 128.7 16.69 12.12 49.75 41.4 72.93 41.4h.94c23.18 0 56.24-29.28 72.93-41.4 132.7-96.3 142.8-104.7 173.4-128.7A23.93 23.93 0 0 0 512 131z" class="fa-primary"/></svg>
+      <p>New Email</p>
+    </div>
+  </div>
+</div>
+
+<div class="workArea2">
+  <div class="mail-app">
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+      <div class="sidebar-title">Mail</div>
+      <div class="sidebar-item active"><span class="sidebar-icon">&#9711;</span> Inbox</div>
+      <div class="sidebar-item"><span class="sidebar-icon">&#10148;</span> Sent</div>
+      <div class="sidebar-item"><span class="sidebar-icon">&#9998;</span> Drafts</div>
+      <div class="sidebar-item"><span class="sidebar-icon">&#9707;</span> Archive</div>
+      <div class="sidebar-item"><span class="sidebar-icon">&#128465;</span> Trash</div>
+    </nav>
+
+    <div class="emailInboxThread">
+      <!-- INBOX LIST -->
+      <div class="inbox-list">
+        <div class="inbox-toolbar">
+          <span class="inbox-toolbar-title">Inbox</span>
+          <span class="inbox-toolbar-count" id="inboxCount"></span>
+        </div>
+        <div id="inboxRows"><!-- built by renderInbox() --></div>
+      </div>
+
+      <!-- THREAD PANE -->
+      <div class="thread-pane">
+        <div id="threadHeader"><!-- built by selectEmail() --></div>
+        <div id="threadBody" class="thread-body" tabindex="0"><!-- built by selectEmail() --></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="container">
+  <!-- <div class="instructions">
+    <p class="lead">Having read the emails, consider the different ways your team members have responded to change.</p>
+    <p>In your response, reflect on:</p>
+    <ul>
+      <li>How different communication styles may indicate developing resistance.</li>
+      <li>How workload and performance expectations might affect different people.</li>
+      <li>What additional information you would need before drawing conclusions and deciding how to respond as their leader.</li>
+    </ul>
+  </div> -->
+
+  <div class="taskPrompt">
+    <h2>Draft a new email</h2>
+    <p>After reading both emails, answer the questions below in an email to Noel addressing the situation with John.</p>
+    <ul>
+        <li>How would you respond to the concerns raised while maintaining a positive and supportive environment within your newly combined team?</li>
+        <li>How can you reinforce professional boundaries and organisational expectations while still making space for staff to raise genuine concerns and feel supported during change?</li>
+    </ul>
+  </div>
+
+  <div class="compose" id="questionBox">
+    <div class="compose-bar">New message</div>
+    <div class="compose-row">
+      <span class="compose-label">To</span>
+      <div class="compose-value chips" role="group" aria-label="Recipients">
+        <button type="button" class="chip" aria-pressed="true">Noel</button>
+      </div>
+    </div>
+    <div class="compose-row">
+      <label class="compose-label" for="subjectInput1">Subject</label>
+      <input type="text" id="subjectInput1" value="New challenges during change" />
+    </div>
+    <label class="sr-only" for="notesInput1" style="position:absolute;left:-9999px;">Email body</label>
+    <textarea id="notesInput1" placeholder="Hi Noel,&#10;&#10;"></textarea>
+    <div class="saved">
+      <p id="statusMsg1" class="savedMsg" role="status">Saved!</p>
+      <button id="saveBtn1" class="saveBtn" type="button">Save draft</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   LEARNER — name comes from the LMS if it was stored there
+   ========================================================= */
+function titleCase(s) { return s.replace(/\b\w/g, c => c.toUpperCase()); }
+let storedName = 'Leader', storedInitial = '';
+try {
+  storedName = localStorage.getItem('riseUserName') || storedName;
+  storedInitial = localStorage.getItem('lastInitialToken') || '';
+} catch (e) { /* storage unavailable */ }
+const learnerName = titleCase(storedName.trim()) + (storedInitial ? ' ' + storedInitial.toUpperCase() : '');
+const learnerEmail = 'teamleader@blackswanminerals.com.au';
+
+/* =========================================================
+   DATA — edit the emails here
+   Blank line = new paragraph. A single line break stays a line break.
+   ========================================================= */
+const emails = [
+  {
+    id: 'hr',
+    sender: 'Nicole Z',
+    initials: 'NZ',
+    avatarClass: 'avatar-navy',
+    address: 'nicole.z@blackswanminerals.com.au',
+    toName: 'All staff',
+    toAddress: 'allstaff@blackswanminerals.com.au',
+    time: '8:45 am',
+    subject: 'Welcome to our new team members!',
+    unread: true,
+    body: `Hi everyone,
+
+As we consolidate the organisation, I wanted to take a moment to welcome all our new staff that have recently moved teams during the restructure.
+
+We know that the past few weeks have involved significant change, new responsibilities and plenty of adjustments for everyone. Thank you for your patience, flexibility and hard work through this transition.
+
+It’s so encouraging to see people sharing their knowledge, building new relationships and finding new opportunities to work together. We know there is still plenty to learn from one another, and we encourage everyone to approach this next stage with curiosity, enthusiasm and collaboration.
+
+Please join us in welcoming our new colleagues to the organisation!
+
+Sauli S. – Senior Environmental Consultant
+Grey L. – Environmental Project Officer
+Daniel Q. – Rehabilitation and Land Management Specialist
+Zainab F. – Sustainability and Reporting Coordinator
+
+We appreciate everyone’s contribution to making this transformation a positive experience.
+
+Thanks again for your continued efforts!
+
+Kind regards,
+
+Nicole
+
+People and Culture Officer`
+  },
+  {
+    id: 'john',
+    sender: 'John',
+    initials: 'B',
+    avatarClass: 'av-purple',
+    address: 'johbn.b@blackswanminerals.com.au',
+    time: '11:05 am',
+    subject: 'Employee conduct – Recent team transfers',
+    unread: true,
+    arrival: 'later',   // delivered when the learner clicks the New Email alert
+    body: `Hello,
+
+This week there was a situation involving one of your team members that I wanted to bring to your attention.
+
+This employee contacted an officer at P&C asking for information about the status of two employees who were transferred to different roles as part of the organisational restructure. While we understand that staff may have questions about changes that are affecting themselves and their teams, the nature of the enquiry raised some concerns.
+
+Individual employee transfers, role changes and associated employment arrangements are confidential matters. Employees should not be seeking or sharing information about another person’s employment circumstances unless they have an appropriate business reason and the necessary authorisation.
+
+Could you please speak with Noel G. and reinforce the importance of respecting colleagues’ privacy and following our confidentiality and workplace conduct guidelines? It is important that employees understand that curiosity about organisational changes does not provide permission to question or attempt to gain access to another person’s employment information.
+
+We appreciate that everyone is still adjusting to the restructure, and we want to encourage open communication. However, this needs to occur within appropriate professional boundaries.
+Please let me know if you have any concerns or would like to discuss this further.
+
+John
+
+People and Culture Coordinator`
+  }
+];
+// Newest first, as in a real inbox
+emails.reverse();
+const emailsById = Object.fromEntries(emails.map(e => [e.id, e]));
+let selectedId = null;
+
+/* =========================================================
+   RENDERING
+   ========================================================= */
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function bodyHtml(text) {
+  return text.split('\n\n').map(p => `<p>${esc(p).replace(/\n/g, '<br>')}</p>`).join('');
+}
+function previewOf(text) {
+  const lines = text.split('\n\n');
+  return (lines[1] || lines[0]).replace(/\n/g, ' ');
+}
+
+let delivered = false;   // becomes true when the learner clicks the New Email alert
+let arrivingId = null;   // the row that should animate in on the next render
+
+function renderInbox() {
+  const list = emails.filter(e => e.arrival !== 'later' || delivered);
+  document.getElementById('inboxCount').textContent =
+    list.length + (list.length === 1 ? ' message' : ' messages');
+  const arriving = arrivingId;
+  arrivingId = null;
+  document.getElementById('inboxRows').innerHTML = list.map(e => `
+    <div class="email-row${e.id === selectedId ? ' selected' : ''}${e.id === arriving ? ' arrive' : ''}" data-email-id="${e.id}" tabindex="0" role="button">
+      <div class="email-row-top">
+        ${e.unread ? '<span class="unread-dot"></span>' : ''}
+        <span class="email-sender">${esc(e.sender)}</span>
+        <span class="email-time">${esc(e.time)}</span>
+      </div>
+      <div class="email-subject">${esc(e.subject)}</div>
+      <div class="email-preview">${esc(previewOf(e.body))}</div>
+    </div>`).join('');
+}
+
+function selectEmail(id) {
+  const e = emailsById[id];
+  if (!e) return;
+  selectedId = id;
+  e.unread = false;
+
+  const toName = e.toName || learnerName;
+  const toAddress = e.toAddress || learnerEmail;
+
+  document.getElementById('threadHeader').innerHTML = `
+    <div class="thread-header">
+      <div class="thread-subject">${esc(e.subject)}</div>
+      <div class="thread-meta">
+        <span class="tag tag-inbox">Inbox</span>
+        <div class="thread-actions">
+        
+        </div>
+      </div>
+    </div>`;
+
+  document.getElementById('threadBody').innerHTML = `
+    <div class="message-card">
+      <div class="message-header">
+        <div class="avatar ${e.avatarClass}">${esc(e.initials)}</div>
+        <div class="message-from">
+          <div class="message-name">${esc(e.sender)} <span class="message-name-to">to ${esc(toName)}</span></div>
+          <div class="message-address">${esc(toAddress)}</div>
+        </div>
+        <span class="message-time">${esc(e.time)}</span>
+      </div>
+      <div class="message-body">${bodyHtml(e.body)}</div>
+    </div>`;
+  document.getElementById('threadBody').scrollTop = 0;
+  renderInbox();
+}
+
+document.getElementById('inboxRows').addEventListener('click', ev => {
+  const row = ev.target.closest('.email-row');
+  if (row) selectEmail(row.dataset.emailId);
+});
+document.getElementById('inboxRows').addEventListener('keydown', ev => {
+  if (ev.key !== 'Enter' && ev.key !== ' ') return;
+  const row = ev.target.closest('.email-row');
+  if (row) { ev.preventDefault(); selectEmail(row.dataset.emailId); }
+});
+
+/* =========================================================
+   NEW EMAIL ALERT
+   ========================================================= */
+function openEmailAlert() {
+  const el = document.getElementById('emailAlert');
+  el.classList.add('alertAppear');
+  el.classList.remove('hideMe');
+}
+function closeEmailAlert() {
+  const el = document.getElementById('emailAlert');
+  el.classList.remove('alertAppear');
+  el.classList.add('hideMe');
+}
+function clickEmailAlert() {
+  delivered = true;
+  arrivingId = 'john';       // Robert's email slides in at the top of the inbox
+  closeEmailAlert();
+  selectEmail('john');       // and opens
+}
+document.getElementById('emailAlert').addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); clickEmailAlert(); }
+});
+
+/* =========================================================
+   COMPOSE — recipient chips toggle on/off
+   ========================================================= */
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    chip.setAttribute('aria-pressed', chip.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+  });
+});
+
+/* =========================================================
+   SAVE DRAFT — pulse the button and fade the status message in and out
+   ========================================================= */
+let saveTimer;
+document.getElementById('saveBtn1').addEventListener('click', () => {
+  const btn = document.getElementById('saveBtn1');
+  const msg = document.getElementById('statusMsg1');
+  const body = document.getElementById('notesInput1').value.trim();
+
+  clearTimeout(saveTimer);
+  if (!body) {
+    msg.textContent = 'Write your email before saving.';
+    msg.classList.add('error');
+  } else {
+    msg.textContent = 'Saved!';
+    msg.classList.remove('error');
+    try {
+      localStorage.setItem('serenityEmail', body);   // plain text, message body only
+    } catch (e) { /* storage unavailable */ }
+    btn.classList.remove('just-saved');
+    void btn.offsetWidth;            // restart the animation on repeat clicks
+    btn.classList.add('just-saved');
+  }
+  msg.style.opacity = 1;
+  saveTimer = setTimeout(() => { msg.style.opacity = 0; }, 2500);
+});
+
+/* =========================================================
+   AUTO-SAVE — keep the message body in localStorage as the learner types
+   ========================================================= */
+const BODY_STORAGE_KEY = 'serenityEmail';
+document.getElementById('notesInput1').addEventListener('input', e => {
+  const text = e.target.value.trim();
+  try {
+    if (text) localStorage.setItem(BODY_STORAGE_KEY, text);
+    else localStorage.removeItem(BODY_STORAGE_KEY);   // nothing typed, nothing stored
+  } catch (err) { /* storage unavailable */ }
+});
+
+/* BOOT — three emails already in the inbox (HR open), alert pops up shortly after load */
+renderInbox();
+selectEmail('hr');
+setTimeout(openEmailAlert, 800);
+</script>
+</body>
+</html>

@@ -456,7 +456,7 @@ svg:hover { fill: var(--teal); }
 <div class="container">
   <div class="instructions">
     <h2>Reflection</h2>
-    <p>After reading through the different responses, answer the question below. Then, click the Save button to download your answers as a PDF.</p>
+    <p>After reading through the different responses, answer the question below. Then, click the <strong>'Download your activity'</strong> button below the questions to save your answers as a PDF.</p>
   </div>
 
   <div class="reflection" id="questionBox">
@@ -676,7 +676,7 @@ function setChat(id) {
   icon.innerHTML = `<div class="chat-avatar ${p.av}">${esc(p.initials)}</div>`;
   const body = document.getElementById('chat-body');
   body.innerHTML = threadHtml(id);
-  body.scrollTop = body.scrollHeight;
+  // body.scrollTop = body.scrollHeight;
 }
 
 function renderDMs() {
