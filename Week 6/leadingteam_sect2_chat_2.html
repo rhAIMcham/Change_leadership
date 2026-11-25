@@ -185,7 +185,7 @@ svg:hover { fill: var(--teal); }
   cursor: pointer;
   transition: 300ms ease;
   background-color: var(--bg-selected-row);
-  color: var(--text-muted);
+  color: var(--text-primary);
 }
 .learnerOption:hover, .learnerOption:focus-visible {
   background: white;
@@ -201,6 +201,7 @@ svg:hover { fill: var(--teal); }
 .av-teal   { background: #9FE1CB; color: #085041; }
 .av-coral  { background: #F5C4B3; color: #712B13; }
 .av-purple { background: #9EA2D4; color: #3C3489; }
+.av-gold { background: #F7DDA0; color: #6B4A08; }
 
 .search-bar { padding: 10px 16px; border-bottom: 1px solid var(--border-subtle); }
 .search-input {
@@ -465,7 +466,7 @@ svg:hover { fill: var(--teal); }
     <div class="question">
       <div class="question-head">
         <span class="question-num" aria-hidden="true">1</span>
-        <label class="question-text" for="reflect1">Do you feel you have successfully supported your team members and addressed their concerns about the restructure, or has the conversation highlighted areas where you could have provided other support?</label>
+        <label class="question-text" for="reflect1">Which team member did you choose to speak with, and what forms of resistance or underlying concerns did you identify during the conversation?</label>
       </div>
       <textarea id="reflect1" data-q="1"></textarea>
     </div>
@@ -473,7 +474,7 @@ svg:hover { fill: var(--teal); }
     <div class="question">
       <div class="question-head">
         <span class="question-num" aria-hidden="true">2</span>
-        <label class="question-text" for="reflect2">How confident do you now feel about integrating the two new team members and building a cohesive work environment when some current staff may still be uncertain or resistant to the changes? </span></label>
+        <label class="question-text" for="reflect2">Did you feel the conversation was successful, or did it reveal further risks or challenges the organisation needs to address?</span></label>
       </div>
       <textarea id="reflect2" data-q="2"></textarea>
     </div>
@@ -514,100 +515,149 @@ const people = {
     desc: 'Busy · he/him · Operations Coordinator · 15 years experience at Black Swan',
     unread: 1, fixed: false, replyTime: '11:15 AM',
     messages: [
-      { time: '10:30 AM', text: [
-        `[NAME],`,
-        `I just heard about Margot and Dinesh moving across to other teams.`,
-        `I’m going to be honest, because I respect our relationship, but I’m not happy about this. Margot and Dinesh have been part of this team for a long time. They know how things work and are great at solving problems. I’m struggling to understand why they were the ones moved in the first place.`,
-        `What do we know about their replacements? I’m sure they’ve got experience in their own areas, but environmental consulting and running operations aren’t exactly the same thing. How are they expected to fill the gaps left by people who know this business inside and out?`,
-        `I understand that things are changing, but I don’t think we should be making decisions about experienced staff without properly considering what they bring to the team.`,
-        `I’m not trying to make things difficult, but I think someone needs to explain how this is supposed to work. We’ve got a good team here, and I’d rather not see our work be affected because decisions are being made elsewhere without much thought for people on the ground.`,
-        `Noel`
-      ] }
+    //   { time: '10:30 AM', text: [
+       
+    //   ] }
     ],
     options: [
       { learner: [
           `Hi Noel,`,
-          `I understand your concerns, and I appreciate you being upfront about how you’re feeling. You’re right – Margot and Dinesh made valuable contributions to the team, and I recognise that their experience and knowledge will be missed.`,
-          `The changes are part of the broader restructure following the merger, and I don’t have any further information I can share about the individual decisions. What I can say is that I want to make sure everyone feels supported through the transition.`,
-          `The two new team members from OurSphere bring different experiences and skills, and it’s important that we give them an opportunity to settle in and understand how we work. We’ll need to work together to make sure we’re making the most of everyone’s strengths.`,
-          `I know there are still questions about how everything will work, but I’d like us to keep communicating and raise any practical concerns as they come up. I value your experience and would appreciate your support as we work through the changes.`,
-          `Thanks.`
+        `I noticed a few comments in the team chat that have come across as dismissive of Sauli and Grey and the experience they’re bringing to the team.`,
+        `I understand you’ve had concerns about the restructure, particularly regarding Margot and Dinesh, but I also need to make everyone has an opportunity to contribute without feeling that their experience or capabilities are being questioned. As we’ve already discussed, all team members and their personal capability in the workplace should be respected.`,
+        `Can I ask if there’s anything that’s causing significant concern at the moment? Is it still the changes to the team or something broader about the organisation?`
         ],
         reply: [
-          `Thanks for getting back to me.`,
-          `I understand you might not have all the answers, but that’s part of the problem, isn’t it? We’re expected to just get on with things without knowing why decisions are being made or what the longer-term plan actually looks like.`,
-          `I know you’re trying to keep things positive, but I hope you’re also asking some harder questions about what’s happening to this team. Someone needs to make sure our experience isn’t being overlooked while everyone focused on the merger.`,
-          `I’ll have a chat with John B. and see if he can give me a clearer picture of what’s going on. He’s been around long enough to understand what this team needs, and I’m sure he’ll be able to explain things a bit more directly.`,
-          `No offence, but sometimes I think we need someone who’s prepared to push a little harder for the people doing the work.`
+          `I think you’re taking some of my comments the wrong way. I’m not saying Sauli and Grey don’t have experience. I’m saying their experience is different, and that seems to be getting overlooked.`,
+          `To be honest, we’re expected to make room for the new staff, while the people who have spent years building this business are being moved around or expected to just accept whatever decisions are made.`,
+          `I used to feel like I had a place here and that people valued what I knew. Lately, I’m not so sure. There’s a lot of talk about new ideas but not much recognition of what the existing teams have contributed, I’m not trying to make things difficult for anyone, but ignoring the problem isn’t going to fix it.`
         ] },
       { learner: [
-          `Hi Noel,`,
-          `I understand why you’re frustrated, and to be honest, I’ve had some of the same concerns myself.`,
-          `Margot and Dinesh weren’t expecting to be moved, and I don’t think either of them was particularly happy with how it happened. From what I’ve been told, there was a push to bring the two orgs together quickly, and I don’t think the impact on existing relationships was fully considered.`,
-          `I agree that Margot and Dinesh won’t be easy to replace, but I want to make this work. There’s been a lot of promises about the benefits of the acquisition, though I’m not sure everyone has thought through what this will mean in practice.`,
-          `I don’t want you to think I’m not supporting the changes, but I think it’s fair to have some questions about where things are heading.`,
-          `Thanks`
+          `Hi Noel, have you got a few minutes to chat?`,
+          `I just wanted to check in since the conversation this morning. I know there have been quite a few changes since the merger, and I’d be interested to hear how you’ve found things across the organisation so far.`,
+          `I know everyone is adjusting in different ways, and sometimes the impact of these decisions isn’t immediately obvious. Since we’ve discussed the situation with John, perhaps this is also an opportunity for us to find practical ways to look after the people you work with that still align with operational expectations and bring the two organisations together.`,
+          `I’d value your honest opinion. I don’t expect you to agree with every decision that’s been made, but I do think it’s important that we understand how these changes are being experienced by people who have been here for a long time.`
         ],
         reply: [
-          `I appreciate you being honest with me. It’s good to know I’m not the only one wondering what’s going on.`,
-          `What concerns me is that if Margot and Dinesh can be moved around like that, what’s stopping the same thing from happening to the rest of us? We’ve spent years building experience to get the work done, and now it sounds like we’re all expected to adapt to a structure that hasn’t really been thought through.`,
-          `I’ve heard a few things from people in other parts of the business too. There seems to be a lot of confusion about who’s making the decisions and what the priorities are going to be. I don’t think we should just sit back and wait for things to become a problem.`,
-          `Leave it with me. I’ll have some chats and see if I can get a better understanding of what’s happening. I can raise some of the operational concerns without putting you in an awkward position.`,
-          `You’ve got enough to deal with trying to bring new people into the team. I don’t want you caught up in the politics of it all. I’ll see what I can find out and let you know.`,
-          `Noel`
+          `I suppose it depends on what you mean by bringing the organisations together effectively.`,
+          `There are definitely some good people coming across from OurSphere, and I’m sure they’ll have things to contribute. But I think there’s been a bit of an assumption that bringing in different experience automatically makes things better. It doesn’t always work that way.`,
+          `I’ve had a few conversations with people in other teams, and I wouldn’t say everyone is comfortable with how things have played out. I get a general feeling that people already here are just expected to make most of the adjustments.`,
+          `I’m not against progress, but it’s hard to feel invested when you don’t know if your experience is still valued. Black Swan needs to be careful about how it treats the people who helped build it.`,
+          `Anyway, I appreciate you asking. `
         ] }
     ]
   },
-  margot: {
-    id: 'margot', name: 'Margot J.', initials: 'MJ', av: 'av-coral', status: 'online',
-    desc: 'Online · she/her · Senior Site Coordinator · 4 years experience at Black Swan',
-    unread: 1, fixed: true, replyTime: '9:42 AM',
+  
+  grey: {
+    id: 'grey', name: 'Grey L.', initials: 'GL', av: 'av-gold', status: 'online',
+    desc: 'Online · she/her · Environmental project officer · 4 years experience at OurSphere',
+    unread: 1, fixed: false, replyTime: '11:15 AM',
     messages: [
-      { time: '9:15 AM', text: [
-        `Hi [NAME],`,
-        `I just wanted to say thank you for everything over the time we’ve worked together. I’ve really appreciated your leadership, especially when things have been busy or challenging. You’ve always made an effort to support us, and I won’t forget that.`,
-        `I’m still getting my head around the changes, to be honest. I suppose these decisions have been made for a reason, even if it hasn’t always felt like we got much consideration. It’s a little disappointing after putting so much into this team over the years.`,
-        `Hopefully things will settle down eventually. I just need a bit of time to work out where I fit into everything now.`,
-        `It’s been great working with you, and I hope things go well for the team.`
-      ] }
+    //   { time: '10:30 AM', text: [
+    //     `Text`
+    //   ] }
     ],
     options: [
       { learner: [
-          `Hi Margot,`,
-          `Thank you for the message. I’ve really valued your work over the years, and the experience and support you’ve brought to the team has made a real difference.`,
-          `I hope your new role provides exciting new opportunities, even if it takes a little while to find your feet. If there’s anything you’d like to talk through, I’m happy to make time.`,
-          `Thank you again for everything you’ve done.`
+          `Hi Grey,`,
+          `Just wanted to check in and see how you’re finding things now that you’ve had a little time to settle into the team. I want you to know that you’re welcome in the team, and I appreciate the enthusiasm you’ve brought with you. It’s a big adjustment joining a new organisation, particularly when you’re getting familiar with different processes and expectations.`,
+          `Don’t feel you need to have everything worked out straight away – I’m here to help you work through any questions as they come up.`,
+          `For now, bring any questions or concerns to me first, particularly if they relate to how the team currently operates or how tasks are managed. That will give us a chance to work through things together and make sure you’re getting consistent guidance while you become more comfortable in the role.`,
+          `There’s plenty of opportunity for you to develop and contribute, so I’d rather you take the time to build your confidence than feel you need to demonstrate everything you can do straight away.`
         ],
         reply: [
-          `Thanks, I really appreciate you saying that. It’s been a strange few weeks, and I think I’m still processing it all.`,
-          `I know you’ve had a lot to deal with yourself, so I don’t want to make things harder for you. I’ll definitely miss the team though. Please let everyone know I’m thinking of them ❤️`
+          `Thank you, I really appreciate it.`,
+          `I’ve probably been asking a lot of questions, and I hope I haven’t made things more difficult for everyone. Sometimes I’m not sure whether I’m asking the right person or whether I should already know the answer.`,
+          `I think I’m just a little nervous about the change and want to make sure I’m doing a good job. There’s so much experience in the team, and I’d really like to show that I’m going to put in the effort.`,
+          `I’ll make sure to come to you first while I’m getting settled. I don’t want to push too hard or give the impression I think I know how everything should be done already!`
+        ] },
+      { learner: [
+          `Hi Grey,`,
+          `Just wanted to check in with you. I know there’s been quite a lot to take in, particularly coming from a different organisation and getting familiar with our operational processes so quickly. It’s great to see how keen you are to get involved, and I think there’s a lot you can learn from the experience already within the team.`,
+          `One of the best ways to become comfortable in a new environment is to build relationships with the people you’re working alongside. Both Noel and Khadija have a good understanding of how things operate here, so there may be opportunities to learn from their experience as you become more familiar with the work.`,
+          `I’d encourage you to have conversations with them as things come up, rather than feeling you need to work everything out on your own. Everyone has different strengths, and part of bringing the team together is making sure we’re sharing that knowledge.`,
+          `It may take a little time to find your feet, but you don’t need to prove yourself immediately. Focus on getting to know the team, understanding how things work and finding opportunities to contribute as your confidence grows.`
+        ],
+        reply: [
+          `Thank you, that’s helpful. I know everyone has a lot of experience, and I’d definitely like to learn from them. I haven’t been entirely sure how to approach the team. Everyone seems to have their own processes, and I don’t want to interrupt or make it seem like I’m questioning them.`,
+          `I think I’ll try to make more of an effort to connect with them. It might just take a little while before I feel comfortable asking for help, particularly when everyone seems so busy.`,
+          `I’ll do my best to get involved and hopefully find a way to contribute without getting in the way!!`
         ] }
     ]
   },
 
-  dinesh: {
-    id: 'dinesh', name: 'Dinesh O.', initials: 'DO', av: 'av-blue', status: 'away',
-    desc: 'Away · he/him · Operations Administrator · 5 years experience at Black Swan',
-    unread: 1, fixed: true, replyTime: '10:05 AM',
+  sauli: {
+    id: 'sauli', name: 'Sauli S.', initials: 'SS', av: 'av-blue', status: 'busy',
+    desc: 'Busy · he/him · Senior Environmental Consultant · 10+ years experience at OurSphere',
+    unread: 1, fixed: false, replyTime: '11:15 AM',
     messages: [
-      { time: '9:50 AM', text: [
-        `Hey [NAME],`,
-        `Just wanted to send you a quick message before I move across to the new team. Thanks for being a good leader and backing me over the years. I’ve enjoyed working with you, and I appreciate the trust you’ve placed in me.`,
-        `It’s disappointing to think we won’t be working together every day anymore, especially when we’ve built up such a good way of working over the years. I’ll be honest, some of the people here are more than just colleagues to me.`,
-        `Anyway, thanks again. Don’t let them run you into the ground trying to make this all work!`
-      ] }
+    //   { time: '10:30 AM', text: [
+    //     `Text`
+    //   ] }
     ],
     options: [
       { learner: [
-          `Thanks for reaching out. I’ve really appreciated working with you, and I know your absence will be felt in the team.`,
-          `I understand why this is disappointing, particularly given the relationships we’ve built in the team. I hope the move gives you an opportunity to use your experience and continue developing in your role. And I promise to try my best to not take on too much.`,
-          `Thanks again for everything, Dinesh. I wish you all the best.`
+          `Hi Sauli,`,
+          `I wanted to touch base about how things have been going since you’ve joined the team. I appreciate the perspective you’ve brough to the organisation, and I agree there’s a real opportunity to improve the Black Swan’s sustainability initiatives and environmental impact.`,
+          `At the same time, we need to be mindful that the team is still adjusting to quite a significant restructure. There are established processes and operational requirements that we need to understand before we start rapidly changing how we work. Getting familiar with the team will also probably help make practical recommendations for how we can be more environmentally conscious in the future.`,
+          `I’d encourage you to keep sharing your ideas but also take the time to understand the practical challenges the others are managing. It would be useful to work through some of these tasks together rather than trying to introduce too many changes at once.`,
+          `We’re all working towards the same objectives, even if we approach them from different perspectives. I think there’s a lot we can achieve if we give everyone the opportunity to contribute and find some common ground.`
         ],
         reply: [
-          `Thanks for saying that, really.`,
-          `I know you’ve got a lot on your plate with new people coming in and trying to get everyone working together. I hope they give you the support you need, because it won’t be easy balancing everything.`,
-          `I’ll still be around of course, so it’s not as though we’re disappearing completely. Always here if you need a chat or open ear.`,
-          `All the best with it.`
+          `Thanks, I understand what you’re saying, and I certainly don’t want to come across as trying to change everything overnight.`,
+          `Speaking frankly, it can be a little frustrating. At OurSphere, environmental assessment was generally part of the conversation from the beginning, so it’s been an adjustment to find that some of these discussions happen much later in the process here.`,
+          `I appreciate there are operation pressures and existing concerns, and I’m trying to understand those better. I just don’t want to lose sight of what the restructure was supposed to create by continuing to do everything as it’s always been done at Black Swan.`,
+          `Hopefully, once people see how some of these changes can help rather than create more work, there’ll be a bit more interest in exploring how they will positively impact the company.`
+        ] },
+      { learner: [
+          `Hi Sauli,`,
+          `I understand you’re keen to make an impact, and it’s good to see that level of enthusiasm. However, it’s important to remember that you’ve joined an established organisation with its own processes, priorities and operational expectations. The merger doesn’t mean everything will change immediately, and we need to be realistic about how quickly people can adapt.`,
+          `I’d suggest spending some time getting familiar with how the team currently operates before pushing for too many changes. There will be opportunities to introduce different approaches, but it’s important that we work within the expectations of the organisation and allow those changes to develop over time.`,
+          `I’m sure you’ll find your feet as you become more familiar with the team and how things are done here.`
+        ],
+        reply: [
+          `Of course, I understand that there are established processes here, and I’m certainly not expecting everything to change immediately.`,
+          `I suppose I had understood that the merger was intended to bring the two areas of expertise together, rather than simply have one adapt to the other. Some of the things I’ve raised aren’t necessarily new ideas or significant changes; they’re practices that were already part of our work at OurSphere. I’m happy to learn more about the operational side of the business, and I recognise that there are things I’ll need to understand better. I just hope there’s room for the experience I’ve brought with me as well.`,
+          `I’ll keep working through things with the team, although I think it may take a while to work out where my input is most useful.`
+        ] }
+    ]
+  },
+
+  khadija: {
+    id: 'khadija', name: 'Khadija R.', initials: 'KR', av: 'av-coral', status: 'busy',
+    desc: 'Busy · she/her · Project Support Officer · 7 years experience at Black Swan',
+    unread: 1, fixed: false, replyTime: '11:15 AM',
+    messages: [
+    //   { time: '10:30 AM', text: [
+    //     `Text`
+    //   ] }
+    ],
+    options: [
+      { learner: [
+          `Hey Khadija,`,
+          `I just wanted to check in with you about how things have been going since the team changes.`,
+          `I understand there’s been some confusion about how responsibilities will be managed while everyone adjusts to the new structure, so I want to make sure any expectations are clear for the team.`,
+          `We’re currently reviewing the team’s workload and allocating tasks based on everyone’s role, experience and capacity. I don’t expect you to absorb all additional tasks because we’ve moved people elsewhere, and if priorities change, we’ll discuss that in the team before there are any delays.`,
+          `There will be opportunities for everyone to share knowledge and support each other, but we’ll need to make sure that work is distributed fairly.`,
+          `If you notice your workload becoming difficult to manage, or if you’re unsure about anything in the team, I’d like you to raise it with me early so we can work through it together. I’d rather we have those conversations as things arise than have people feeling they need to manage everything themselves.`
+        ],
+        reply: [
+          `Thanks, that actually helps clarify a few things.`,
+          `I think I was starting to wonder whether we’d just be picking up any unfinished tasks, particularly while Sauli and Grey got settled. Since there’s so much to get through, I didn’t know how projects would be allocated.`,
+          `I do think there’s a lot of value into brining the environmental work into the business more directly, I just hope that it doesn’t change too much about how we work. It’s felt a bit different lately, and the team feels really different without Margot.`,
+          `I’ll let you know if anything becomes difficult to manage.`,
+          `Thanks [NAME]`
+        ] },
+      { learner: [
+          `Hi Khadija,`,
+          `Just wanted to check in since you’ve been less active with the team. I know it’s been quite a different environment lately, and I imagine there are a few things that might take some getting used to.`,
+          `I’d be interested to hear how you’re feeling about the changes overall. We’ve had different people moving in and out of the team, and we’re still figuring out how tasks are going to be allocated in the future.`,
+          `I’d really like to make sure everyone has a voice in that process, including people who have been part of the team for a long time. You’ve got a good understanding of how things have traditionally worked, and there’s value in having you involved as we work out what the next stage looks like.`,
+          `It’d be great to see you getting involved in some of the team discussions and sharing your thoughts as we go. Is there anything in particularly you’d like to see us focus on as we settle into the new arrangements?`
+        ],
+        reply: [
+          `I think things are okay. It’s probably just a matter of getting used to having different people around and working things out as we go.`,
+          `I’m sure everyone has good intentions, and there are probably some things that will become clearer once we’ve been working together for a while.`,
+          `I don’t really have anything specific to suggest at the moment. I think it might be a bit early to know what will work best, particularly when there are still a quite a few things changing. I’ll keep an eye on what’s happening and get involved when I can. We’ll have a better idea of how things are going once everything settles down a bit.`
         ] }
     ]
   }
@@ -618,7 +668,7 @@ const state = {};
 Object.keys(people).forEach(id => {
   state[id] = people[id].fixed ? { chosen: 0, replied: true } : { chosen: null, replied: false };
 });
-let currentId = 'margot';
+let currentId = 'grey';
 
 /* =========================================================
    HELPERS
@@ -843,9 +893,9 @@ document.getElementById('reflectSave').addEventListener('click', () => {
    BOOT
    ========================================================= */
 renderContacts();
-people.margot.unread = 0;      // the first chat opens automatically
+people.grey.unread = 0;      // the first chat opens automatically
 renderDMs();
-setChat('margot');
+setChat('grey');
 </script>
 </body>
 </html>
