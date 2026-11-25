@@ -1,0 +1,339 @@
+<style>
+:root {
+    --AIMblue: #4353A3;
+    --darkBlue: #38416D;
+    --teal: #5DC8B9;
+    --cream: #F1EEDE;
+    --grey: #e7e9ec;
+    --rust: #AF4510;
+    --navy: #12195C;
+    --white: #ffffff;
+    --lightBlue: #AEBAE4;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+.carousel {
+    max-width: 700px;
+    margin: 30px auto;
+
+}
+
+.carouselViewport {
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.carouselTrack {
+    display: flex;
+    align-items: stretch;
+    transition: transform 0.4s ease;
+}
+
+.notesBox {
+    flex: 0 0 100%;
+    box-sizing: border-box;
+    padding: 1rem 1.25rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            border: var(--navy) solid 2px;
+    padding: 30px;
+
+}
+
+.notesBox h3 {
+    color: var(--navy);
+    margin-top: 0.25rem;
+}
+
+textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    resize: vertical;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+}
+
+textarea:focus {
+    outline: 2px solid var(--AIMblue);
+    outline-offset: 1px;
+}
+
+.saved {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+}
+
+.savedMsg {
+    font-size: 0.9rem;
+    color: var(--AIMblue);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    margin: 0;
+    min-width: 60px;
+}
+
+.saveBtn {
+    background-color: var(--navy);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 1.25rem;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.questionText {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    padding: 5px;
+}
+
+/* Carousel controls */
+.carouselNav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.navBtn {
+    background: var(--AIMblue);
+    color: var(--white);
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 1.25rem;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    min-width: 100px;
+}
+
+.navBtn:hover:not(:disabled) {
+    background: var(--darkBlue);
+}
+
+.navBtn:disabled {
+    background: var(--grey);
+    color: #8a8f98;
+    cursor: not-allowed;
+}
+
+.navBtn:focus-visible,
+.saveBtn:focus-visible,
+.dot:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
+}
+
+.dots {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    padding: 0;
+    border-radius: 50%;
+    border: none;
+    background: var(--lightBlue);
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.dot.active {
+    background: var(--navy);
+    transform: scale(1.25);
+}
+
+.counter {
+    text-align: center;
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    color: var(--darkBlue);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .carouselTrack { transition: none; }
+}
+
+@media (max-width: 480px) {
+    .navBtn { min-width: 80px; padding: 0.5rem 0.75rem; }
+}
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+<div class="carousel" id="reflectionCarousel" role="region" aria-roledescription="carousel" aria-label="Change leadership reflection">
+  <div class="carouselViewport">
+    <div class="carouselTrack" id="carouselTrack">
+
+      <div class="notesBox" role="group" aria-roledescription="slide" aria-label="1 of 5">
+        <h3>Organisational change means….</h3>
+        <p class="questionText">How would you describe organisational change and how leaders are responsible for guiding others through change?</p>
+        <textarea id="notesInput1" rows="8"></textarea>
+        <div class="saved">
+          <p id="statusMsg1" class="savedMsg">Saved!</p>
+          <button id="saveBtn1" class="saveBtn">Save</button>
+        </div>
+      </div>
+
+      <div class="notesBox" role="group" aria-roledescription="slide" aria-label="2 of 5">
+        <h3>The aspect of workplace change I struggle with most is…</h3>
+        <p class="questionText">Consider your own experiences managing uncertainty, resistance, communication challenges or the impact of change on others.</p>
+        <textarea id="notesInput2" rows="8"></textarea>
+        <div class="saved">
+          <p id="statusMsg2" class="savedMsg">Saved!</p>
+          <button id="saveBtn2" class="saveBtn">Save</button>
+        </div>
+      </div>
+
+      <div class="notesBox" role="group" aria-roledescription="slide" aria-label="3 of 5">
+        <h3>The strategies I will implement to overcome these challenges are…</h3>
+        <p class="questionText">What practical tools, leadership skills or behaviours will help you become more confident and adaptable when navigating change?</p>
+        <textarea id="notesInput3" rows="8"></textarea>
+        <div class="saved">
+          <p id="statusMsg3" class="savedMsg">Saved!</p>
+          <button id="saveBtn3" class="saveBtn">Save</button>
+        </div>
+      </div>
+
+      <div class="notesBox" role="group" aria-roledescription="slide" aria-label="4 of 5">
+        <h3>I will support my team when navigating change by…</h3>
+        <p class="questionText">How will you communicate expectations, build trust, encourage participation and recognise the different needs of team members?</p>
+        <textarea id="notesInput4" rows="8"></textarea>
+        <div class="saved">
+          <p id="statusMsg4" class="savedMsg">Saved!</p>
+          <button id="saveBtn4" class="saveBtn">Save</button>
+        </div>
+      </div>
+
+      <div class="notesBox" role="group" aria-roledescription="slide" aria-label="5 of 5">
+        <h3>One thing I will do differently as a leader following this course is…</h3>
+        <p class="questionText">Identify one behaviour, approach or leadership practice you intend to apply in your workplace.</p>
+        <textarea id="notesInput5" rows="8"></textarea>
+        <div class="saved">
+          <p id="statusMsg5" class="savedMsg">Saved!</p>
+          <button id="saveBtn5" class="saveBtn">Save</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="carouselNav">
+    <button class="navBtn" id="prevBtn" aria-label="Previous question">&larr; Back</button>
+    <div class="dots" id="dots"></div>
+    <button class="navBtn" id="nextBtn" aria-label="Next question">Next &rarr;</button>
+  </div>
+  <p class="counter" id="counter" aria-live="polite"></p>
+</div>
+
+<script>
+function initNotesBox(inputId, btnId, msgId, storageKey) {
+  const textArea = document.getElementById(inputId);
+  const saveBtn = document.getElementById(btnId);
+  const statusMsg = document.getElementById(msgId);
+
+  // Load existing note (if any)
+  try {
+    const savedNote = localStorage.getItem(storageKey);
+    if (savedNote) textArea.value = savedNote;
+  } catch (e) {}
+
+  // Save on button click
+  saveBtn.addEventListener('click', () => {
+    try { localStorage.setItem(storageKey, textArea.value.trim()); } catch (e) {}
+    statusMsg.style.opacity = '1';
+    setTimeout(() => statusMsg.style.opacity = '0', 1500);
+  });
+
+  // Auto-save while typing
+  textArea.addEventListener('input', () => {
+    try { localStorage.setItem(storageKey, textArea.value.trim()); } catch (e) {}
+  });
+}
+
+initNotesBox('notesInput1', 'saveBtn1', 'statusMsg1', 'CHGCOMQ1');
+initNotesBox('notesInput2', 'saveBtn2', 'statusMsg2', 'CHGCOMQ2');
+initNotesBox('notesInput3', 'saveBtn3', 'statusMsg3', 'CHGCOMQ3');
+initNotesBox('notesInput4', 'saveBtn4', 'statusMsg4', 'CHGCOMQ4');
+initNotesBox('notesInput5', 'saveBtn5', 'statusMsg5', 'CHGCOMQ5');
+
+// ---- Carousel ----
+(function () {
+  const root = document.getElementById('reflectionCarousel');
+  const track = document.getElementById('carouselTrack');
+  const slides = Array.from(track.children);
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const dotsWrap = document.getElementById('dots');
+  const counter = document.getElementById('counter');
+  let current = 0;
+
+  const dots = slides.map((_, i) => {
+    const d = document.createElement('button');
+    d.className = 'dot';
+    d.setAttribute('aria-label', 'Go to question ' + (i + 1));
+    d.addEventListener('click', () => goTo(i));
+    dotsWrap.appendChild(d);
+    return d;
+  });
+
+  function goTo(index) {
+    current = Math.max(0, Math.min(slides.length - 1, index));
+    track.style.transform = 'translateX(-' + (current * 100) + '%)';
+
+    slides.forEach((s, i) => {
+      // Keep off-screen slides out of the tab order
+      if (i === current) s.removeAttribute('inert');
+      else s.setAttribute('inert', '');
+      s.setAttribute('aria-hidden', i === current ? 'false' : 'true');
+    });
+    dots.forEach((d, i) => {
+      d.classList.toggle('active', i === current);
+      if (i === current) d.setAttribute('aria-current', 'true');
+      else d.removeAttribute('aria-current');
+    });
+
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === slides.length - 1;
+    counter.textContent = 'Question ' + (current + 1) + ' of ' + slides.length;
+  }
+
+  prevBtn.addEventListener('click', () => goTo(current - 1));
+  nextBtn.addEventListener('click', () => goTo(current + 1));
+
+  // Arrow keys navigate, but not while typing in a note
+  root.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'ArrowLeft') goTo(current - 1);
+    if (e.key === 'ArrowRight') goTo(current + 1);
+  });
+
+  // Touch swipe (ignored when starting inside a textarea)
+  let startX = null;
+  root.addEventListener('touchstart', (e) => {
+    startX = e.target.tagName === 'TEXTAREA' ? null : e.touches[0].clientX;
+  }, { passive: true });
+  root.addEventListener('touchend', (e) => {
+    if (startX === null) return;
+    const dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) > 50) goTo(current + (dx < 0 ? 1 : -1));
+    startX = null;
+  });
+
+  goTo(0);
+})();
+</script>
