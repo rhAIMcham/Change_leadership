@@ -770,8 +770,8 @@ function chooseOption(index) {
   const o = p.options[index];
   try {   // saved for use elsewhere in the course, as in the reference file
     const key = p.name.replace(/[^A-Za-z]/g, '');   // e.g. "NoelG"
-    localStorage.setItem(key + 'Choice', plain(o.learner));
-    localStorage.setItem(key + 'Response', plain(o.reply));
+    localStorage.setItem(key + 'M6S3C2Choice', plain(o.learner));
+    localStorage.setItem(key + 'M6S3C2Response', plain(o.reply));
   } catch (e) { /* storage unavailable */ }
 
   setTimeout(() => {
