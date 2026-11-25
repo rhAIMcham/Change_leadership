@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Chat simulation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --AIMblue: #4353A3;
+  --darkBlue: #38416D;
+  --teal: #5DC8B9;
+  --cream: #F1EEDE;
+  --grey: #e7e9ec;
+  --rust: #AF4510;
+  --navy: #12195C;
+  --white: #ffffff;
+  --lightBlue: #AEBAE4;
+  --bg-app:          #f0ede8;
+  --bg-sidebar:      #e8e4de;
+  --bg-activity-pane:#454545;
+  --bg-panel:        #ffffff;
+  --bg-message-head: #f5f3f0;
+  --bg-unread-dot:   #378add;
+  --bg-selected-row: #e6f1fb;
+  --bg-input:        #f5f3f0;
+
+  --text-primary:    #1a1a1a;
+  --text-secondary:  #555;
+  --text-muted:      #999;
+
+  --border-subtle:   #dedad3;
+  --border-medium:   #ccc8c0;
+  --border:          rgba(0,0,0,0.1);
+
+  --purple-mid:  #6264A7;
+  --purple-light:#9EA2D4;
+  --channel-bg:  #252538;
+  --chat-bg:     #ffffff;
+  --bg-secondary:#f5f5f5;
+  --bg-primary:  #ffffff;
+  --online:      #6EBB8A;
+  --away:        #F4A540;
+  --busy:        #E04D4D;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+}
+
+body { font-family: 'Inter', sans-serif; }
+
+svg { fill: white; cursor: pointer; transition: 300ms ease; width: 30px; margin: 5px; }
+svg:hover { fill: var(--teal); }
+
+.workArea3 {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.teams-app {
+  display: flex;
+  width: 960px;
+  height: 600px;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  background: var(--bg-panel);
+}
+
+.activity-bar {
+  width: 65px;
+  flex-shrink: 0;
+  background: var(--bg-activity-pane);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0;
+  gap: 2px;
+}
+.activity-bar-top { display: flex; flex-direction: column; align-items: center; gap: 15px; flex: 1; margin-top: 15px; }
+.activity-icon {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px; cursor: pointer;
+  color: rgba(255,255,255,0.55); font-size: 18px;
+  position: relative; transition: background 0.15s, color 0.15s;
+}
+.activity-icon:hover, .activity-icon.active { background: rgba(255,255,255,0.13); color: #fff; }
+
+.left-sidebar {
+  color: black;
+  width: 210px;
+  flex-shrink: 0;
+  background: var(--bg-app);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-right: 1px solid rgba(255,255,255,0.05);
+}
+.sidebar-header { padding: 14px 12px 8px; display: flex; align-items: center; gap: 8px; }
+.sidebar-header-title { font-size: 1.4rem; font-weight: 600; flex: 1; }
+
+.dm-unread-count {
+  background: var(--busy);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 10px;
+  margin-left: auto;
+}
+
+.dm-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; cursor: pointer;
+  border-radius: 5px; margin: 1px 5px;
+  transition: background 0.1s;
+}
+.dm-item:hover { color: var(--AIMblue); }
+.dm-item.active { background: white; }
+
+.dm-avatar {
+  width: 24px; height: 24px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700; flex-shrink: 0; position: relative;
+}
+.status-dot {
+  position: absolute; bottom: -1px; right: -1px;
+  width: 7px; height: 7px; border-radius: 50%;
+  border: 1.5px solid var(--channel-bg);
+}
+.status-online { background: var(--online); }
+.status-away   { background: var(--away); }
+.status-busy   { background: var(--busy); }
+
+.dm-name { font-size: 12px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dm-item.active .dm-name { color: var(--navy); }
+.dm-item:hover .dm-name { color: var(--AIMblue); }
+
+.chat-pane { flex: 1; display: flex; flex-direction: column; background: var(--chat-bg); min-width: 0; }
+
+.chat-header {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bg-message-head);
+}
+.chat-header-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+.chat-header-icon { font-size: 17px; color: var(--purple-mid); }
+.chat-header-name { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+.chat-header-desc { font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.chat-body { flex: 1; overflow-y: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 2px; }
+
+.date-divider { display: flex; align-items: center; gap: 8px; margin: 10px 0; font-size: 11px; color: var(--text-muted); }
+.date-divider::before, .date-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.chat-group { display: flex; gap: 10px; padding: 3px; align-items: flex-start; border-radius: 6px; margin-top: 7px; }
+.chat-group:hover { background: var(--bg-secondary); }
+
+.chat-avatar {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  margin-top: 2px; display: flex; align-items: center;
+  justify-content: center; font-size: 11px; font-weight: 700;
+}
+.chat-content { flex: 1; min-width: 0; }
+.chat-meta { display: flex; align-items: baseline; gap: 8px; margin-bottom: 2px; }
+.chat-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.chat-time { font-size: 11px; color: var(--text-muted); }
+.chat-text { font-size: 13px; color: var(--text-primary); line-height: 1.55; }
+
+.learner { border: solid grey 0px; }
+
+.learnerOption {
+  border: solid 1px var(--border-medium);
+  padding: 10px;
+  border-radius: 8px;
+  margin: 5px;
+  cursor: pointer;
+  transition: 300ms ease;
+  background-color: var(--bg-selected-row);
+  color: var(--text-primary);
+}
+.learnerOption:hover, .learnerOption:focus-visible {
+  background: white;
+  margin-left: 7px;
+  color: black;
+  outline: none;
+}
+
+.chat-answers-box { border-radius: 8px; display: flex; }
+.explainerP { font-size: 12px; display: flex; justify-content: center; margin: 10px; }
+
+.av-blue   { background: #B5D4F4; color: #0C447C; }
+.av-teal   { background: #9FE1CB; color: #085041; }
+.av-coral  { background: #F5C4B3; color: #712B13; }
+.av-purple { background: #9EA2D4; color: #3C3489; }
+.av-gold { background: #F7DDA0; color: #6B4A08; }
+
+.search-bar { padding: 10px 16px; border-bottom: 1px solid var(--border-subtle); }
+.search-input {
+  width: 100%; background: #f0ede8; border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 6px; padding: 6px 10px; font-size: 13px; outline: none;
+  font-family: inherit; color: var(--text-primary);
+}
+.search-input::placeholder { color: var(--text-muted); }
+.contact-group-label {
+  padding: 8px 16px 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+  text-transform: uppercase; color: var(--text-muted); background: #faf9f7;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+.contact-item {
+  display: flex; align-items: center; gap: 12px; padding: 9px 16px;
+  border-bottom: 1px solid rgba(0,0,0,0.04); cursor: pointer;
+}
+.contact-item:hover { background: #f5f3f0; }
+.contact-avatar {
+  width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; position: relative;
+}
+.contact-info { flex: 1; min-width: 0; }
+.contact-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+
+.pane-header {
+  padding: 10px 16px; border-bottom: 1px solid var(--border-subtle);
+  display: flex; align-items: center; gap: 10px; background: var(--bg-message-head);
+}
+.pane-header-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.pane-header-desc { font-size: 12px; color: var(--text-muted); }
+.pane-body { flex: 1; overflow-y: auto; }
+.no-calls { display: flex; justify-content: space-around; margin: 20px; color: var(--text-muted); font-size: 12px; }
+
+.missed-teams-dot {
+  position: absolute;
+  width: 15px; height: 15px;
+  border-radius: 50%;
+  border: 1.5px solid white;
+  font-size: 11px; color: white; text-align: center;
+}
+.messages-waiting { display: flex; }
+
+.dm-avatar > svg { fill: black; }
+
+#chatSection { display: flex; width: 895px; }
+#phoneSection { display: none; width: 895px; }
+
+.new-message { opacity: 0; transform: translateY(6px); transition: opacity 0.25s ease, transform 0.25s ease; }
+.new-message.visible { opacity: 1; transform: translateY(0); }
+
+.typing-dots span {
+  display: inline-block; width: 6px; height: 6px; margin-right: 3px;
+  border-radius: 50%; background: var(--text-muted);
+  animation: typingBounce 1s infinite ease-in-out;
+}
+.typing-dots span:nth-child(2) { animation-delay: 0.15s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes typingBounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+  40% { transform: translateY(-3px); opacity: 1; }
+}
+
+@media only screen and (max-width: 767px) {
+  .chat-header-desc { text-wrap: wrap; }
+  .teams-app { flex-direction: column; height: auto; width: 100%; max-width: 100%; }
+  .activity-bar { width: auto; flex-direction: row; }
+  .activity-bar-top { flex-direction: row; justify-content: space-around; margin: 0; }
+  #chatSection, #phoneSection { width: 100%; }
+  .left-sidebar { width: 80px; flex-direction: column; }
+  .dm-item { flex-direction: column; }
+  .chat-pane { width: auto; overflow: auto; }
+  .chat-body { flex: 1; overflow-y: scroll; max-height: 300px; overflow-x: hidden; }
+  .chat-answers-box { flex-direction: column; }
+}
+
+.dm-item.disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+.reset-btn {
+  margin-left: auto; font-family: inherit; font-size: 12px; font-weight: 600;
+  color: var(--AIMblue); background: var(--white);
+  border: 1px solid var(--AIMblue); border-radius: 99px;
+  padding: 5px 14px; cursor: pointer; transition: 200ms ease;
+}
+.reset-btn:hover { background: var(--AIMblue); color: var(--white); }
+.pick-prompt { padding: 10px 4px; }
+.pick-prompt h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.pick-prompt p { font-size: 12px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.5; }
+.pick-card {
+  display: flex; align-items: center; gap: 12px; padding: 10px 12px; margin-bottom: 8px;
+  border: 1px solid var(--border-medium); border-radius: 8px; cursor: pointer;
+  background: var(--bg-selected-row); transition: 300ms ease;
+}
+.pick-card:hover, .pick-card:focus-visible { background: var(--white); outline: none; margin-left: 4px; }
+.pick-card .pick-name { font-size: 13px; font-weight: 600; }
+.pick-card .pick-desc { font-size: 11px; color: var(--text-secondary); }
+
+.container {
+  width: 1000px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 20px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.instructions {
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid var(--AIMblue);
+  padding: 18px 22px;
+  line-height: 1.6;
+}
+.instructions h2 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+
+.reflection {
+  background: var(--white);
+  border: 1px solid var(--border-medium);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+.reflection-bar {
+  padding: 10px 20px;
+  background: var(--bg-message-head);
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 13px; font-weight: 600;
+}
+.question { padding: 20px; border-bottom: 1px solid var(--border-subtle); }
+.question-head { display: flex; gap: 12px; margin-bottom: 10px; }
+.question-num {
+  flex-shrink: 0;
+  width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg-selected-row); color: var(--darkBlue);
+  font-size: 12px; font-weight: 700;
+}
+.question-text { max-width: 75ch; font-size: 14px; font-weight: 600; line-height: 1.5; padding-top: 2px; }
+.question-text span { display: block; margin-top: 6px; font-weight: 400; color: var(--text-secondary); }
+
+.question textarea {
+  display: block;
+  width: 100%;
+  min-height: 140px;
+  padding: 12px 14px;
+  font-family: inherit; font-size: 14px; line-height: 1.6;
+  color: var(--text-primary);
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  resize: vertical;
+}
+.question textarea:focus { outline: none; border-color: var(--AIMblue); background: var(--white); }
+
+.reflection-footer {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  padding: 12px 20px;
+  background: var(--bg-message-head);
+}
+.savedMsg { font-size: 13px; color: var(--AIMblue); opacity: 0; transition: opacity 0.4s ease; }
+.savedMsg.error { color: var(--rust); }
+.saveBtn {
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  color: var(--white); background-color: var(--AIMblue);
+  border: none; border-radius: 99px;
+  padding: 8px 22px; cursor: pointer;
+}
+.saveBtn:hover { background-color: var(--darkBlue); }
+.saveBtn:focus-visible { outline: 2px solid var(--AIMblue); outline-offset: 2px; }
+
+@media only screen and (max-width: 767px) {
+  .container { padding: 0 12px 24px; }
+  .question { padding: 16px 14px; }
+}
+</style>
+</head>
+<body>
+
+<div class="workArea3" id="work3">
+<div class="teams-app">
+
+  <!-- ACTIVITY BAR -->
+  <div class="activity-bar">
+    <div class="activity-bar-top">
+      <div class="messages-waiting">
+        <div class="activity-icon active" title="Chat" onclick="setActive(this)" tabindex="0" role="button" aria-label="Chat">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><style>.fa-secondary{opacity:.4}</style></defs><path d="M256 32C114.6 32 0 125.1 0 240c0 49.6 21.4 95 57 130.7C44.5 421.1 2.7 466 2.2 466.5a8 8 0 0 0-1.5 8.7A7.83 7.83 0 0 0 8 480c66.3 0 116-31.8 140.6-51.4A305 305 0 0 0 256 448c141.4 0 256-93.1 256-208S397.4 32 256 32zM128 272a32 32 0 1 1 32-32 32 32 0 0 1-32 32zm128 0a32 32 0 1 1 32-32 32 32 0 0 1-32 32zm128 0a32 32 0 1 1 32-32 32 32 0 0 1-32 32z" class="fa-secondary"/><path d="M128 208a32 32 0 1 0 32 32 32 32 0 0 0-32-32zm128 0a32 32 0 1 0 32 32 32 32 0 0 0-32-32zm128 0a32 32 0 1 0 32 32 32 32 0 0 0-32-32z" class="fa-primary"/></svg>
+        </div>
+        <span class="missed-teams-dot status-busy" id="totalUnread">3</span>
+      </div>
+      <div class="activity-icon" title="Calls" onclick="setActive(this)" tabindex="0" role="button" aria-label="Calls">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><style>.fa-secondary{opacity:.4}</style></defs><path d="M336.23 167.12L406 4.43 389.41.61a24.16 24.16 0 0 0-27.5 13.9l-48 112a23.9 23.9 0 0 0 6.91 28zM154.6 320.71a24 24 0 0 0-28-6.91l-112 48a24.3 24.3 0 0 0-14 27.61l3.8 16.49 162.81-69.77zm338.81-296.1l-55.75-12.87L362 188.23l19.39 15.87A370.59 370.59 0 0 1 204.2 381.3l-15.88-19.4-176.6 75.69 12.89 55.82A24 24 0 0 0 48 512c256.1 0 464-207.49 464-464a24 24 0 0 0-18.59-23.39z" class="fa-secondary"/><path d="M406 4.43l-69.77 162.69L362 188.23l75.66-176.49zM4.41 405.9l7.31 31.69 176.6-75.69-21.1-25.77z" class="fa-primary"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAT SECTION -->
+  <div id="chatSection">
+    <div class="left-sidebar">
+      <div class="sidebar-header">
+        <span class="sidebar-header-title">Chats</span>
+      </div>
+      <div id="dmList"><!-- built by renderDMs() --></div>
+    </div>
+
+    <div class="chat-pane">
+      <div class="chat-header">
+        <div class="chat-header-left">
+          <i class="chat-header-icon" id="header-icon"></i>
+             <button id="resetBtn" class="reset-btn" type="button" style="display:none">Reset conversation</button>
+          <div>
+            <div class="chat-header-name" id="chat-title"></div>
+            <div class="chat-header-desc" id="chat-desc"></div>
+          </div>
+        </div>
+      </div>
+      <div class="chat-body" id="chat-body"></div>
+    </div>
+  </div>
+
+  <!-- PHONE SECTION -->
+  <div id="phoneSection">
+    <div class="left-sidebar">
+      <div class="sidebar-header">
+        <span class="sidebar-header-title">Calls</span>
+      </div>
+      <div class="dm-item active" id="tab-calls" onclick="switchPhoneTab('calls', this)" tabindex="0" role="button">
+        <div class="dm-avatar av-blue">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><style>.fa-secondary{opacity:.4}</style></defs><path d="M256 240a72 72 0 1 0 72 72 72 72 0 0 0-72-72zm250.18-117C436.76 65 347.38 32 256 32S75.24 65 5.82 123A16.45 16.45 0 0 0 0 135.64V192a16 16 0 0 0 16 16h70.11a16 16 0 0 0 14.31-8.85L128 128c39.9-17.28 83.2-24 128-24 44.77 0 88.07 6.72 128 24l27.58 71.15a16 16 0 0 0 14.31 8.85H496a16 16 0 0 0 16-16v-56.36a16.45 16.45 0 0 0-5.82-12.64z" class="fa-secondary"/><path d="M475.78 376.62L370.43 192.25A64 64 0 0 0 314.86 160H197.14a64 64 0 0 0-55.57 32.25L36.22 376.62A32 32 0 0 0 32 392.5V448a32 32 0 0 0 32 32h384a32 32 0 0 0 32-32v-55.5a32 32 0 0 0-4.22-15.88zM256 384a72 72 0 1 1 72-72 72 72 0 0 1-72 72z" class="fa-primary"/></svg>
+        </div>
+        <span class="dm-name">Recent calls</span>
+      </div>
+      <div class="dm-item" id="tab-contacts" onclick="switchPhoneTab('contacts', this)" tabindex="0" role="button">
+        <div class="dm-avatar av-teal">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><defs><style>.fa-secondary{opacity:.4}</style></defs><path d="M96 224a64 64 0 1 0-64-64 64.06 64.06 0 0 0 64 64zm480 32h-64a63.81 63.81 0 0 0-45.1 18.6A146.27 146.27 0 0 1 542 384h66a32 32 0 0 0 32-32v-32a64.06 64.06 0 0 0-64-64zm-512 0a64.06 64.06 0 0 0-64 64v32a32 32 0 0 0 32 32h65.9a146.64 146.64 0 0 1 75.2-109.4A63.81 63.81 0 0 0 128 256zm480-32a64 64 0 1 0-64-64 64.06 64.06 0 0 0 64 64z" class="fa-secondary"/><path d="M396.8 288h-8.3a157.53 157.53 0 0 1-68.5 16c-24.6 0-47.6-6-68.5-16h-8.3A115.23 115.23 0 0 0 128 403.2V432a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48v-28.8A115.23 115.23 0 0 0 396.8 288zM320 256a112 112 0 1 0-112-112 111.94 111.94 0 0 0 112 112z" class="fa-primary"/></svg>
+        </div>
+        <span class="dm-name">Contacts</span>
+      </div>
+    </div>
+
+    <div class="chat-pane">
+      <div id="calls-pane">
+        <div class="pane-header">
+          <div>
+            <div class="pane-header-name">Recent calls</div>
+            <div class="pane-header-desc">All calls — today and earlier</div>
+          </div>
+        </div>
+        <div class="pane-body">
+          <div class="no-calls"><p>No calls to display</p></div>
+        </div>
+      </div>
+
+      <div id="contacts-pane" style="display: none; flex-direction: column; height: 100%;">
+        <div class="pane-header">
+          <div>
+            <div class="pane-header-name">Contacts</div>
+            <div class="pane-header-desc" id="contactCount"></div>
+          </div>
+        </div>
+        <div class="search-bar">
+          <input class="search-input" type="text" placeholder="Search contacts…" aria-label="Search contacts" oninput="filterContacts(this.value)" />
+        </div>
+        <div class="pane-body" id="contacts-list"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- REFLECTION -->
+<div class="container">
+  <div class="instructions">
+    <h2>Reflection</h2>
+    <p>After reading through the different responses, answer the question below. Then, click the <strong>'Download your activity'</strong> button below the questions to save your answers as a PDF.</p>
+  </div>
+
+  <div class="reflection" id="questionBox">
+    <div class="reflection-bar">Your reflection</div>
+
+    <div class="question">
+      <div class="question-head">
+        <span class="question-num" aria-hidden="true">1</span>
+        <label class="question-text" for="reflect1">Which team member did you choose to speak with, and what forms of resistance or underlying concerns did you identify during the conversation?</label>
+      </div>
+      <textarea id="reflect1" data-q="1"></textarea>
+    </div>
+
+    <div class="question">
+      <div class="question-head">
+        <span class="question-num" aria-hidden="true">2</span>
+        <label class="question-text" for="reflect2">Did you feel the conversation was successful, or did it reveal further risks or challenges the organisation needs to address?</span></label>
+      </div>
+      <textarea id="reflect2" data-q="2"></textarea>
+    </div>
+
+    <div class="reflection-footer">
+      <p id="reflectStatus" class="savedMsg" role="status">Saved!</p>
+      <button id="reflectSave" class="saveBtn" type="button">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   LEARNER (name comes from the LMS, as in the reference file)
+   ========================================================= */
+function titleCase(s) { return s.replace(/\b\w/g, c => c.toUpperCase()); }
+let storedName = 'Leader', storedInitial = '';
+try {
+  storedName = localStorage.getItem('riseUserName') || storedName;
+  storedInitial = localStorage.getItem('lastInitialToken') || storedInitial;
+} catch (e) { /* storage unavailable */ }
+const username = titleCase(storedName.trim()) + ' ' + storedInitial.toUpperCase();
+const firstName = titleCase(storedName.trim()).split(' ')[0];
+const userIcon = storedName.trim().slice(0, 1).toUpperCase() + storedInitial.toUpperCase();
+
+/* =========================================================
+   DATA — one entry per chat. Edit text here.
+   [NAME] in a message becomes the learner's first name.
+   fixed: true  = the conversation has already happened (no choice).
+                  It has a single option that is shown as already sent.
+   fixed: false = the learner chooses between the options.
+   ========================================================= */
+const people = {
+
+
+  noel: {
+    id: 'noel', name: 'Noel G.', initials: 'NG', av: 'av-purple', status: 'busy',
+    desc: 'Busy · he/him · Operations Coordinator · 15 years experience at Black Swan',
+    unread: 1, fixed: false, replyTime: '11:15 AM',
+    messages: [
+    //   { time: '10:30 AM', text: [
+       
+    //   ] }
+    ],
+    options: [
+      { learner: [
+          `Hi Noel,`,
+        `I noticed a few comments in the team chat that have come across as dismissive of Sauli and Grey and the experience they’re bringing to the team.`,
+        `I understand you’ve had concerns about the restructure, particularly regarding Margot and Dinesh, but I also need to make everyone has an opportunity to contribute without feeling that their experience or capabilities are being questioned. As we’ve already discussed, all team members and their personal capability in the workplace should be respected.`,
+        `Can I ask if there’s anything that’s causing significant concern at the moment? Is it still the changes to the team or something broader about the organisation?`
+        ],
+        reply: [
+          `I think you’re taking some of my comments the wrong way. I’m not saying Sauli and Grey don’t have experience. I’m saying their experience is different, and that seems to be getting overlooked.`,
+          `To be honest, we’re expected to make room for the new staff, while the people who have spent years building this business are being moved around or expected to just accept whatever decisions are made.`,
+          `I used to feel like I had a place here and that people valued what I knew. Lately, I’m not so sure. There’s a lot of talk about new ideas but not much recognition of what the existing teams have contributed, I’m not trying to make things difficult for anyone, but ignoring the problem isn’t going to fix it.`
+        ] },
+      { learner: [
+          `Hi Noel, have you got a few minutes to chat?`,
+          `I just wanted to check in since the conversation this morning. I know there have been quite a few changes since the merger, and I’d be interested to hear how you’ve found things across the organisation so far.`,
+          `I know everyone is adjusting in different ways, and sometimes the impact of these decisions isn’t immediately obvious. Since we’ve discussed the situation with John, perhaps this is also an opportunity for us to find practical ways to look after the people you work with that still align with operational expectations and bring the two organisations together.`,
+          `I’d value your honest opinion. I don’t expect you to agree with every decision that’s been made, but I do think it’s important that we understand how these changes are being experienced by people who have been here for a long time.`
+        ],
+        reply: [
+          `I suppose it depends on what you mean by bringing the organisations together effectively.`,
+          `There are definitely some good people coming across from OurSphere, and I’m sure they’ll have things to contribute. But I think there’s been a bit of an assumption that bringing in different experience automatically makes things better. It doesn’t always work that way.`,
+          `I’ve had a few conversations with people in other teams, and I wouldn’t say everyone is comfortable with how things have played out. I get a general feeling that people already here are just expected to make most of the adjustments.`,
+          `I’m not against progress, but it’s hard to feel invested when you don’t know if your experience is still valued. Black Swan needs to be careful about how it treats the people who helped build it.`,
+          `Anyway, I appreciate you asking. `
+        ] }
+    ]
+  },
+  
+  grey: {
+    id: 'grey', name: 'Grey L.', initials: 'GL', av: 'av-gold', status: 'online',
+    desc: 'Online · she/her · Environmental project officer · 4 years experience at OurSphere',
+    unread: 1, fixed: false, replyTime: '11:15 AM',
+    messages: [
+    //   { time: '10:30 AM', text: [
+    //     `Text`
+    //   ] }
+    ],
+    options: [
+      { learner: [
+          `Hi Grey,`,
+          `Just wanted to check in and see how you’re finding things now that you’ve had a little time to settle into the team. I want you to know that you’re welcome in the team, and I appreciate the enthusiasm you’ve brought with you. It’s a big adjustment joining a new organisation, particularly when you’re getting familiar with different processes and expectations.`,
+          `Don’t feel you need to have everything worked out straight away – I’m here to help you work through any questions as they come up.`,
+          `For now, bring any questions or concerns to me first, particularly if they relate to how the team currently operates or how tasks are managed. That will give us a chance to work through things together and make sure you’re getting consistent guidance while you become more comfortable in the role.`,
+          `There’s plenty of opportunity for you to develop and contribute, so I’d rather you take the time to build your confidence than feel you need to demonstrate everything you can do straight away.`
+        ],
+        reply: [
+          `Thank you, I really appreciate it.`,
+          `I’ve probably been asking a lot of questions, and I hope I haven’t made things more difficult for everyone. Sometimes I’m not sure whether I’m asking the right person or whether I should already know the answer.`,
+          `I think I’m just a little nervous about the change and want to make sure I’m doing a good job. There’s so much experience in the team, and I’d really like to show that I’m going to put in the effort.`,
+          `I’ll make sure to come to you first while I’m getting settled. I don’t want to push too hard or give the impression I think I know how everything should be done already!`
+        ] },
+      { learner: [
+          `Hi Grey,`,
+          `Just wanted to check in with you. I know there’s been quite a lot to take in, particularly coming from a different organisation and getting familiar with our operational processes so quickly. It’s great to see how keen you are to get involved, and I think there’s a lot you can learn from the experience already within the team.`,
+          `One of the best ways to become comfortable in a new environment is to build relationships with the people you’re working alongside. Both Noel and Khadija have a good understanding of how things operate here, so there may be opportunities to learn from their experience as you become more familiar with the work.`,
+          `I’d encourage you to have conversations with them as things come up, rather than feeling you need to work everything out on your own. Everyone has different strengths, and part of bringing the team together is making sure we’re sharing that knowledge.`,
+          `It may take a little time to find your feet, but you don’t need to prove yourself immediately. Focus on getting to know the team, understanding how things work and finding opportunities to contribute as your confidence grows.`
+        ],
+        reply: [
+          `Thank you, that’s helpful. I know everyone has a lot of experience, and I’d definitely like to learn from them. I haven’t been entirely sure how to approach the team. Everyone seems to have their own processes, and I don’t want to interrupt or make it seem like I’m questioning them.`,
+          `I think I’ll try to make more of an effort to connect with them. It might just take a little while before I feel comfortable asking for help, particularly when everyone seems so busy.`,
+          `I’ll do my best to get involved and hopefully find a way to contribute without getting in the way!!`
+        ] }
+    ]
+  },
+
+  sauli: {
+    id: 'sauli', name: 'Sauli S.', initials: 'SS', av: 'av-blue', status: 'busy',
+    desc: 'Busy · he/him · Senior Environmental Consultant · 10+ years experience at OurSphere',
+    unread: 1, fixed: false, replyTime: '11:15 AM',
+    messages: [
+    //   { time: '10:30 AM', text: [
+    //     `Text`
+    //   ] }
+    ],
+    options: [
+      { learner: [
+          `Hi Sauli,`,
+          `I wanted to touch base about how things have been going since you’ve joined the team. I appreciate the perspective you’ve brough to the organisation, and I agree there’s a real opportunity to improve the Black Swan’s sustainability initiatives and environmental impact.`,
+          `At the same time, we need to be mindful that the team is still adjusting to quite a significant restructure. There are established processes and operational requirements that we need to understand before we start rapidly changing how we work. Getting familiar with the team will also probably help make practical recommendations for how we can be more environmentally conscious in the future.`,
+          `I’d encourage you to keep sharing your ideas but also take the time to understand the practical challenges the others are managing. It would be useful to work through some of these tasks together rather than trying to introduce too many changes at once.`,
+          `We’re all working towards the same objectives, even if we approach them from different perspectives. I think there’s a lot we can achieve if we give everyone the opportunity to contribute and find some common ground.`
+        ],
+        reply: [
+          `Thanks, I understand what you’re saying, and I certainly don’t want to come across as trying to change everything overnight.`,
+          `Speaking frankly, it can be a little frustrating. At OurSphere, environmental assessment was generally part of the conversation from the beginning, so it’s been an adjustment to find that some of these discussions happen much later in the process here.`,
+          `I appreciate there are operation pressures and existing concerns, and I’m trying to understand those better. I just don’t want to lose sight of what the restructure was supposed to create by continuing to do everything as it’s always been done at Black Swan.`,
+          `Hopefully, once people see how some of these changes can help rather than create more work, there’ll be a bit more interest in exploring how they will positively impact the company.`
+        ] },
+      { learner: [
+          `Hi Sauli,`,
+          `I understand you’re keen to make an impact, and it’s good to see that level of enthusiasm. However, it’s important to remember that you’ve joined an established organisation with its own processes, priorities and operational expectations. The merger doesn’t mean everything will change immediately, and we need to be realistic about how quickly people can adapt.`,
+          `I’d suggest spending some time getting familiar with how the team currently operates before pushing for too many changes. There will be opportunities to introduce different approaches, but it’s important that we work within the expectations of the organisation and allow those changes to develop over time.`,
+          `I’m sure you’ll find your feet as you become more familiar with the team and how things are done here.`
+        ],
+        reply: [
+          `Of course, I understand that there are established processes here, and I’m certainly not expecting everything to change immediately.`,
+          `I suppose I had understood that the merger was intended to bring the two areas of expertise together, rather than simply have one adapt to the other. Some of the things I’ve raised aren’t necessarily new ideas or significant changes; they’re practices that were already part of our work at OurSphere. I’m happy to learn more about the operational side of the business, and I recognise that there are things I’ll need to understand better. I just hope there’s room for the experience I’ve brought with me as well.`,
+          `I’ll keep working through things with the team, although I think it may take a while to work out where my input is most useful.`
+        ] }
+    ]
+  },
+
+  khadija: {
+    id: 'khadija', name: 'Khadija R.', initials: 'KR', av: 'av-coral', status: 'busy',
+    desc: 'Busy · she/her · Project Support Officer · 7 years experience at Black Swan',
+    unread: 1, fixed: false, replyTime: '11:15 AM',
+    messages: [
+    //   { time: '10:30 AM', text: [
+    //     `Text`
+    //   ] }
+    ],
+    options: [
+      { learner: [
+          `Hey Khadija,`,
+          `I just wanted to check in with you about how things have been going since the team changes.`,
+          `I understand there’s been some confusion about how responsibilities will be managed while everyone adjusts to the new structure, so I want to make sure any expectations are clear for the team.`,
+          `We’re currently reviewing the team’s workload and allocating tasks based on everyone’s role, experience and capacity. I don’t expect you to absorb all additional tasks because we’ve moved people elsewhere, and if priorities change, we’ll discuss that in the team before there are any delays.`,
+          `There will be opportunities for everyone to share knowledge and support each other, but we’ll need to make sure that work is distributed fairly.`,
+          `If you notice your workload becoming difficult to manage, or if you’re unsure about anything in the team, I’d like you to raise it with me early so we can work through it together. I’d rather we have those conversations as things arise than have people feeling they need to manage everything themselves.`
+        ],
+        reply: [
+          `Thanks, that actually helps clarify a few things.`,
+          `I think I was starting to wonder whether we’d just be picking up any unfinished tasks, particularly while Sauli and Grey got settled. Since there’s so much to get through, I didn’t know how projects would be allocated.`,
+          `I do think there’s a lot of value into brining the environmental work into the business more directly, I just hope that it doesn’t change too much about how we work. It’s felt a bit different lately, and the team feels really different without Margot.`,
+          `I’ll let you know if anything becomes difficult to manage.`,
+          `Thanks [NAME]`
+        ] },
+      { learner: [
+          `Hi Khadija,`,
+          `Just wanted to check in since you’ve been less active with the team. I know it’s been quite a different environment lately, and I imagine there are a few things that might take some getting used to.`,
+          `I’d be interested to hear how you’re feeling about the changes overall. We’ve had different people moving in and out of the team, and we’re still figuring out how tasks are going to be allocated in the future.`,
+          `I’d really like to make sure everyone has a voice in that process, including people who have been part of the team for a long time. You’ve got a good understanding of how things have traditionally worked, and there’s value in having you involved as we work out what the next stage looks like.`,
+          `It’d be great to see you getting involved in some of the team discussions and sharing your thoughts as we go. Is there anything in particularly you’d like to see us focus on as we settle into the new arrangements?`
+        ],
+        reply: [
+          `I think things are okay. It’s probably just a matter of getting used to having different people around and working things out as we go.`,
+          `I’m sure everyone has good intentions, and there are probably some things that will become clearer once we’ve been working together for a while.`,
+          `I don’t really have anything specific to suggest at the moment. I think it might be a bit early to know what will work best, particularly when there are still a quite a few things changing. I’ll keep an eye on what’s happening and get involved when I can. We’ll have a better idea of how things are going once everything settles down a bit.`
+        ] }
+    ]
+  }
+};
+
+// Per-chat progress. Fixed chats start already answered; the others wait for a choice.
+const state = {};
+Object.keys(people).forEach(id => {
+  state[id] = people[id].fixed ? { chosen: 0, replied: true } : { chosen: null, replied: false };
+});
+// let currentId = 'grey';
+
+let currentId = null;      // null = picker screen
+let lockedId = null;       // the one person the learner has chosen to speak with
+let replyTimer = null;
+const FIRST_ENTRY_KEY = 'BSOS_M6S3C2FirstEntry';   // marker: first entry already saved
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function para(arr) {
+  return '<p>' + arr.map(t => esc(t.replace(/\[NAME\]/g, firstName))).join('<br><br>') + '</p>';
+}
+function plain(arr) { return arr.map(t => t.replace(/\[NAME\]/g, firstName)).join(' '); }
+
+function group(avClass, initials, name, time, bodyHtml, extra) {
+  return `
+    <div class="chat-group${extra ? ' ' + extra : ''}">
+      <div class="chat-avatar ${avClass}">${esc(initials)}</div>
+      <div class="chat-content">
+        <div class="chat-meta"><span class="chat-name">${esc(name)}</span><span class="chat-time">${esc(time)}</span></div>
+        <div class="chat-text">${bodyHtml}</div>
+      </div>
+    </div>`;
+}
+
+/* =========================================================
+   CHAT RENDERING
+   ========================================================= */
+function threadHtml(id) {
+  const p = people[id], s = state[id];
+  let html = '<div class="date-divider">Today</div>';
+  html += p.messages.map(m => group(p.av, p.initials, p.name, m.time, para(m.text))).join('');
+
+  if (s.chosen === null) {
+    html += `
+      <div>
+        <div class="explainerP"><p>Select the option you would send in this scenario.</p></div>
+        <div class="chat-answers-box">
+          ${p.options.map((o, i) => `
+            <div class="chat-options learnerOption" data-choice="${i}" tabindex="0" role="button">${para(o.learner)}</div>`).join('')}
+        </div>
+      </div>`;
+  } else {
+    const o = p.options[s.chosen];
+    html += group('av-teal', userIcon, username, p.replyTime, para(o.learner), 'learner');
+    if (s.replied) html += group(p.av, p.initials, p.name, p.replyTime, para(o.reply));
+  }
+  return html;
+}
+
+function setChat(id) {
+  currentId = id;
+  const body = document.getElementById('chat-body');
+  const icon = document.getElementById('header-icon');
+  const reset = document.getElementById('resetBtn');
+  if (!id) {
+    document.getElementById('chat-title').textContent = 'New message';
+    document.getElementById('chat-desc').textContent = 'Choose a team member to speak with';
+    icon.innerHTML = '';
+    reset.style.display = 'none';
+    body.innerHTML = pickerHtml();
+    return;
+  }
+  const p = people[id];
+  document.getElementById('chat-title').textContent = p.name;
+  document.getElementById('chat-desc').textContent = p.desc;
+  icon.innerHTML = `<div class="chat-avatar ${p.av}">${esc(p.initials)}</div>`;
+  reset.style.display = 'inline-block';
+  body.innerHTML = threadHtml(id);
+}
+
+function renderDMs() {
+  document.getElementById('dmList').innerHTML = Object.values(people).map(p => {
+    const locked = lockedId && p.id !== lockedId;
+    return `
+    <div class="dm-item${p.id === currentId ? ' active' : ''}${locked ? ' disabled' : ''}" data-dm="${p.id}" tabindex="${locked ? -1 : 0}" role="button"${locked ? ' aria-disabled="true"' : ''}>
+      <div class="dm-avatar ${p.av}">${esc(p.initials)}<span class="status-dot status-${p.status}"></span></div>
+      <span class="dm-name">${esc(p.name)}</span>
+      ${p.unread ? `<span class="dm-unread-count">${p.unread}</span>` : ''}
+    </div>`;
+  }).join('');
+  const total = Object.values(people).reduce((n, p) => n + p.unread, 0);
+  const dot = document.getElementById('totalUnread');
+  dot.textContent = total;
+  dot.style.display = total ? 'block' : 'none';
+}
+
+function loadDM(id) {
+  if (lockedId && id !== lockedId) return;   // one conversation only
+  lockedId = id;
+  people[id].unread = 0;
+  renderDMs();
+  setChat(id);
+}
+
+function resetConversation() {
+  clearTimeout(replyTimer);
+  lockedId = null;
+  Object.keys(people).forEach(id => {
+    state[id] = { chosen: null, replied: false };
+    people[id].unread = 1;
+  });
+  renderDMs();
+  setChat(null);
+}
+document.getElementById('resetBtn').addEventListener('click', resetConversation);
+
+function pickFromPrompt(e) {
+  const card = e.target.closest('[data-pick]');
+  if (!card) return false;
+  loadDM(card.dataset.pick);
+  return true;
+}
+
+function pickerHtml() {
+  return `
+    <div class="pick-prompt">
+      <h3>Who would you like to speak with?</h3>
+      <p>Choose one team member to message. You can only speak with one person each time. Use <strong>Reset conversation</strong> if you'd like to start again with someone else.</p>
+      ${Object.values(people).map(p => `
+        <div class="pick-card" data-pick="${p.id}" tabindex="0" role="button">
+          <div class="chat-avatar ${p.av}">${esc(p.initials)}</div>
+          <div><div class="pick-name">${esc(p.name)}</div><div class="pick-desc">${esc(p.desc)}</div></div>
+        </div>`).join('')}
+    </div>`;
+}
+
+/* =========================================================
+   CHOOSING A REPLY (only chats with fixed: false)
+   ========================================================= */
+function chooseOption(index) {
+  const id = currentId, p = people[id], s = state[id];
+  if (!id || s.chosen !== null) return;
+  s.chosen = index;
+
+  const body = document.getElementById('chat-body');
+  body.innerHTML = threadHtml(id) + `
+    <div class="chat-group typing-indicator" id="typing-${id}">
+      <div class="chat-avatar ${p.av}">${esc(p.initials)}</div>
+      <div class="chat-content">
+        <div class="chat-text typing-dots"><span></span><span></span><span></span></div>
+      </div>
+    </div>`;
+  body.scrollTop = body.scrollHeight;
+
+  const o = p.options[index];
+  try {   // only the learner's FIRST entry is ever saved
+    if (!localStorage.getItem(FIRST_ENTRY_KEY)) {
+      const key = p.name.replace(/[^A-Za-z]/g, '');   // e.g. "NoelG"
+      localStorage.setItem(key + 'M6S3C2Choice', plain(o.learner));
+      localStorage.setItem(key + 'M6S3C2Response', plain(o.reply));
+      localStorage.setItem(FIRST_ENTRY_KEY, p.name);
+    }
+  } catch (e) { /* storage unavailable */ }
+
+  replyTimer = setTimeout(() => {
+    s.replied = true;
+    if (currentId !== id) return;
+    const indicator = document.getElementById('typing-' + id);
+    if (indicator) indicator.remove();
+    const el = document.createElement('div');
+    el.innerHTML = group(p.av, p.initials, p.name, p.replyTime, para(o.reply), 'new-message');
+    const node = el.firstElementChild;
+    body.appendChild(node);
+    requestAnimationFrame(() => node.classList.add('visible'));
+    body.scrollTop = body.scrollHeight;
+  }, 1400);
+}
+document.getElementById('chat-body').addEventListener('click', e => {
+  if (pickFromPrompt(e)) return;                       // person picker cards
+  const opt = e.target.closest('[data-choice]');       // answer options
+  if (opt) chooseOption(Number(opt.dataset.choice));
+});
+
+document.getElementById('chat-body').addEventListener('keydown', e => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  if (e.target.closest('[data-pick]')) { e.preventDefault(); pickFromPrompt(e); return; }
+  const opt = e.target.closest('[data-choice]');
+  if (opt) { e.preventDefault(); chooseOption(Number(opt.dataset.choice)); }
+});
+
+document.getElementById('dmList').addEventListener('click', e => {
+  const item = e.target.closest('[data-dm]');
+  if (item) loadDM(item.dataset.dm);
+});
+document.getElementById('dmList').addEventListener('keydown', e => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const item = e.target.closest('[data-dm]');
+  if (item) { e.preventDefault(); loadDM(item.dataset.dm); }
+});
+
+/* =========================================================
+   CALLS + CONTACTS + ACTIVITY BAR
+   ========================================================= */
+function renderContacts() {
+  const sorted = Object.values(people).sort((a, b) => a.name.localeCompare(b.name));
+  let last = '';
+  document.getElementById('contactCount').textContent = sorted.length + ' contacts';
+  document.getElementById('contacts-list').innerHTML = sorted.map(p => {
+    const letter = p.name.charAt(0).toUpperCase();
+    const label = letter !== last ? `<div class="contact-group-label">${letter}</div>` : '';
+    last = letter;
+    return label + `
+      <div class="contact-item" data-name="${esc(p.name.toLowerCase())}">
+        <div class="contact-avatar ${p.av}">${esc(p.initials)}<span class="status-dot status-${p.status}"></span></div>
+        <div class="contact-info"><div class="contact-name">${esc(p.name)}</div></div>
+      </div>`;
+  }).join('');
+}
+
+function switchPhoneTab(tab, el) {
+  document.querySelectorAll('#phoneSection .dm-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('calls-pane').style.display    = tab === 'calls'    ? 'block' : 'none';
+  document.getElementById('contacts-pane').style.display = tab === 'contacts' ? 'flex'  : 'none';
+}
+
+function filterContacts(val) {
+  const query = val.toLowerCase();
+  document.querySelectorAll('#contacts-list .contact-item').forEach(item => {
+    item.style.display = item.dataset.name.includes(query) ? 'flex' : 'none';
+  });
+  document.querySelectorAll('#contacts-list .contact-group-label').forEach(label => {
+    const next = label.nextElementSibling;
+    label.style.display = (next && next.style.display !== 'none') ? 'block' : 'none';
+  });
+}
+
+function setActive(el) {
+  document.querySelectorAll('.activity-icon').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  const icons = Array.from(document.querySelectorAll('.activity-icon'));
+  const isChat = icons.indexOf(el) === 0;
+  document.getElementById('chatSection').style.display  = isChat ? 'flex' : 'none';
+  document.getElementById('phoneSection').style.display = isChat ? 'none' : 'flex';
+}
+document.querySelectorAll('.activity-icon, #phoneSection .dm-item').forEach(el => {
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
+  });
+});
+
+/* =========================================================
+   REFLECTION — answers are stored in localStorage
+   (keys: serenityReflectionAnswer1, serenityReflectionAnswer2, serenityReflectionAnswer3)
+   ========================================================= */
+function flashStatus(text) {
+  const el = document.getElementById('reflectStatus');
+  el.textContent = text;
+  el.style.opacity = 1;
+  clearTimeout(flashStatus.t);
+  flashStatus.t = setTimeout(() => { el.style.opacity = 0; }, 3000);
+}
+
+function saveAnswer(box) {
+  const key = 'BSOS_noel_chat_' + box.dataset.q;
+  const text = box.value.trim();
+  try {
+    if (text) localStorage.setItem(key, text);
+    else localStorage.removeItem(key);
+  } catch (err) { /* storage unavailable */ }
+}
+
+document.querySelectorAll('.question textarea').forEach(box => {
+  box.addEventListener('input', () => saveAnswer(box));
+});
+
+document.getElementById('reflectSave').addEventListener('click', () => {
+  document.querySelectorAll('.question textarea').forEach(saveAnswer);
+  flashStatus('Saved!');
+}); 
+
+/* =========================================================
+   BOOT
+   ========================================================= */
+renderDMs();
+setChat(null);
+</script>
+</body>
+</html>
