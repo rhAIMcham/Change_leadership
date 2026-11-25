@@ -61,11 +61,11 @@ window.InitUserScripts = function() {
             day: "2-digit", month: "long", year: "numeric"
           });
 
-          page.drawText("Leading yourself through change", {
+          page.drawText("Change Commitments", {
             x: margin, y: y, size: 21, font: fontBold, color: NAVY
           });
           y -= 22;
-          page.drawText("Change Leadership  ·  Session 6  · Leading yourself through change " + dateStr, {
+          page.drawText("Change Leadership  ·  Session 6  · Change Commitments " + dateStr, {
             x: margin, y: y, size: 11, font: font, color: MUTED_GRAY
           });
           y -= 14;
@@ -340,7 +340,7 @@ y -= 14;
               font: font,
               color: MUTED_GRAY
             });
-            pg.drawText("Change Leadership Session 6 Leading yourself through change ", {
+            pg.drawText("Change Leadership Session 6 Change Commitments ", {
               x: margin,
               y: 32,
               size: labelSize,
@@ -355,7 +355,7 @@ y -= 14;
             var url  = URL.createObjectURL(blob);
             var a    = document.createElement("a");
             a.href     = url;
-            a.download = "Change Leadership Session 6 Leading yourself through change AIM.pdf";
+            a.download = "Change Leadership Session 6 Change Commitments AIM.pdf";
             a.style.display = "none";
             document.body.appendChild(a);
             a.click();
