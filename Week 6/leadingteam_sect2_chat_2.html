@@ -201,14 +201,6 @@ svg:hover { fill: var(--teal); }
 .av-teal   { background: #9FE1CB; color: #085041; }
 .av-coral  { background: #F5C4B3; color: #712B13; }
 .av-purple { background: #9EA2D4; color: #3C3489; }
-.av-gold { background: #F7DDA0; color: #6B4A08; }
-
-.system-msg {
-  text-align: center;
-  font-size: 11px;
-  color: var(--text-muted);
-  margin: 8px 0;
-}
 
 .search-bar { padding: 10px 16px; border-bottom: 1px solid var(--border-subtle); }
 .search-input {
@@ -473,7 +465,7 @@ svg:hover { fill: var(--teal); }
     <div class="question">
       <div class="question-head">
         <span class="question-num" aria-hidden="true">1</span>
-        <label class="question-text" for="reflect1">How might existing personal relationships and trust within a team influence its ability to remain united during organisational change?</label>
+        <label class="question-text" for="reflect1">Do you feel you have successfully supported your team members and addressed their concerns about the restructure, or has the conversation highlighted areas where you could have provided other support?</label>
       </div>
       <textarea id="reflect1" data-q="1"></textarea>
     </div>
@@ -481,7 +473,7 @@ svg:hover { fill: var(--teal); }
     <div class="question">
       <div class="question-head">
         <span class="question-num" aria-hidden="true">2</span>
-        <label class="question-text" for="reflect2">What forms of resistance can you identify, and how might you distinguish between genuine concerns about operational changes, personal disappointment and a reluctance to accept new ways of working?</span></label>
+        <label class="question-text" for="reflect2">How confident do you now feel about integrating the two new team members and building a cohesive work environment when some current staff may still be uncertain or resistant to the changes? </span></label>
       </div>
       <textarea id="reflect2" data-q="2"></textarea>
     </div>
@@ -515,50 +507,12 @@ const userIcon = storedName.trim().slice(0, 1).toUpperCase() + storedInitial.toU
    fixed: false = the learner chooses between the options.
    ========================================================= */
 const people = {
-    groupchat: {
-        id: 'groupchat', name: 'Group chat', initials: 'GC', av: 'av-teal', status: 'busy',
-    desc: 'Team Group chat · Noel, Khadija, Grey, Sauli, and you · Created 3 years ago',
-    unread: 1, fixed: true, replyTime: '11:15 AM',
-    speakers: {
-    NOEL:    { name: 'Noel G.', initials: 'NG', av: 'av-purple' },
-    SAULI:   { name: 'Sauli',   initials: 'SS', av: 'av-blue'   },
-    KHADIJA: { name: 'Khadija', initials: 'KR', av: 'av-coral'  },
-    GREY:    { name: 'Grey',    initials: 'GL', av: 'av-gold'   }
-  },
-  messages: [
-    { time: '10:30 AM', transcript: `[NAME] has removed Margot G. and Dinesh O. from the chat.
-[NAME]: Morning everyone. I thought it would be a good idea to get this chat going again now that we’ve had a few changes to the team. With Sauli and Grey joining us, it should be a useful space to share updates, ask questions and keep everyone across what’s happening. Feel free to share anything relevant to the team or raise questions as the come up.
-NOEL: Morning. Sounds fine. I suppose we’ll see how it goes.
-SAULI: Thanks for setting us up! I think having a more active team chat could be really useful. At OurSphere, we shared updates and ideas regularly, which really helped plan across multiple projects. It’s way easier to address issues before starting a project rather than once work is already underway.
-NOEL: Yes, I can see how that might be useful. It probably depends on the type of work, though. Some things are easier to work through directly with the people involved, especially if there are deadlines to meet.
-GREY: That’s fair. I’d actually appreciate people sharing a bit more about what’s happening on site, so I have a better understanding of the operational side and where environmental checks fit into the process. I’m keen to get involved, but I don’t want to slow anyone down while I’m getting up to speed!
-SAULI: I think it’s a great opportunity for us to learn from each other. The restructure gives us a chance to bring different perspectives together, and hopefully we can find some better ways to work across different areas.
-NOEL: Definitely some things we can learn from each other. I think it’s also important we don’t lose sight of what already works well.
-There’s a lot of experience in this team, and some of our processes have been developed over years of working in the industry. It’d be good to build on that rather than starting from scratch.
-KHADIJA: Agreed. Probably best to take things one step at a time. There’s already plenty to get through at the moment.
-SAULI: Absolutely. Maybe we could start with a quick update each morning? Nothing too formal, just a chance to flag what we’re working on and whether anyone needs input from another part of the team.
-NOEL: Not sure a daily update is necessary, but we can see how things go. Most of us already have a pretty good idea of what’s happening across the operation.  It might be useful to keep everyone informed when something actually affects them.
-KHADIJA: That would probably work better for me.
-SAULI: That’s fair, I suppose we’ll need to work out what information is useful to everyone. I did want to ask, though, whether we’ll have a chance to go through some of the environmental processes together. There are still a few areas where I think we could get more involved earlier.
-NOEL: Sure, although it’ll be more useful to get a better understanding of how things currently operate first. There are also a few things that aren’t always obvious until you’re actually dealing with them on site.
-GREY: That’s something I’d definitely like to learn more about. I haven’t had much direct mine-site experience, so it’ll be good to understand what affects the day-to-day work. I’m sure there are things I can contribute as well.
-SAULI: Yes, and hopefully we can share some of our experience with environmental assessment as well. I think there’s a lot of value in getting both perspectives involved from the beginning.
-NOEL: I’m sure there is. We’ll just need to make sure we’re being practical about it. We have production targets deadlines and people waiting on decisions. Those things don’t just stop because we had a restructure.
-KHADIJA: Speaking of deadlines, I’ve got a few things to finish before lunch. We can see how things go.
-SAULI: I agree that deadlines and goals are important, I just think that environmental considerations aren’t separate from operations. I hope we can find a way to work together rather than treating these as competing priorities.
-[NAME]: Thanks everyone. I appreciate the different perspectives, and I think it’s useful to start understanding how we might work together. Let’s keep communication open but make sure we’re using everyone’s time effectively. We can share updates when they’re relevant and look at opportunities to work more closely across operational and environmental responsibilities.
-SAULI: Sounds good. I think the more we communicate, the easier it will be to build that understanding. Looking forward to working through it together.
-NOEL: Let’s just make sure we don’t lose sight of the actual work while we’re doing it.
-KHADIJA: Yep. Back to it.
-GREY: Thanks everyone. I’ll keep asking questions as I get settled in. Hopefully I can start contributing more soon!` }
-],
-    // options: [
-    // ]
-    },
+
+
   noel: {
     id: 'noel', name: 'Noel G.', initials: 'NG', av: 'av-purple', status: 'busy',
     desc: 'Busy · he/him · Operations Coordinator · 15 years experience at Black Swan',
-    unread: 0, fixed: true, replyTime: '11:15 AM',
+    unread: 1, fixed: false, replyTime: '11:15 AM',
     messages: [
       { time: '10:30 AM', text: [
         `[NAME],`,
@@ -658,17 +612,11 @@ GREY: Thanks everyone. I’ll keep asking questions as I get settled in. Hopeful
     ]
   }
 };
-/* =========================================================
-   STATE
-   ========================================================= */
-const hasOptions = p => Array.isArray(p.options) && p.options.length > 0;
 
+// Per-chat progress. Fixed chats start already answered; the others wait for a choice.
 const state = {};
 Object.keys(people).forEach(id => {
-  const p = people[id];
-  state[id] = hasOptions(p) && p.fixed
-    ? { chosen: 0, shown: Infinity }
-    : { chosen: null, shown: 0 };
+  state[id] = people[id].fixed ? { chosen: 0, replied: true } : { chosen: null, replied: false };
 });
 let currentId = 'margot';
 
@@ -694,83 +642,13 @@ function group(avClass, initials, name, time, bodyHtml, extra) {
     </div>`;
 }
 
-// "10:30 AM" + 3 minutes -> "10:33 AM"
-function clock(startStr, add) {
-  const m = String(startStr).match(/(\d+):(\d+)\s*(AM|PM)/i);
-  if (!m) return startStr;
-  let mins = (Number(m[1]) % 12) * 60 + Number(m[2]) + (m[3].toUpperCase() === 'PM' ? 720 : 0) + add;
-  mins %= 1440;
-  const H = Math.floor(mins / 60), M = mins % 60;
-  return `${H % 12 || 12}:${String(M).padStart(2, '0')} ${H < 12 ? 'AM' : 'PM'}`;
-}
-
-// "SPEAKER: text" lines -> message objects
-function parseTranscript(p, raw, startTime) {
-  const out = [];
-  let cur = null;
-  raw.split('\n').forEach(line => {
-    line = line.trim();
-    if (!line) return;
-    const m = line.match(/^(\[NAME\]|[A-Z]+):\s*(.*)$/);
-    if (m && (m[1] === '[NAME]' || (p.speakers && p.speakers[m[1]]))) {
-      cur = { from: m[1], text: [m[2]] };
-      out.push(cur);
-    } else if (cur) {
-      cur.text.push(line);
-    } else {
-      out.push({ system: true, text: [line] });
-    }
-  });
-  let n = 0;
-  out.forEach(m => { if (!m.system) m.time = clock(startTime, n++); });
-  return out;
-}
-
-function speakerOf(p, m) {
-  if (m.from === '[NAME]') return { av: 'av-teal', initials: userIcon, name: username, extra: 'learner' };
-  if (m.from && p.speakers && p.speakers[m.from]) return p.speakers[m.from];
-  return { av: p.av, initials: p.initials, name: p.name };
-}
-
-function messageHtml(p, m) {
-  if (m.system) {
-    return `<div class="system-msg">${esc(m.text.join(' ').replace(/\[NAME\]/g, firstName))}</div>`;
-  }
-  const who = speakerOf(p, m);
-  return group(who.av, who.initials, who.name, m.time, para(m.text), who.extra);
-}
-
-// reply can be: array of strings | { from, text } | transcript string
-function replyMessages(p, o) {
-  const r = o.reply;
-  if (typeof r === 'string') {
-    return parseTranscript(p, r, clock(p.replyTime, 1)).filter(m => !m.system);
-  }
-  if (Array.isArray(r)) return [{ text: r, time: p.replyTime }];
-  return [{ from: r.from, text: r.text, time: p.replyTime }];
-}
-
-function replyPlain(p, o) {
-  return replyMessages(p, o).map(m => {
-    const who = m.from && p.speakers && p.speakers[m.from] ? p.speakers[m.from].name + ': ' : '';
-    return who + plain(m.text);
-  }).join('\n');
-}
-
 /* =========================================================
    CHAT RENDERING
    ========================================================= */
 function threadHtml(id) {
   const p = people[id], s = state[id];
-  const msgs = p.messages.flatMap(m =>
-    m.transcript ? parseTranscript(p, m.transcript, m.time) : [m]
-  );
-
   let html = '<div class="date-divider">Today</div>';
-  html += msgs.map(m => messageHtml(p, m)).join('');
-
-  // Read-only chat: the existing messages are the whole conversation
-  if (!hasOptions(p)) return html;
+  html += p.messages.map(m => group(p.av, p.initials, p.name, m.time, para(m.text))).join('');
 
   if (s.chosen === null) {
     html += `
@@ -784,7 +662,7 @@ function threadHtml(id) {
   } else {
     const o = p.options[s.chosen];
     html += group('av-teal', userIcon, username, p.replyTime, para(o.learner), 'learner');
-    html += replyMessages(p, o).slice(0, s.shown).map(m => messageHtml(p, m)).join('');
+    if (s.replied) html += group(p.av, p.initials, p.name, p.replyTime, para(o.reply));
   }
   return html;
 }
@@ -794,9 +672,11 @@ function setChat(id) {
   const p = people[id];
   document.getElementById('chat-title').textContent = p.name;
   document.getElementById('chat-desc').textContent = p.desc;
-  document.getElementById('header-icon').innerHTML =
-    `<div class="chat-avatar ${p.av}">${esc(p.initials)}</div>`;
-  document.getElementById('chat-body').innerHTML = threadHtml(id);
+  const icon = document.getElementById('header-icon');
+  icon.innerHTML = `<div class="chat-avatar ${p.av}">${esc(p.initials)}</div>`;
+  const body = document.getElementById('chat-body');
+  body.innerHTML = threadHtml(id);
+  // body.scrollTop = body.scrollHeight;
 }
 
 function renderDMs() {
@@ -820,57 +700,42 @@ function loadDM(id) {
 }
 
 /* =========================================================
-   CHOOSING A REPLY
+   CHOOSING A REPLY (only chats with fixed: false)
    ========================================================= */
 function chooseOption(index) {
   const id = currentId, p = people[id], s = state[id];
-  if (!hasOptions(p) || s.chosen !== null) return;
+  if (s.chosen !== null) return;
   s.chosen = index;
 
-  const o = p.options[index];
-  document.getElementById('chat-body').innerHTML = threadHtml(id);
+  const body = document.getElementById('chat-body');
+  body.innerHTML = threadHtml(id) + `
+    <div class="chat-group typing-indicator" id="typing-${id}">
+      <div class="chat-avatar ${p.av}">${esc(p.initials)}</div>
+      <div class="chat-content">
+        <div class="chat-text typing-dots"><span></span><span></span><span></span></div>
+      </div>
+    </div>`;
+  body.scrollTop = body.scrollHeight;
 
-  try {
-    const key = p.name.replace(/[^A-Za-z]/g, '');
+  const o = p.options[index];
+  try {   // saved for use elsewhere in the course, as in the reference file
+    const key = p.name.replace(/[^A-Za-z]/g, '');   // e.g. "NoelG"
     localStorage.setItem(key + 'Choice', plain(o.learner));
-    localStorage.setItem(key + 'Response', replyPlain(p, o));
+    localStorage.setItem(key + 'Response', plain(o.reply));
   } catch (e) { /* storage unavailable */ }
 
-  playReplies(id, replyMessages(p, o), 0);
-}
-
-function playReplies(id, msgs, i) {
-  if (i >= msgs.length) return;
-  const p = people[id], s = state[id];
-  const body = document.getElementById('chat-body');
-  const who = speakerOf(p, msgs[i]);
-
-  if (currentId === id) {
-    body.insertAdjacentHTML('beforeend', `
-      <div class="chat-group typing-indicator" id="typing-${id}">
-        <div class="chat-avatar ${who.av}">${esc(who.initials)}</div>
-        <div class="chat-content">
-          <div class="chat-text typing-dots"><span></span><span></span><span></span></div>
-        </div>
-      </div>`);
-    body.scrollTop = body.scrollHeight;
-  }
-
   setTimeout(() => {
-    s.shown = i + 1;
-    if (currentId === id) {
-      const indicator = document.getElementById('typing-' + id);
-      if (indicator) indicator.remove();
-      const el = document.createElement('div');
-      el.innerHTML = messageHtml(p, msgs[i]);
-      const node = el.firstElementChild;
-      node.classList.add('new-message');
-      body.appendChild(node);
-      requestAnimationFrame(() => node.classList.add('visible'));
-      body.scrollTop = body.scrollHeight;
-    }
-    playReplies(id, msgs, i + 1);
-  }, i === 0 ? 1400 : 1800);
+    s.replied = true;
+    if (currentId !== id) return;
+    const indicator = document.getElementById('typing-' + id);
+    if (indicator) indicator.remove();
+    const el = document.createElement('div');
+    el.innerHTML = group(p.av, p.initials, p.name, p.replyTime, para(o.reply), 'new-message');
+    const node = el.firstElementChild;
+    body.appendChild(node);
+    requestAnimationFrame(() => node.classList.add('visible'));
+    body.scrollTop = body.scrollHeight;
+  }, 1400);
 }
 
 document.getElementById('chat-body').addEventListener('click', e => {
