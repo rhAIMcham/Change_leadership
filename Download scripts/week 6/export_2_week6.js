@@ -226,16 +226,6 @@ window.InitUserScripts = function() {
               response: t1
             },
             {
-              title: "Responding to Luke's voicemail question 1",
-              intro: "How would you respond to the concerns raised while maintaining a positive and supportive environment within your newly combined team?",
-              response: t2
-            },
-            {
-              title: "Responding to Luke's voicemail question 2",
-              intro: "How can you reinforce professional boundaries and organisational expectations while still making space for staff to raise genuine concerns and feel supported during change?",
-              response: t3
-            },
-            {
               title: "Unpacking the group chat question 1",
               intro: "How might existing personal relationships and trust within a team influence its ability to remain united during organisational change?",
               response: t4
@@ -264,6 +254,16 @@ window.InitUserScripts = function() {
                title: "How they replied",
               intro: "How your team member responded to your question.",
               response: t8
+            },
+              {
+              title: "Responding to Luke's voicemail question 1",
+              intro: "How would you respond to the concerns raised while maintaining a positive and supportive environment within your newly combined team?",
+              response: t2
+            },
+            {
+              title: "Responding to Luke's voicemail question 2",
+              intro: "How can you reinforce professional boundaries and organisational expectations while still making space for staff to raise genuine concerns and feel supported during change?",
+              response: t3
             }
             
           ];

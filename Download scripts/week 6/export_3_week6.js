@@ -255,7 +255,7 @@ var introSection = {
   title: "Introduction",
   paragraphs: [
     "You are a team leader at Black Swan Minerals, an established mining company that has recently acquired OurSphere Consulting, an environmental consultancy specialising in sustainability, environmental assessment and regulatory compliance. The acquisition is intended to combine Black Swan’s operational experience and industry capabilities with OurSphere’s environmental expertise to strengthen the organisation’s position and support more responsible approaches to resource development. As a leader, you are now responsible for navigating these changes within your own team. ",
-    "You responded to the company websites, a voicemail regarding staffing changes and messages from your team. Your responses are stored below."
+    "In this section you responded to news of a company wide survey, and supported your team and other leaders. Your responses are stored below."
     
   ],
   // Label shown above the fillable box under the intro
