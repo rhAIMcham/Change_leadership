@@ -1,7 +1,7 @@
 window.InitUserScripts = function() {
   window.Script1 = function() {
-    var t1 = localStorage.getItem("richardQ1") || "(no response saved)";
-    var t2 = localStorage.getItem("richardQ2") || "(no response saved)";
+    var t1 = localStorage.getItem("omarQ1") || "(no response saved)";
+    var t2 = localStorage.getItem("omarQ2") || "(no response saved)";
     var t3 = localStorage.getItem("BSOS_margot_email") || "(no response saved)";
     var t4 = localStorage.getItem("MargotJM6S3C2Choice") || "(no response saved)";
     var t5 = localStorage.getItem("MargotJM6S3C2Response") || "(no response saved)";
@@ -218,12 +218,12 @@ window.InitUserScripts = function() {
           // ✏️ Update titles, intro text, and reflection prompt to match your exercises
           var exercises = [ 
             {
-              title: "Responding to Richard's email question 1",
+              title: "Responding to Omar's email question 1",
               intro: "From what you have observed in the previous activities, which survey scores do you think may have changed following the organisational restructure?",
               response: t1
             },
             {
-              title: "Responding to Richard's email question 2",
+              title: "Responding to Omar's email question 2",
               intro: "How could comparing these results help the organisation identify emerging concerns, recognise improvements and adapt its approach to better meet peoples’ changing needs?",
               response: t2
             },

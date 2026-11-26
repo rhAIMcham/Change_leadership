@@ -453,10 +453,10 @@ const learnerEmail = 'teamleader@blackswanminerals.com.au';
 const emails = [
   {
     id: 'hr',
-    sender: 'Richard M',
-    initials: 'RM',
-    avatarClass: 'avatar-coral',
-    address: 'richard.m@blackswanminerals.com.au',
+    sender: 'Omar M',
+    initials: 'OM',
+    avatarClass: 'av-coral',
+    address: 'omar.m@blackswanminerals.com.au',
     toName: 'All staff',
     toAddress: 'allstaff@blackswanminerals.com.au',
     time: '8:33 am',
@@ -494,7 +494,7 @@ Thank you for your contribution, adaptability and commitment. I encourage you to
 
 Kind regards,
 
-Richard
+Omar
 
 Chief Executive Officer
 
@@ -613,7 +613,7 @@ document.getElementById('inboxRows').addEventListener('keydown', ev => {
    (keys: BSSReflectionAnswer1, serenityReflectionAnswer2, serenityReflectionAnswer3)
    ========================================================= */
 function flashStatus(text) {
-  const el = document.getElementById('richardQ');
+  const el = document.getElementById('omarQ');
   el.textContent = text;
   el.style.opacity = 1;
   clearTimeout(flashStatus.t);
@@ -621,7 +621,7 @@ function flashStatus(text) {
 }
 
 function saveAnswer(box) {
-  const key = 'richardQ' + box.dataset.q;
+  const key = 'omarQ' + box.dataset.q;
   const text = box.value.trim();
   try {
     if (text) localStorage.setItem(key, text);
