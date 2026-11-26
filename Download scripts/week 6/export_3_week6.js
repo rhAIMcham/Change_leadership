@@ -8,6 +8,7 @@ window.InitUserScripts = function() {
     var t6 = localStorage.getItem("nicoleSurvey") || "(no response saved)";
 
 
+
     function loadScript(src, onload) {
       var s = document.createElement("script");
       s.src = src;
@@ -62,11 +63,11 @@ window.InitUserScripts = function() {
             day: "2-digit", month: "long", year: "numeric"
           });
 
-          page.drawText("Navigating leading a new team", {
+          page.drawText("Change across an organisation", {
             x: margin, y: y, size: 21, font: fontBold, color: NAVY
           });
           y -= 22;
-          page.drawText("Change Leadership  ·  Session 6  · Navigating leading a new team " + dateStr, {
+          page.drawText("Change Leadership  ·  Session 6  · Change across an organisation " + dateStr, {
             x: margin, y: y, size: 11, font: font, color: MUTED_GRAY
           });
           y -= 14;
@@ -217,35 +218,36 @@ window.InitUserScripts = function() {
           // ✏️ Update titles, intro text, and reflection prompt to match your exercises
           var exercises = [ 
             {
-              title: "Noel's conversation with John",
-              intro: "How did you respond to Noel following insight from John surrounding his behaviour?",
+              title: "Responding to Richard's email question 1",
+              intro: "From what you have observed in the previous activities, which survey scores do you think may have changed following the organisational restructure?",
               response: t1
             },
             {
-              title: "Responding to Luke's voicemail question 1",
-              intro: "How would you respond to the concerns raised while maintaining a positive and supportive environment within your newly combined team?",
+              title: "Responding to Richard's email question 2",
+              intro: "How could comparing these results help the organisation identify emerging concerns, recognise improvements and adapt its approach to better meet peoples’ changing needs?",
               response: t2
             },
             {
-              title: "Responding to Luke's voicemail question 2",
-              intro: "How can you reinforce professional boundaries and organisational expectations while still making space for staff to raise genuine concerns and feel supported during change?",
+              title: "Supporting Margot",
+              intro: "EMail to Luke",
               response: t3
             },
             {
-              title: "Unpacking the group chat question 1",
-              intro: "How might existing personal relationships and trust within a team influence its ability to remain united during organisational change?",
+              title: "Message to margot",
+              intro: "What did you say?",
               response: t4
             },
             {
-              title: "Unpacking the group chat question 2",
-              intro: "Who did you choose to speak to?",
+              title: "Message from Margot",
+              intro: "What did she say",
               response: t5
             },
             {
-              title: "Understanding the groupchat question 1",
-              intro: "Which team member did you choose to speak with, and what forms of resistance or underlying concerns did you identify during the conversation?",
+              title: "Responding to the employee survey",
+              intro: "Email to nicole",
               response: t6
-            }            
+            }
+            
           ];
 // ✏️ Intro section: appears before the question sections.
 // Each string in `paragraphs` becomes its own paragraph. Use **double asterisks** for bold.
@@ -253,7 +255,7 @@ var introSection = {
   title: "Introduction",
   paragraphs: [
     "You are a team leader at Black Swan Minerals, an established mining company that has recently acquired OurSphere Consulting, an environmental consultancy specialising in sustainability, environmental assessment and regulatory compliance. The acquisition is intended to combine Black Swan’s operational experience and industry capabilities with OurSphere’s environmental expertise to strengthen the organisation’s position and support more responsible approaches to resource development. As a leader, you are now responsible for navigating these changes within your own team. ",
-    "You responded to messages and emails from your team. Your responses are stored below."
+    "You responded to the company websites, a voicemail regarding staffing changes and messages from your team. Your responses are stored below."
     
   ],
   // Label shown above the fillable box under the intro
@@ -346,7 +348,7 @@ y -= 14;
               font: font,
               color: MUTED_GRAY
             });
-            pg.drawText("Change Leadership Session 6 Navigating leading a new team ", {
+            pg.drawText("Change Leadership Session 6 Change across an organisation ", {
               x: margin,
               y: 32,
               size: labelSize,
@@ -361,7 +363,7 @@ y -= 14;
             var url  = URL.createObjectURL(blob);
             var a    = document.createElement("a");
             a.href     = url;
-            a.download = "Change Leadership Session 6 Navigating leading a new team AIM.pdf";
+            a.download = "Change Leadership Session 6 Change across an organisation AIM.pdf";
             a.style.display = "none";
             document.body.appendChild(a);
             a.click();
