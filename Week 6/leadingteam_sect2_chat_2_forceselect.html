@@ -842,8 +842,8 @@ function chooseOption(index) {
   try {   // only the learner's FIRST entry is ever saved
     if (!localStorage.getItem(FIRST_ENTRY_KEY)) {
       const key = p.name.replace(/[^A-Za-z]/g, '');   // e.g. "NoelG"
-      localStorage.setItem(key + 'M6S3C2Choice', plain(o.learner));
-      localStorage.setItem(key + 'M6S3C2Response', plain(o.reply));
+      localStorage.setItem('M6S3C2Choice', plain(o.learner));
+      localStorage.setItem('M6S3C2Response', plain(o.reply));
       localStorage.setItem(FIRST_ENTRY_KEY, p.name);
     }
   } catch (e) { /* storage unavailable */ }
@@ -948,7 +948,7 @@ function flashStatus(text) {
 }
 
 function saveAnswer(box) {
-  const key = 'BSOS_noel_chat_' + box.dataset.q;
+  const key = 'BSOS_forced_chat_' + box.dataset.q;
   const text = box.value.trim();
   try {
     if (text) localStorage.setItem(key, text);

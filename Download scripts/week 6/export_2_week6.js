@@ -1,12 +1,15 @@
 window.InitUserScripts = function() {
   window.Script1 = function() {
-    var t1 = localStorage.getItem("BSOSQ1") || "(no response saved)";
-    var t2 = localStorage.getItem("BSOSQ2") || "(no response saved)";
-    var t3 = localStorage.getItem("BSOSQ3") || "(no response saved)";
-    var t4 = localStorage.getItem("NoelGChoice") || "(no response saved)";
-    var t5 = localStorage.getItem("NoelGResponse") || "(no response saved)";
-    var t6 = localStorage.getItem("BSOS_noel_chat_1") || "(no response saved)";
-    var t7 = localStorage.getItem("BSOS_noel_chat_2") || "(no response saved)";
+    var t1 = localStorage.getItem("noelEmailTeam") || "(no response saved)";
+    var t2 = localStorage.getItem("MOD6VM2Q1") || "(no response saved)";
+    var t3 = localStorage.getItem("MOD6VM2Q2") || "(no response saved)";
+    var t4 = localStorage.getItem("BSOS_groupchat_1") || "(no response saved)";
+    var t5 = localStorage.getItem("BSOS_groupchat_2") || "(no response saved)";
+    var t6 = localStorage.getItem("BSOS_M6S3C2FirstEntry") || "(no response saved)";
+    var t7 = localStorage.getItem("M6S3C2Choice") || "(no response saved)";
+    var t8 = localStorage.getItem("M6S3C2Response") || "(no response saved)";
+    var t9 = localStorage.getItem("BSOS_forced_chat_1") || "(no response saved)";
+    var t10 = localStorage.getItem("BSOS_forced_chat_2") || "(no response saved)";
 
 
     function loadScript(src, onload) {
@@ -63,11 +66,11 @@ window.InitUserScripts = function() {
             day: "2-digit", month: "long", year: "numeric"
           });
 
-          page.drawText("Leading yourself through change", {
+          page.drawText("Navigating leading a new team", {
             x: margin, y: y, size: 21, font: fontBold, color: NAVY
           });
           y -= 22;
-          page.drawText("Change Leadership  ·  Session 6  · Leading yourself through change " + dateStr, {
+          page.drawText("Change Leadership  ·  Session 6  · Navigating leading a new team " + dateStr, {
             x: margin, y: y, size: 11, font: font, color: MUTED_GRAY
           });
           y -= 14;
@@ -218,40 +221,51 @@ window.InitUserScripts = function() {
           // ✏️ Update titles, intro text, and reflection prompt to match your exercises
           var exercises = [ 
             {
-              title: "Website reflection 1",
-              intro: "What differences in Black Swan and OurSphere’s priorities or expectations might indicate potential cultural challenges after the acquisition?",
+              title: "Noel's conversation with John",
+              intro: "How did you respond to Noel following insight from John surrounding his behaviour?",
               response: t1
             },
             {
-              title: "Website reflection 2",
-              intro: "Consider what these differences could reveal about future points of tension or resistance, and how you, as a leader, might identify and address these early before they begin to affect your leadership, team relationships and the broader integration of change.",
+              title: "Responding to Luke's voicemail question 1",
+              intro: "How would you respond to the concerns raised while maintaining a positive and supportive environment within your newly combined team?",
               response: t2
             },
             {
-              title: "Responding to Nicole's voicemail",
-              intro: "Knowing that two of your team members are about to be replaced, how would you prepare yourself and your remaining team for this transition. Consider how you might anticipate and manage uncertainty or resistance among existing staff while preparing to welcome and integrate two new staff members.",
+              title: "Responding to Luke's voicemail question 2",
+              intro: "How can you reinforce professional boundaries and organisational expectations while still making space for staff to raise genuine concerns and feel supported during change?",
               response: t3
             },
             {
-              title: "Response to Noel",
-              intro: "In this interaction, you recieved a message from Noel. You selected the below response.",
+              title: "Unpacking the group chat question 1",
+              intro: "How might existing personal relationships and trust within a team influence its ability to remain united during organisational change?",
               response: t4
             },
             {
-              title: "Noel's reaction",
-              intro: "Noel replied to your message with the response below.",
+              title: "Unpacking the group chat question 2",
+              intro: "Who did you choose to speak to?",
               response: t5
             },
             {
-              title: "Team chat reflection 1",
-              intro: "Do you feel you have successfully supported your team members and addressed their concerns about the restructure, or has the conversation highlighted areas where you could have provided other support?",
-              response: t6
+              title: "Understanding the groupchat question 1",
+              intro: "Which team member did you choose to speak with, and what forms of resistance or underlying concerns did you identify during the conversation?",
+              response: t9
             },
             {
-              title: "Team chat reflection 2",
-              intro: "How confident do you now feel about integrating the two new team members and building a cohesive work environment when some current staff may still be uncertain or resistant to the changes?",
+              title: "Understanding the groupchat question 2",
+              intro: "Did you feel the conversation was successful, or did it reveal further risks or challenges the organisation needs to address?",
+              response: t10
+            },
+            {
+             title: "What you said",
+              intro: "The message you sent to a team member responding to the group chat.",
               response: t7
+            },
+            {
+               title: "How they replied",
+              intro: "How your team member responded to your question.",
+              response: t8
             }
+            
           ];
 // ✏️ Intro section: appears before the question sections.
 // Each string in `paragraphs` becomes its own paragraph. Use **double asterisks** for bold.
@@ -259,7 +273,7 @@ var introSection = {
   title: "Introduction",
   paragraphs: [
     "You are a team leader at Black Swan Minerals, an established mining company that has recently acquired OurSphere Consulting, an environmental consultancy specialising in sustainability, environmental assessment and regulatory compliance. The acquisition is intended to combine Black Swan’s operational experience and industry capabilities with OurSphere’s environmental expertise to strengthen the organisation’s position and support more responsible approaches to resource development. As a leader, you are now responsible for navigating these changes within your own team. ",
-    "You responded to the company websites, a voicemail regarding staffing changes and messages from your team. Your responses are stored below."
+    "You responded to messages and emails from your team. Your responses are stored below."
     
   ],
   // Label shown above the fillable box under the intro
@@ -352,7 +366,7 @@ y -= 14;
               font: font,
               color: MUTED_GRAY
             });
-            pg.drawText("Change Leadership Session 6 Leading yourself through change ", {
+            pg.drawText("Change Leadership Session 6 Navigating leading a new team ", {
               x: margin,
               y: 32,
               size: labelSize,
@@ -367,7 +381,7 @@ y -= 14;
             var url  = URL.createObjectURL(blob);
             var a    = document.createElement("a");
             a.href     = url;
-            a.download = "Change Leadership Session 6 Leading yourself through change AIM.pdf";
+            a.download = "Change Leadership Session 6 Navigating leading a new team AIM.pdf";
             a.style.display = "none";
             document.body.appendChild(a);
             a.click();

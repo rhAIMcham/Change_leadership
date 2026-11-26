@@ -675,7 +675,7 @@ document.getElementById('saveBtn1').addEventListener('click', () => {
     msg.textContent = 'Saved!';
     msg.classList.remove('error');
     try {
-      localStorage.setItem('serenityEmail', body);   // plain text, message body only
+      localStorage.setItem('noelEmailTeam', body);   // plain text, message body only
     } catch (e) { /* storage unavailable */ }
     btn.classList.remove('just-saved');
     void btn.offsetWidth;            // restart the animation on repeat clicks
@@ -688,7 +688,7 @@ document.getElementById('saveBtn1').addEventListener('click', () => {
 /* =========================================================
    AUTO-SAVE — keep the message body in localStorage as the learner types
    ========================================================= */
-const BODY_STORAGE_KEY = 'serenityEmail';
+const BODY_STORAGE_KEY = 'noelEmailTeam';
 document.getElementById('notesInput1').addEventListener('input', e => {
   const text = e.target.value.trim();
   try {

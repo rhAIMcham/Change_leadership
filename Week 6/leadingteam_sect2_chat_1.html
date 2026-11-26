@@ -957,7 +957,7 @@ function flashStatus(text) {
 }
 
 function saveAnswer(box) {
-  const key = 'BSOS_noel_chat_' + box.dataset.q;
+  const key = 'BSOS_groupchat_' + box.dataset.q;
   const text = box.value.trim();
   try {
     if (text) localStorage.setItem(key, text);
