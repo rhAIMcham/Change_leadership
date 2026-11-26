@@ -608,76 +608,35 @@ document.getElementById('inboxRows').addEventListener('keydown', ev => {
   if (row) { ev.preventDefault(); selectEmail(row.dataset.emailId); }
 });
 
-// /* =========================================================
-//    NEW EMAIL ALERT
-//    ========================================================= */
-// function openEmailAlert() {
-//   const el = document.getElementById('emailAlert');
-//   el.classList.add('alertAppear');
-//   el.classList.remove('hideMe');
-// }
-// function closeEmailAlert() {
-//   const el = document.getElementById('emailAlert');
-//   el.classList.remove('alertAppear');
-//   el.classList.add('hideMe');
-// }
-// function clickEmailAlert() {
-//   delivered = true;
-//   arrivingId = 'john';       // Robert's email slides in at the top of the inbox
-//   closeEmailAlert();
-//   selectEmail('john');       // and opens
-// }
-// document.getElementById('emailAlert').addEventListener('keydown', e => {
-//   if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); clickEmailAlert(); }
-// });
+/* =========================================================
+   REFLECTION — answers are stored in localStorage
+   (keys: BSSReflectionAnswer1, serenityReflectionAnswer2, serenityReflectionAnswer3)
+   ========================================================= */
+function flashStatus(text) {
+  const el = document.getElementById('richardQ');
+  el.textContent = text;
+  el.style.opacity = 1;
+  clearTimeout(flashStatus.t);
+  flashStatus.t = setTimeout(() => { el.style.opacity = 0; }, 3000);
+}
 
-// /* =========================================================
-//    COMPOSE — recipient chips toggle on/off
-//    ========================================================= */
-// document.querySelectorAll('.chip').forEach(chip => {
-//   chip.addEventListener('click', () => {
-//     chip.setAttribute('aria-pressed', chip.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
-//   });
-// });
+function saveAnswer(box) {
+  const key = 'richardQ' + box.dataset.q;
+  const text = box.value.trim();
+  try {
+    if (text) localStorage.setItem(key, text);
+    else localStorage.removeItem(key);
+  } catch (err) { /* storage unavailable */ }
+}
 
-// /* =========================================================
-//    SAVE DRAFT — pulse the button and fade the status message in and out
-//    ========================================================= */
-// let saveTimer;
-// document.getElementById('saveBtn1').addEventListener('click', () => {
-//   const btn = document.getElementById('saveBtn1');
-//   const msg = document.getElementById('statusMsg1');
-//   const body = document.getElementById('notesInput1').value.trim();
+document.querySelectorAll('.question textarea').forEach(box => {
+  box.addEventListener('input', () => saveAnswer(box));
+});
 
-//   clearTimeout(saveTimer);
-//   if (!body) {
-//     msg.textContent = 'Write your email before saving.';
-//     msg.classList.add('error');
-//   } else {
-//     msg.textContent = 'Saved!';
-//     msg.classList.remove('error');
-//     try {
-//       localStorage.setItem('serenityEmail', body);   // plain text, message body only
-//     } catch (e) { /* storage unavailable */ }
-//     btn.classList.remove('just-saved');
-//     void btn.offsetWidth;            // restart the animation on repeat clicks
-//     btn.classList.add('just-saved');
-//   }
-//   msg.style.opacity = 1;
-//   saveTimer = setTimeout(() => { msg.style.opacity = 0; }, 2500);
-// });
-
-// /* =========================================================
-//    AUTO-SAVE — keep the message body in localStorage as the learner types
-//    ========================================================= */
-// const BODY_STORAGE_KEY = 'serenityEmail';
-// document.getElementById('notesInput1').addEventListener('input', e => {
-//   const text = e.target.value.trim();
-//   try {
-//     if (text) localStorage.setItem(BODY_STORAGE_KEY, text);
-//     else localStorage.removeItem(BODY_STORAGE_KEY);   // nothing typed, nothing stored
-//   } catch (err) { /* storage unavailable */ }
-// });
+document.getElementById('reflectSave').addEventListener('click', () => {
+  document.querySelectorAll('.question textarea').forEach(saveAnswer);
+  flashStatus('Saved!');
+}); 
 
 /* BOOT — three emails already in the inbox (HR open), alert pops up shortly after load */
 renderInbox();

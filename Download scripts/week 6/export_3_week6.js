@@ -1,15 +1,12 @@
 window.InitUserScripts = function() {
   window.Script1 = function() {
-    var t1 = localStorage.getItem("noelEmailTeam") || "(no response saved)";
-    var t2 = localStorage.getItem("MOD6VM2Q1") || "(no response saved)";
-    var t3 = localStorage.getItem("MOD6VM2Q2") || "(no response saved)";
-    var t4 = localStorage.getItem("BSOS_groupchat_1") || "(no response saved)";
-    var t5 = localStorage.getItem("BSOS_groupchat_2") || "(no response saved)";
-    var t6 = localStorage.getItem("BSOS_M6S3C2FirstEntry") || "(no response saved)";
-    var t7 = localStorage.getItem("M6S3C2Choice") || "(no response saved)";
-    var t8 = localStorage.getItem("M6S3C2Response") || "(no response saved)";
-    var t9 = localStorage.getItem("BSOS_forced_chat_1") || "(no response saved)";
-    var t10 = localStorage.getItem("BSOS_forced_chat_2") || "(no response saved)";
+    var t1 = localStorage.getItem("richardQ1") || "(no response saved)";
+    var t2 = localStorage.getItem("richardQ2") || "(no response saved)";
+    var t3 = localStorage.getItem("BSOS_margot_email") || "(no response saved)";
+    var t4 = localStorage.getItem("MargotJM6S3C2Choice") || "(no response saved)";
+    var t5 = localStorage.getItem("MargotJM6S3C2Response") || "(no response saved)";
+    var t6 = localStorage.getItem("nicoleSurvey") || "(no response saved)";
+
 
 
     function loadScript(src, onload) {
@@ -221,49 +218,34 @@ window.InitUserScripts = function() {
           // ✏️ Update titles, intro text, and reflection prompt to match your exercises
           var exercises = [ 
             {
-              title: "Noel's conversation with John",
-              intro: "How did you respond to Noel following insight from John surrounding his behaviour?",
+              title: "Responding to Richard's email question 1",
+              intro: "From what you have observed in the previous activities, which survey scores do you think may have changed following the organisational restructure?",
               response: t1
             },
             {
-              title: "Responding to Luke's voicemail question 1",
-              intro: "How would you respond to the concerns raised while maintaining a positive and supportive environment within your newly combined team?",
+              title: "Responding to Richard's email question 2",
+              intro: "How could comparing these results help the organisation identify emerging concerns, recognise improvements and adapt its approach to better meet peoples’ changing needs?",
               response: t2
             },
             {
-              title: "Responding to Luke's voicemail question 2",
-              intro: "How can you reinforce professional boundaries and organisational expectations while still making space for staff to raise genuine concerns and feel supported during change?",
+              title: "Supporting Margot",
+              intro: "EMail to Luke",
               response: t3
             },
             {
-              title: "Unpacking the group chat question 1",
-              intro: "How might existing personal relationships and trust within a team influence its ability to remain united during organisational change?",
+              title: "Message to margot",
+              intro: "What did you say?",
               response: t4
             },
             {
-              title: "Unpacking the group chat question 2",
-              intro: "Who did you choose to speak to?",
+              title: "Message from Margot",
+              intro: "What did she say",
               response: t5
             },
             {
-              title: "Understanding the groupchat question 1",
-              intro: "Which team member did you choose to speak with, and what forms of resistance or underlying concerns did you identify during the conversation?",
-              response: t9
-            },
-            {
-              title: "Understanding the groupchat question 2",
-              intro: "Did you feel the conversation was successful, or did it reveal further risks or challenges the organisation needs to address?",
-              response: t10
-            },
-            {
-             title: "What you said",
-              intro: "The message you sent to a team member responding to the group chat.",
-              response: t7
-            },
-            {
-               title: "How they replied",
-              intro: "How your team member responded to your question.",
-              response: t8
+              title: "Responding to the employee survey",
+              intro: "Email to nicole",
+              response: t6
             }
             
           ];
