@@ -244,7 +244,7 @@ window.InitUserScripts = function() {
             },
             {
               title: "Team chat reflection 1",
-              intro: "Do you feel you have successfully supported your team members and addressed their concerns about the restructure, or has the conversation highlighted areas where you could have provided other support?",
+              intro: "How successfully do you feel you have supported your team members and addressed their concerns about the restructure? Has the conversation highlighted any areas where you could have provided other support?",
               response: t6
             },
             {

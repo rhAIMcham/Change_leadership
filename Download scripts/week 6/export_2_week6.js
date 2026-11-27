@@ -242,7 +242,7 @@ window.InitUserScripts = function() {
             },
             {
               title: "Understanding the groupchat question 2",
-              intro: "Did you feel the conversation was successful, or did it reveal further risks or challenges the organisation needs to address?",
+              intro: "How successful do you feel the conversation was? Did it reveal further risks or challenges the organisation needs to address?",
               response: t10
             },
             {

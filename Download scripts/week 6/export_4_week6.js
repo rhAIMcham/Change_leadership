@@ -222,7 +222,7 @@ window.InitUserScripts = function() {
             },
             {
               title: "The aspect of workplace change I struggle with most is…",
-              intro: "Consider your own experiences managing uncertainty, resistance, communication challenges or the impact of change on others.",
+              intro: "Which of your own experiences managing uncertainty, resistance, communication challenges or the impact of change on others did you find most challenging?",
               response: t2
             },
             {
@@ -237,7 +237,7 @@ window.InitUserScripts = function() {
             },
             {
               title: "One thing I will do differently as a leader following this course is…",
-              intro: "Identify one behaviour, approach or leadership practice you intend to apply in your workplace.",
+              intro: "Identify and describe at least one behaviour, approach or leadership practice you intend to apply in your workplace",
               response: t5
             }
           ];
